@@ -22,8 +22,8 @@
   --color-sky: #55c8f5;
   --color-sky-deep: #0b6e97;
   --color-amber: #e8b23a;
-  --color-amber-deep: #8a6410;
-  --color-rust: #c4553d;
+  --color-amber-deep: #7a560c;
+  --color-rust: #d4674f;
 
   /* — tokens contextuales: cambian con la superficie de la sección — */
   --color-surface: var(--bg);
@@ -69,7 +69,7 @@
   --bg-sunk: var(--color-carbon-sunk);
   --fg-hi: #f2f0ec;
   --fg-mid: color-mix(in oklab, #f2f0ec 64%, var(--color-carbon));
-  --fg-low: color-mix(in oklab, #f2f0ec 46%, var(--color-carbon));
+  --fg-low: color-mix(in oklab, #f2f0ec 58%, var(--color-carbon));
   --rule: color-mix(in oklab, var(--color-steel) 45%, transparent);
   --rule-strong: color-mix(in oklab, var(--color-steel) 78%, transparent);
   --accent: var(--color-sky);
@@ -92,7 +92,7 @@
   --bg-sunk: var(--color-aluminio-sunk);
   --fg-hi: #0b0e12;
   --fg-mid: color-mix(in oklab, #0b0e12 72%, var(--color-aluminio));
-  --fg-low: color-mix(in oklab, #0b0e12 54%, var(--color-aluminio));
+  --fg-low: color-mix(in oklab, #0b0e12 58%, var(--color-aluminio));
   --rule: color-mix(in oklab, #0b0e12 22%, transparent);
   --rule-strong: color-mix(in oklab, #0b0e12 42%, transparent);
   --accent: var(--color-sky-deep);

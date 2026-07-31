@@ -107,7 +107,7 @@ export function ProductCard({
                   ? 'text-rust'
                   : availability === 'ultimas-unidades'
                     ? 'text-amber'
-                    : 'text-steel'
+                    : 'text-fg-low'
               }`}
             >
               {t(`product.availability.${availability}`)}

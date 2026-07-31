@@ -37,6 +37,7 @@ configurador de compatibilidad, carrito persistente y checkout simulado, en
 | [three.js](https://threejs.org) | 0.185.1 | La pieza WebGL, cargada dinámicamente |
 | [Vitest](https://vitest.dev) | 4.1.10 | Pruebas unitarias |
 | [Playwright](https://playwright.dev) | 1.62.1 | Pruebas end-to-end |
+| [axe-core](https://github.com/dequelabs/axe-core) | 4.x | Auditoría de accesibilidad |
 | [sharp](https://sharp.pixelplumbing.com) | 0.35 | Generación de la imagen social |
 
 Sin backend, sin base de datos, sin autenticación y sin servicios externos.
@@ -77,6 +78,7 @@ el idioma del navegador.
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Pruebas unitarias (Vitest) |
 | `npm run e2e` | Pruebas end-to-end (Playwright) |
+| `npm run a11y` | Auditoría de accesibilidad con axe (WCAG 2.1 AA) |
 | `npm run e2e:install` | Descarga el navegador que usa Playwright |
 | `npm run assets` | Regenera `public/og.png` |
 | `npm run verify` | lint + tipos + unitarias + build, en ese orden |
@@ -96,6 +98,9 @@ Las pruebas end-to-end levantan solas la compilación de producción en el puert
 final, la ausencia de peticiones de pago, la intro, el cursor, el movimiento
 reducido, el teclado, el cambio de moneda e idioma, el configurador y los
 estados vacíos.
+
+`npm run a11y` pasa **axe** sobre diez rutas en los dos idiomas y falla si
+aparece cualquier infracción de WCAG 2.1 AA.
 
 ---
 

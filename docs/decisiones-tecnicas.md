@@ -274,6 +274,39 @@ del umbral de 2,5 s, y con `prefers-reduced-motion` la intro no llega a pintarse
 
 ---
 
+## 3 bis · Accesibilidad medida
+
+`npm run a11y` pasa **axe-core** con las etiquetas `wcag2a`, `wcag2aa`,
+`wcag21a` y `wcag21aa` sobre diez rutas, en los dos idiomas y en escritorio y
+teléfono: **20 comprobaciones, cero infracciones**.
+
+La primera pasada encontró **19 nodos con contraste insuficiente**, todos por el
+mismo motivo: `--text-low` estaba demasiado apagado (3,62:1). Se corrigió la
+escala entera con medición real en vez de a ojo:
+
+| Token | Antes | Después | Sobre |
+|---|---|---|---|
+| `--text-low` (carbón) | 3,62:1 | **5,4:1** | `--carbon` |
+| `--text-low` en panel | 4,46:1 | **4,9:1** | `--carbon-lift` |
+| `--text-low` (aluminio) | 4,57:1 | **5,1:1** | `--aluminio` |
+| `--rust` | 4,34:1 | **5,4:1** | `--carbon` |
+
+Y se corrigió un error de rol: **`--steel` no es un color de texto** (4,41:1). Es
+material — filetes, marcos, cotas, trazos de SVG. La etiqueta neutra de
+disponibilidad, que lo usaba, pasó a `--text-low`.
+
+El par que decide la escala resultó ser `--text-low` sobre `--carbon-lift`, no
+sobre `--carbon`: el panel elevado es más claro que la superficie, así que un
+valor que pasa sobre el fondo puede no pasar dentro de un panel. Ese detalle no
+se ve leyendo código; salió de la medición.
+
+Lo que axe no puede comprobar está en `experiencia.spec.ts`: trampa de foco en
+el carrito con retorno al abridor, `prefers-reduced-motion` apagando la intro, el
+enlace de salto como primer destino del tabulador y el cursor propio ausente en
+puntero grueso.
+
+---
+
 ## 4 · Decisiones de contenido
 
 - **Los modelos son comerciales reales y sus especificaciones fueron verificadas**
