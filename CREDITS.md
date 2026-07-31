@@ -63,24 +63,45 @@ incrusta; no las modifica ni las redistribuye por separado.
 | eslint · eslint-config-next | MIT |
 | vitest | MIT |
 | @playwright/test | Apache-2.0 |
+| @axe-core/playwright · axe-core | MPL-2.0 |
+| ogl | Unlicense |
 | sharp | Apache-2.0 |
 
 ---
 
-## Recursos evaluados y no incorporados
+## React Bits — código adaptado
 
-Se revisaron durante la fase de investigación y **no se copió código ni recursos
-de ninguno**. El razonamiento completo está en
+<https://reactbits.dev> · **MIT + Commons Clause**
+
+A pedido expreso del titular del proyecto, cinco componentes de React Bits se
+integraron **adaptados**, no copiados: en todos hubo que cambiar la paleta, la
+geometría o la implementación para que encajaran con el sistema visual y con el
+presupuesto de rendimiento de este proyecto.
+
+| Componente | Archivo en este repositorio | Qué se cambió |
+|---|---|---|
+| `DotField` | `src/components/background/CircuitField.tsx` | Reescrito entero: canvas 2D, los puntos son pads de vía de una placa, agrupados en cuatro cubos de intensidad para pintar cada uno con una sola llamada. |
+| `Threads` | `src/components/background/Threads.tsx` | Portado a TypeScript, paleta de la casa, menos líneas, resolución interna acotada, guardián de cuadros y liberación del contexto WebGL. |
+| `Beams` | `src/components/background/Beams.tsx` | **Portado a three.js plano** (el original usa `@react-three/fiber` y `@react-three/drei`); ruido de UV con semilla en vez de `Math.random()`. |
+| `BorderGlow` | `src/components/motion/EdgeGlow.tsx` y `.u-edge` en `globals.css` | Un solo color, radio de 3 px, sin degradado de malla multicolor. |
+| `MagicBento` | `src/components/motion/Cell.tsx` y `.u-cell` en `globals.css` | **Sin GSAP** (bucle de animación propio) y **sin partículas flotantes**. |
+
+La Commons Clause permite usar los componentes dentro de una aplicación y
+prohíbe venderlos, sublicenciarlos o redistribuirlos por separado. Este
+repositorio contiene adaptaciones dentro de un producto, no una redistribución
+de la colección, y ninguno de estos componentes se ofrece como producto.
+
+---
+
+## Otros recursos evaluados
+
+El razonamiento completo está en
 [`docs/decisiones-tecnicas.md`](docs/decisiones-tecnicas.md).
 
 - **Impeccable** (<https://impeccable.style>) — usado como skill de criterio
   visual durante el diseño. No aporta código al producto final.
 - **Emil Kowalski skills** (<https://emilkowal.ski/skill>) — no instalado.
 - **Taste Skill** (<https://www.tasteskill.dev>) — no instalado.
-- **React Bits** (<https://reactbits.dev>) — MIT + Commons Clause. **No se copió
-  ningún componente.** Su Commons Clause prohíbe redistribuir los componentes en
-  sí, y este repositorio es público. Dos ideas (fondo de retícula y cursor con
-  estados) se reimplementaron desde cero con los tokens de este proyecto.
 - **Uiverse** (<https://uiverse.io>) — no utilizado. La consulta automatizada
   recibió `403` y no se pudo verificar de primera mano el estado de sus
   condiciones de uso, así que se descartó la fuente en lugar de asumir nada.

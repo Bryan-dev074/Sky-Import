@@ -9,6 +9,8 @@ import { makeT } from '@/lib/i18n/dictionary'
 import { I18nProvider } from '@/lib/i18n/context'
 import { prePaintScript } from '@/lib/prePaint'
 import { Header } from '@/components/chrome/Header'
+import { RenderDefs } from '@/components/render/RenderDefs'
+import { LiveBackground } from '@/components/background/LiveBackground'
 import { Footer } from '@/components/chrome/Footer'
 import { CartDrawer } from '@/components/chrome/CartDrawer'
 import { Toaster } from '@/components/chrome/Toaster'
@@ -137,8 +139,13 @@ export default async function LocaleLayout({
           }}
         />
       </head>
-      <body className="bg-surface text-fg antialiased">
-        <I18nProvider locale={locale}>
+      <body className="text-fg antialiased">
+        <I18nProvider initialLocale={locale}>
+          {/* El fondo vivo: una retícula de vías que reacciona al puntero.
+              Vive detrás de todo y no existe en punteros gruesos. */}
+          <LiveBackground />
+          <RenderDefs />
+
           <a href="#contenido" className="skip-link">
             {t('skip.toContent')}
           </a>
@@ -152,7 +159,7 @@ export default async function LocaleLayout({
             {children}
           </main>
 
-          <Footer locale={locale} />
+          <Footer />
 
           <CartDrawer />
           <Toaster />

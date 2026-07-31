@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CatalogBrowser } from '@/components/catalog/CatalogBrowser'
 import { CatalogSkeleton } from '@/components/catalog/CatalogSkeleton'
+import { PageHeader } from '@/components/views/PageHeader'
 import { makeT } from '@/lib/i18n/dictionary'
 import { LOCALES, isLocale, type Locale } from '@/lib/i18n/locales'
 
@@ -22,20 +23,12 @@ export async function generateMetadata({
 }
 
 export default async function CatalogPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: raw } = await params
-  if (!isLocale(raw)) notFound()
-  const t = makeT(raw)
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
 
   return (
     <>
-      <header className="u-page pt-28 pb-10 lg:pt-36">
-        <p className="u-eyebrow">{t('catalog.eyebrow')}</p>
-        <h1 className="u-display mt-5 text-[clamp(2.2rem,5.5vw,4rem)]">{t('catalog.title')}</h1>
-        <p className="u-measure mt-5 text-[1.0625rem] leading-relaxed text-fg-mid">
-          {t('catalog.lede')}
-        </p>
-      </header>
-
+      <PageHeader eyebrow="catalog.eyebrow" title="catalog.title" lede="catalog.lede" background="trace" />
       <Suspense fallback={<CatalogSkeleton />}>
         <CatalogBrowser />
       </Suspense>

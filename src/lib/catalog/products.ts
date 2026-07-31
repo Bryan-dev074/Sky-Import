@@ -104,7 +104,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR7',
       busWidthBit: 256,
     },
-    render: { shape: 'gpu', accent: GRAPHITE, seed: 12, fans: 3 },
+    render: { shape: 'gpu', accent: GRAPHITE, seed: 12, fans: 3, variant: 0 },
   },
   {
     slug: 'geforce-rtx-5070-ti-16gb',
@@ -144,7 +144,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR7',
       busWidthBit: 256,
     },
-    render: { shape: 'gpu', accent: STEEL, seed: 31, fans: 3 },
+    render: { shape: 'gpu', accent: STEEL, seed: 31, fans: 3, variant: 1 },
   },
   {
     slug: 'geforce-rtx-5070-12gb',
@@ -182,7 +182,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR7',
       busWidthBit: 192,
     },
-    render: { shape: 'gpu', accent: STEEL, seed: 44, fans: 2 },
+    render: { shape: 'gpu', accent: STEEL, seed: 44, fans: 2, variant: 0 },
   },
   {
     slug: 'radeon-rx-9070-xt-16gb',
@@ -220,7 +220,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR6',
       busWidthBit: 256,
     },
-    render: { shape: 'gpu', accent: GRAPHITE, seed: 58, fans: 3 },
+    render: { shape: 'gpu', accent: GRAPHITE, seed: 58, fans: 3, variant: 2 },
   },
   {
     slug: 'geforce-rtx-4060-8gb',
@@ -258,7 +258,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR6',
       busWidthBit: 128,
     },
-    render: { shape: 'gpu', accent: STEEL, seed: 67, fans: 2 },
+    render: { shape: 'gpu', accent: STEEL, seed: 67, fans: 2, variant: 2 },
   },
   {
     slug: 'arc-b580-12gb',
@@ -297,7 +297,7 @@ export const PRODUCTS: Product[] = [
       vramType: 'GDDR6',
       busWidthBit: 192,
     },
-    render: { shape: 'gpu', accent: SKY, seed: 73, fans: 2 },
+    render: { shape: 'gpu', accent: SKY, seed: 73, fans: 2, variant: 2 },
   },
 
   // ──────────────────────────────────────────────────────────── procesadores
@@ -323,7 +323,7 @@ export const PRODUCTS: Product[] = [
       { label: S.ramGen, value: 'DDR5' },
     ],
     compat: { kind: 'cpu', socket: 'AM5', tdpW: 120, cores: 8, threads: 16, igpu: true },
-    render: { shape: 'cpu', accent: NICKEL, seed: 21 },
+    render: { shape: 'cpu', accent: NICKEL, seed: 21, variant: 0 },
   },
   {
     slug: 'ryzen-7-7800x3d',
@@ -346,7 +346,7 @@ export const PRODUCTS: Product[] = [
       { label: S.ramGen, value: 'DDR5' },
     ],
     compat: { kind: 'cpu', socket: 'AM5', tdpW: 120, cores: 8, threads: 16, igpu: true },
-    render: { shape: 'cpu', accent: NICKEL, seed: 27 },
+    render: { shape: 'cpu', accent: NICKEL, seed: 27, variant: 0 },
   },
   {
     slug: 'ryzen-5-9600x',
@@ -369,7 +369,7 @@ export const PRODUCTS: Product[] = [
       { label: S.ramGen, value: 'DDR5' },
     ],
     compat: { kind: 'cpu', socket: 'AM5', tdpW: 65, cores: 6, threads: 12, igpu: true },
-    render: { shape: 'cpu', accent: NICKEL, seed: 35 },
+    render: { shape: 'cpu', accent: NICKEL, seed: 35, variant: 0 },
   },
   {
     slug: 'core-ultra-7-265k',
@@ -393,7 +393,7 @@ export const PRODUCTS: Product[] = [
       { label: S.ramGen, value: 'DDR5' },
     ],
     compat: { kind: 'cpu', socket: 'LGA1851', tdpW: 125, cores: 20, threads: 20, igpu: true },
-    render: { shape: 'cpu', accent: STEEL, seed: 41 },
+    render: { shape: 'cpu', accent: STEEL, seed: 41, variant: 1 },
   },
   {
     slug: 'core-i5-14600k',
@@ -416,7 +416,7 @@ export const PRODUCTS: Product[] = [
       { label: S.ramGen, value: L('DDR4 o DDR5 según la placa', 'DDR4 ou DDR5 conforme a placa') },
     ],
     compat: { kind: 'cpu', socket: 'LGA1700', tdpW: 125, cores: 14, threads: 20, igpu: true },
-    render: { shape: 'cpu', accent: STEEL, seed: 49 },
+    render: { shape: 'cpu', accent: STEEL, seed: 49, variant: 1 },
   },
 
   // ─────────────────────────────────────────────────────────── placas madre
@@ -449,7 +449,7 @@ export const PRODUCTS: Product[] = [
       memorySlots: 4,
       chipset: 'B850',
     },
-    render: { shape: 'motherboard', accent: GRAPHITE, seed: 13 },
+    render: { shape: 'motherboard', accent: GRAPHITE, seed: 13, variant: 0 },
   },
   {
     slug: 'asus-tuf-gaming-b650-plus-wifi',
@@ -479,7 +479,7 @@ export const PRODUCTS: Product[] = [
       memorySlots: 4,
       chipset: 'B650',
     },
-    render: { shape: 'motherboard', accent: GRAPHITE, seed: 19 },
+    render: { shape: 'motherboard', accent: GRAPHITE, seed: 19, variant: 1 },
   },
   {
     slug: 'msi-pro-b650m-a-wifi',
@@ -509,7 +509,7 @@ export const PRODUCTS: Product[] = [
       memorySlots: 4,
       chipset: 'B650',
     },
-    render: { shape: 'motherboard', accent: STEEL, seed: 24 },
+    render: { shape: 'motherboard', accent: STEEL, seed: 24, variant: 2 },
   },
   {
     slug: 'asrock-z890-pro-rs',
@@ -539,7 +539,7 @@ export const PRODUCTS: Product[] = [
       memorySlots: 4,
       chipset: 'Z890',
     },
-    render: { shape: 'motherboard', accent: GRAPHITE, seed: 29 },
+    render: { shape: 'motherboard', accent: GRAPHITE, seed: 29, variant: 0 },
   },
   {
     slug: 'gigabyte-b760m-ds3h',
@@ -569,7 +569,7 @@ export const PRODUCTS: Product[] = [
       memorySlots: 4,
       chipset: 'B760',
     },
-    render: { shape: 'motherboard', accent: STEEL, seed: 34 },
+    render: { shape: 'motherboard', accent: STEEL, seed: 34, variant: 2 },
   },
 
   // ────────────────────────────────────────────────────────── memorias RAM
@@ -594,7 +594,7 @@ export const PRODUCTS: Product[] = [
       { label: S.latency, value: 'CL30' },
     ],
     compat: { kind: 'ram', memory: 'DDR5', capacityGb: 32, modules: 2, speedMts: 6000, latency: 'CL30' },
-    render: { shape: 'ram', accent: GRAPHITE, seed: 11 },
+    render: { shape: 'ram', accent: GRAPHITE, seed: 11, variant: 0 },
   },
   {
     slug: 'gskill-trident-z5-neo-32gb-6000',
@@ -616,7 +616,7 @@ export const PRODUCTS: Product[] = [
       { label: S.latency, value: 'CL30' },
     ],
     compat: { kind: 'ram', memory: 'DDR5', capacityGb: 32, modules: 2, speedMts: 6000, latency: 'CL30' },
-    render: { shape: 'ram', accent: NICKEL, seed: 17 },
+    render: { shape: 'ram', accent: NICKEL, seed: 17, variant: 1 },
   },
   {
     slug: 'kingston-fury-beast-ddr5-16gb-5600',
@@ -638,7 +638,7 @@ export const PRODUCTS: Product[] = [
       { label: S.latency, value: 'CL36' },
     ],
     compat: { kind: 'ram', memory: 'DDR5', capacityGb: 16, modules: 2, speedMts: 5600, latency: 'CL36' },
-    render: { shape: 'ram', accent: STEEL, seed: 23 },
+    render: { shape: 'ram', accent: STEEL, seed: 23, variant: 0 },
   },
   {
     slug: 'corsair-vengeance-lpx-ddr4-16gb-3200',
@@ -660,7 +660,7 @@ export const PRODUCTS: Product[] = [
       { label: S.latency, value: 'CL16' },
     ],
     compat: { kind: 'ram', memory: 'DDR4', capacityGb: 16, modules: 2, speedMts: 3200, latency: 'CL16' },
-    render: { shape: 'ram', accent: STEEL, seed: 28 },
+    render: { shape: 'ram', accent: STEEL, seed: 28, variant: 2 },
   },
 
   // ───────────────────────────────────────────────────────── almacenamiento
@@ -694,7 +694,7 @@ export const PRODUCTS: Product[] = [
       readMBs: 7450,
       writeMBs: 6900,
     },
-    render: { shape: 'ssd-m2', accent: GRAPHITE, seed: 15 },
+    render: { shape: 'ssd-m2', accent: GRAPHITE, seed: 15, variant: 0 },
   },
   {
     slug: 'wd-black-sn850x-1tb',
@@ -724,7 +724,7 @@ export const PRODUCTS: Product[] = [
       readMBs: 7300,
       writeMBs: 6300,
     },
-    render: { shape: 'ssd-m2', accent: GRAPHITE, seed: 22 },
+    render: { shape: 'ssd-m2', accent: GRAPHITE, seed: 22, variant: 1 },
   },
   {
     slug: 'crucial-p3-plus-1tb',
@@ -754,7 +754,7 @@ export const PRODUCTS: Product[] = [
       readMBs: 5000,
       writeMBs: 3600,
     },
-    render: { shape: 'ssd-m2', accent: STEEL, seed: 30 },
+    render: { shape: 'ssd-m2', accent: STEEL, seed: 30, variant: 1 },
   },
   {
     slug: 'samsung-870-evo-1tb',
@@ -809,7 +809,7 @@ export const PRODUCTS: Product[] = [
       { label: S.format, value: 'ATX' },
     ],
     compat: { kind: 'psu', wattsW: 750, efficiency: '80 PLUS Gold', modular: 'Full modular', formFactor: 'ATX' },
-    render: { shape: 'psu', accent: GRAPHITE, seed: 14 },
+    render: { shape: 'psu', accent: GRAPHITE, seed: 14, variant: 0 },
   },
   {
     slug: 'seasonic-focus-gx-850',
@@ -831,7 +831,7 @@ export const PRODUCTS: Product[] = [
       { label: S.format, value: 'ATX' },
     ],
     compat: { kind: 'psu', wattsW: 850, efficiency: '80 PLUS Gold', modular: 'Full modular', formFactor: 'ATX' },
-    render: { shape: 'psu', accent: STEEL, seed: 20 },
+    render: { shape: 'psu', accent: STEEL, seed: 20, variant: 0 },
   },
   {
     slug: 'corsair-rm1000x',
@@ -853,7 +853,7 @@ export const PRODUCTS: Product[] = [
       { label: S.format, value: 'ATX' },
     ],
     compat: { kind: 'psu', wattsW: 1000, efficiency: '80 PLUS Gold', modular: 'Full modular', formFactor: 'ATX' },
-    render: { shape: 'psu', accent: GRAPHITE, seed: 26 },
+    render: { shape: 'psu', accent: GRAPHITE, seed: 26, variant: 0 },
   },
   {
     slug: 'msi-mag-a650bn',
@@ -875,7 +875,7 @@ export const PRODUCTS: Product[] = [
       { label: S.format, value: 'ATX' },
     ],
     compat: { kind: 'psu', wattsW: 650, efficiency: '80 PLUS Bronze', modular: 'No modular', formFactor: 'ATX' },
-    render: { shape: 'psu', accent: STEEL, seed: 33 },
+    render: { shape: 'psu', accent: STEEL, seed: 33, variant: 1 },
   },
 
   // ──────────────────────────────────────────────────────────── refrigeración
@@ -899,7 +899,7 @@ export const PRODUCTS: Product[] = [
       { label: S.sockets, value: 'AM5 · AM4 · LGA1700' },
     ],
     compat: { kind: 'cooling', type: 'aire', heightMm: 165, sockets: ['AM5', 'AM4', 'LGA1700'] },
-    render: { shape: 'air-cooler', accent: COPPER, seed: 16 },
+    render: { shape: 'air-cooler', accent: COPPER, seed: 16, variant: 0 },
   },
   {
     slug: 'thermalright-peerless-assassin-120-se',
@@ -920,7 +920,7 @@ export const PRODUCTS: Product[] = [
       { label: S.sockets, value: 'AM5 · AM4 · LGA1700' },
     ],
     compat: { kind: 'cooling', type: 'aire', heightMm: 155, sockets: ['AM5', 'AM4', 'LGA1700'] },
-    render: { shape: 'air-cooler', accent: NICKEL, seed: 25 },
+    render: { shape: 'air-cooler', accent: NICKEL, seed: 25, variant: 0 },
   },
   {
     slug: 'arctic-liquid-freezer-iii-360',
@@ -978,7 +978,7 @@ export const PRODUCTS: Product[] = [
       maxCoolerMm: 180,
       maxRadiatorMm: 360,
     },
-    render: { shape: 'case', accent: GRAPHITE, seed: 18 },
+    render: { shape: 'case', accent: GRAPHITE, seed: 18, variant: 0 },
   },
   {
     slug: 'nzxt-h5-flow',
@@ -1006,7 +1006,7 @@ export const PRODUCTS: Product[] = [
       maxCoolerMm: 165,
       maxRadiatorMm: 280,
     },
-    render: { shape: 'case', accent: STEEL, seed: 36 },
+    render: { shape: 'case', accent: STEEL, seed: 36, variant: 1 },
   },
   {
     slug: 'cooler-master-masterbox-q300l',
@@ -1034,7 +1034,7 @@ export const PRODUCTS: Product[] = [
       maxCoolerMm: 159,
       maxRadiatorMm: 240,
     },
-    render: { shape: 'case', accent: STEEL, seed: 42 },
+    render: { shape: 'case', accent: STEEL, seed: 42, variant: 2 },
   },
 
   {
@@ -1063,7 +1063,7 @@ export const PRODUCTS: Product[] = [
       maxCoolerMm: 155,
       maxRadiatorMm: 280,
     },
-    render: { shape: 'case', accent: NICKEL, seed: 47 },
+    render: { shape: 'case', accent: NICKEL, seed: 47, variant: 2 },
   },
 
   // ───────────────────────────────────────────────────────────── accesorios

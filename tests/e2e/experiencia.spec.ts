@@ -116,14 +116,33 @@ test.describe('moneda e idioma', () => {
     await expect(page.getByText('US$ 1.249').first()).not.toBeVisible()
   })
 
-  test('el idioma vive en la ruta y conserva la página', async ({ page, isMobile }) => {
+  test('cambiar de idioma NO recarga la página: traduce en el sitio', async ({ page, isMobile }) => {
     await page.goto('/es/catalogo')
-    await abrirControles(page, isMobile)
-    await page.getByRole('group', { name: 'Idioma' }).getByRole('link', { name: 'PT' }).click()
+    await expect(page.getByRole('article').first()).toBeVisible()
 
-    await expect(page).toHaveURL(/\/pt\/catalogo$/)
-    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
+    // Se marca la ventana para detectar cualquier recarga o navegación real.
+    await page.evaluate(() => {
+      ;(window as unknown as { __vivo: boolean }).__vivo = true
+    })
+
+    await abrirControles(page, isMobile)
+    await page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'PT' }).click()
+
     await expect(page.getByPlaceholder('Buscar por modelo, marca ou código')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
+    await expect(page).toHaveURL(/\/pt\/catalogo$/)
+
+    // La marca sigue ahí: no hubo recarga, solo cambió el idioma.
+    const vivo = await page.evaluate(() => (window as unknown as { __vivo?: boolean }).__vivo === true)
+    expect(vivo, 'la página no debe recargarse al cambiar de idioma').toBe(true)
+  })
+
+  test('el idioma sobrevive a una recarga porque queda en la ruta', async ({ page, isMobile }) => {
+    await page.goto('/es')
+    await abrirControles(page, isMobile)
+    await page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'PT' }).click()
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
   })
 
   test('quien entra sin prefijo de idioma cae en español', async ({ page }) => {

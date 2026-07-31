@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ComponentRender } from '@/components/render/ComponentRender'
 import { Price } from '@/components/ui/Price'
 import { useFocusTrap } from '@/lib/useFocusTrap'
-import { useI18n, localePath } from '@/lib/i18n/context'
+import { useI18n } from '@/lib/i18n/context'
 import { useBuild, resolveBuild } from '@/lib/build'
 import { useCart } from '@/lib/cart'
 import { useUi } from '@/lib/ui'
@@ -48,7 +48,7 @@ function optionsFor(slot: BuildSlot): Product[] {
 }
 
 export function Configurator() {
-  const { t, locale } = useI18n()
+  const { t, locale, path } = useI18n()
   const picks = useBuild((s) => s.picks)
   const hydrated = useBuild((s) => s.hydrated)
   const pick = useBuild((s) => s.pick)
@@ -130,7 +130,7 @@ export function Configurator() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <Link
-                            href={localePath(locale, `/producto/${product.slug}`)}
+                            href={path(`/producto/${product.slug}`)}
                             data-cursor="link"
                             className="u-link block text-[1rem] font-medium leading-snug text-fg"
                           >

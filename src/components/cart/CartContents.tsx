@@ -5,7 +5,7 @@ import { ComponentRender } from '@/components/render/ComponentRender'
 import { Price } from '@/components/ui/Price'
 import { useCart, resolveLines, totalsOf } from '@/lib/cart'
 import { useUi } from '@/lib/ui'
-import { useI18n, localePath } from '@/lib/i18n/context'
+import { useI18n } from '@/lib/i18n/context'
 import { formatMoney } from '@/lib/money'
 import { RULES } from '@/config/site'
 
@@ -63,7 +63,7 @@ export function CartContents({
   onNavigate?: () => void
   compact?: boolean
 }) {
-  const { t, locale } = useI18n()
+  const { t, path } = useI18n()
   const lines = useCart((s) => s.lines)
   const hydrated = useCart((s) => s.hydrated)
   const setQty = useCart((s) => s.setQty)
@@ -90,10 +90,10 @@ export function CartContents({
         <p className="u-display-sm text-2xl">{t('cart.empty.title')}</p>
         <p className="u-measure text-[0.9375rem] text-fg-mid">{t('cart.empty.body')}</p>
         <div className="flex flex-wrap justify-center gap-3">
-          <Link href={localePath(locale, '/catalogo')} onClick={onNavigate} className="u-btn u-btn-solid">
+          <Link href={path('/catalogo')} onClick={onNavigate} className="u-btn u-btn-solid">
             {t('cta.catalog')}
           </Link>
-          <Link href={localePath(locale, '/armar')} onClick={onNavigate} className="u-btn u-btn-line">
+          <Link href={path('/armar')} onClick={onNavigate} className="u-btn u-btn-line">
             {t('cta.build')}
           </Link>
         </div>
@@ -108,7 +108,7 @@ export function CartContents({
           <li key={line.slug} className="border-b border-rule">
             <div className="flex gap-4 px-5 py-5">
               <Link
-                href={localePath(locale, `/producto/${line.slug}`)}
+                href={path(`/producto/${line.slug}`)}
                 onClick={onNavigate}
                 data-cursor="product"
                 data-cursor-label={t('cta.view')}
@@ -120,7 +120,7 @@ export function CartContents({
               <div className="min-w-0 flex-1">
                 <p className="u-label mb-1">{line.product.brand}</p>
                 <Link
-                  href={localePath(locale, `/producto/${line.slug}`)}
+                  href={path(`/producto/${line.slug}`)}
                   onClick={onNavigate}
                   data-cursor="link"
                   className="u-link block text-[0.9375rem] font-medium leading-snug"
@@ -205,7 +205,7 @@ export function CartContents({
 
         <div className={`mt-5 grid gap-2 ${compact ? '' : 'sm:grid-cols-2'}`}>
           <Link
-            href={localePath(locale, '/checkout')}
+            href={path('/checkout')}
             onClick={onNavigate}
             className="u-btn u-btn-solid w-full"
           >
@@ -225,7 +225,7 @@ export function CartContents({
 
         <p className="mt-3 text-center">
           <Link
-            href={localePath(locale, '/catalogo')}
+            href={path('/catalogo')}
             onClick={onNavigate}
             data-cursor="link"
             className="u-link font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low"

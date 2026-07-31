@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BrandMark, Wordmark } from '@/components/brand/Wordmark'
-import { useI18n, localePath } from '@/lib/i18n/context'
+import { Magnetic } from '@/components/motion/Motion'
+import { useI18n } from '@/lib/i18n/context'
 import { LOCALES, LOCALE_META } from '@/lib/i18n/locales'
 import { CURRENCIES, CURRENCY_META } from '@/lib/money'
 import { useCurrency } from '@/lib/prefs'
@@ -12,18 +13,19 @@ import { useCart } from '@/lib/cart'
 import { useUi } from '@/lib/ui'
 import { CONTACT, hasWhatsapp, whatsappLink } from '@/config/site'
 
+const NAV = [
+  { href: '/catalogo', key: 'nav.catalog' },
+  { href: '/armar', key: 'nav.build' },
+  { href: '/guias', key: 'nav.guides' },
+] as const
+
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-  const { t, locale } = useI18n()
+  const { t, path } = useI18n()
   const pathname = usePathname()
-  const items = [
-    { href: '/catalogo', label: t('nav.catalog') },
-    { href: '/armar', label: t('nav.build') },
-    { href: '/guias', label: t('nav.guides') },
-  ]
   return (
     <>
-      {items.map((item) => {
-        const href = localePath(locale, item.href)
+      {NAV.map((item, i) => {
+        const href = path(item.href)
         const active = pathname === href || pathname.startsWith(`${href}/`)
         return (
           <Link
@@ -31,10 +33,12 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             href={href}
             onClick={onNavigate}
             aria-current={active ? 'page' : undefined}
-            data-cursor="link"
-            className="u-link font-mono text-[0.6875rem] font-medium tracking-[0.16em] uppercase text-fg-mid transition-colors hover:text-fg"
+            className="u-link relative font-mono text-[0.6875rem] font-medium tracking-[0.16em] uppercase text-fg-mid transition-colors hover:text-fg"
           >
-            {item.label}
+            <span className="mr-1.5 tabular-nums text-accent opacity-0 transition-opacity duration-300 ease-rail hover:opacity-100 group-hover/nav:opacity-60">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            {t(item.key)}
           </Link>
         )
       })}
@@ -57,7 +61,6 @@ function CurrencySwitch() {
           type="button"
           onClick={() => setCurrency(code)}
           aria-pressed={currency === code}
-          data-cursor="link"
           title={CURRENCY_META[code].label}
           className="min-h-[32px] min-w-[42px] px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
         >
@@ -68,10 +71,14 @@ function CurrencySwitch() {
   )
 }
 
+/**
+ * Cambiar de idioma NO navega: es un botón, no un enlace. Todo el texto de la
+ * tienda se vuelve a leer del diccionario en el mismo instante, la URL se
+ * corrige sin recargar y el scroll, el carrito y el armado se quedan donde
+ * estaban.
+ */
 function LocaleSwitch() {
-  const { t, locale } = useI18n()
-  const pathname = usePathname()
-  const rest = pathname.replace(/^\/(es|pt)/, '') || ''
+  const { t, locale, setLocale } = useI18n()
   return (
     <div
       className="flex items-center gap-px border border-rule rounded-part p-px"
@@ -79,16 +86,17 @@ function LocaleSwitch() {
       aria-label={t('lang.label')}
     >
       {LOCALES.map((code) => (
-        <Link
+        <button
           key={code}
-          href={`/${code}${rest}`}
-          hrefLang={LOCALE_META[code].htmlLang}
-          aria-current={locale === code ? 'true' : undefined}
-          data-cursor="link"
-          className="min-h-[32px] min-w-[34px] grid place-items-center px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-[current]:bg-fg aria-[current]:text-surface hover:text-fg"
+          type="button"
+          onClick={() => setLocale(code)}
+          aria-pressed={locale === code}
+          lang={LOCALE_META[code].htmlLang}
+          title={LOCALE_META[code].label}
+          className="min-h-[32px] min-w-[34px] grid place-items-center px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
         >
           {LOCALE_META[code].short}
-        </Link>
+        </button>
       ))}
     </div>
   )
@@ -100,33 +108,50 @@ function CartButton() {
   const lines = useCart((s) => s.lines)
   const hydrated = useCart((s) => s.hydrated)
   const count = hydrated ? lines.reduce((n, l) => n + l.qty, 0) : 0
+  const badge = useRef<HTMLSpanElement>(null)
+
+  /**
+   * El contador acusa recibo con un pulso corto. Se hace reiniciando la
+   * animación en el nodo y no con estado: un `setState` por cada cambio del
+   * carrito volvería a renderizar el encabezado entero para mover un número.
+   */
+  useEffect(() => {
+    const node = badge.current
+    if (!node || count === 0) return
+    node.classList.remove('u-bump')
+    // Forzar reflujo para poder relanzar la misma animación.
+    void node.offsetWidth
+    node.classList.add('u-bump')
+  }, [count])
 
   return (
-    <button
-      type="button"
-      onClick={openCart}
-      data-cursor="link"
-      className="u-btn u-btn-line min-h-[40px] px-3 gap-2"
-      aria-label={t('nav.openCart')}
-    >
-      <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor">
-        <path d="M2 3h2.6l2.1 9.4h8.2l1.8-6.6H5.4" strokeWidth="1.3" strokeLinecap="square" />
-        <circle cx="8" cy="16.4" r="1.2" />
-        <circle cx="14.6" cy="16.4" r="1.2" />
-      </svg>
-      <span className="hidden sm:inline">{t('nav.cart')}</span>
-      <span
-        className="font-mono text-[0.6875rem] tabular-nums text-accent"
-        aria-hidden={count === 0 ? 'true' : undefined}
+    <Magnetic strength={0.2} radius={60}>
+      <button
+        type="button"
+        onClick={openCart}
+        className="u-btn u-btn-line min-h-[40px] px-3 gap-2"
+        aria-label={t('nav.openCart')}
       >
-        {count.toString().padStart(2, '0')}
-      </span>
-    </button>
+        <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor">
+          <path d="M2 3h2.6l2.1 9.4h8.2l1.8-6.6H5.4" strokeWidth="1.3" strokeLinecap="square" />
+          <circle cx="8" cy="16.4" r="1.2" />
+          <circle cx="14.6" cy="16.4" r="1.2" />
+        </svg>
+        <span className="hidden sm:inline">{t('nav.cart')}</span>
+        <span
+          ref={badge}
+          className="inline-block font-mono text-[0.6875rem] tabular-nums text-accent"
+          aria-hidden={count === 0 ? 'true' : undefined}
+        >
+          {count.toString().padStart(2, '0')}
+        </span>
+      </button>
+    </Magnetic>
   )
 }
 
 export function Header() {
-  const { t, locale } = useI18n()
+  const { t, path } = useI18n()
   const menuOpen = useUi((s) => s.menuOpen)
   const toggleMenu = useUi((s) => s.toggleMenu)
   const [scrolled, setScrolled] = useState(false)
@@ -148,21 +173,16 @@ export function Header() {
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-50 bg-surface transition-shadow"
+      className="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-surface/92 backdrop-blur-[2px] transition-[border-color,background-color] duration-500 ease-rail data-[scrolled]:border-rule"
       data-scrolled={scrolled ? '' : undefined}
     >
       <div className="u-page flex h-16 items-center justify-between gap-4 lg:h-[72px]">
-        <Link
-          href={localePath(locale, '/')}
-          data-cursor="link"
-          className="flex items-center gap-2.5 text-fg"
-          aria-label={`Sky Import — ${t('brand.role')}`}
-        >
-          <BrandMark size={24} className="text-accent" />
+        <Link href={path('/')} className="flex items-center gap-2.5 text-fg" aria-label={`Sky Import — ${t('brand.role')}`}>
+          <BrandMark size={24} className="text-accent" animate="hover" />
           <Wordmark className="text-[0.8125rem] lg:text-sm" />
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex" aria-label={t('nav.menu')}>
+        <nav className="group/nav hidden items-center gap-8 lg:flex" aria-label={t('nav.menu')}>
           <NavLinks />
         </nav>
 
@@ -177,7 +197,6 @@ export function Header() {
             onClick={() => toggleMenu()}
             aria-expanded={menuOpen}
             aria-controls="menu-movil"
-            data-cursor="link"
             className="u-btn u-btn-line min-h-[40px] px-3 lg:hidden"
             aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
@@ -198,33 +217,27 @@ export function Header() {
         </div>
       </div>
 
-      <div className="u-rule" />
-
       {/* Panel móvil: pantalla completa, acciones al alcance del pulgar. */}
       <div
         id="menu-movil"
         hidden={!menuOpen}
         className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col bg-surface lg:hidden"
       >
-        <nav
-          className="u-page flex flex-col items-start gap-1 pt-8"
-          aria-label={t('nav.menu')}
-        >
-          {[
-            { href: '/catalogo', label: t('nav.catalog') },
-            { href: '/armar', label: t('nav.build') },
-            { href: '/guias', label: t('nav.guides') },
-          ].map((item, i) => (
+        <nav className="u-page flex flex-col items-start gap-1 pt-8" aria-label={t('nav.menu')}>
+          {NAV.map((item, i) => (
             <Link
               key={item.href}
-              href={localePath(locale, item.href)}
+              href={path(item.href)}
               onClick={() => toggleMenu(false)}
-              className="w-full border-b border-rule py-4 u-display-sm text-[1.75rem]"
+              className="group/item w-full overflow-hidden border-b border-rule py-4 u-display-sm text-[1.75rem]"
+              style={{ animation: `menu-in 420ms var(--ease-clamp) ${i * 60}ms both` }}
             >
-              <span className="font-mono text-[0.625rem] tracking-[0.16em] text-accent mr-3 align-middle">
+              <span className="mr-3 align-middle font-mono text-[0.625rem] tracking-[0.16em] text-accent">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              {item.label}
+              <span className="inline-block transition-transform duration-[420ms] ease-rail group-hover/item:translate-x-2">
+                {t(item.key)}
+              </span>
             </Link>
           ))}
         </nav>

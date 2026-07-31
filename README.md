@@ -17,11 +17,17 @@ configurador de compatibilidad, carrito persistente y checkout simulado, en
 
 | | |
 |---|---|
-| **Inicio** | Hero con render técnico anotado, índice de categorías, destacados |
+| **Entrada** | La cortina se desarma en lamas verticales que se retiran en secuencia |
+| **Fondo vivo** | Retícula de vías que se abomba al acercarse el puntero, con onda de energía |
+| **Inicio** | Hilos de ruido reactivos, titular por palabras, índice en celdas que responden por proximidad |
 | **Ensamblaje** | Una placa de video construida en código con three.js que se arma al hacer scroll |
-| **Catálogo** | 37 piezas, búsqueda sin tildes, filtros en la URL, hoja inferior en móvil |
+| **Catálogo** | 37 piezas con dibujo propio, búsqueda sin tildes, filtros en la URL |
 | **Arma tu PC** | Tablero que compara zócalo, generación DDR, vataje y milímetros |
 | **Checkout** | Tres pasos, sin un solo campo de datos sensibles |
+
+**El idioma cambia sin recargar.** Español y portugués conviven en el paquete del
+cliente: pulsar `PT` retraduce la tienda en el sitio, corrige la URL y deja el
+scroll, el carrito y el armado donde estaban.
 
 ---
 
@@ -34,7 +40,8 @@ configurador de compatibilidad, carrito persistente y checkout simulado, en
 | [TypeScript](https://www.typescriptlang.org) | 5.9.3 | Modo estricto, con `noUncheckedIndexedAccess` |
 | [Tailwind CSS](https://tailwindcss.com) | 4.3.3 | Sistema de estilos con los tokens en `@theme` |
 | [Zustand](https://zustand.docs.pmnd.rs) | 5.0.14 | Carrito y armado, persistidos en `localStorage` |
-| [three.js](https://threejs.org) | 0.185.1 | La pieza WebGL, cargada dinámicamente |
+| [three.js](https://threejs.org) | 0.185.1 | La pieza de ensamblaje y el fondo de haces, cargados dinámicamente |
+| [ogl](https://github.com/oframe/ogl) | 1.0.11 | El fondo de hilos del primer viewport |
 | [Vitest](https://vitest.dev) | 4.1.10 | Pruebas unitarias |
 | [Playwright](https://playwright.dev) | 1.62.1 | Pruebas end-to-end |
 | [axe-core](https://github.com/dequelabs/axe-core) | 4.x | Auditoría de accesibilidad |
@@ -121,16 +128,19 @@ src/
     globals.css          el sistema visual completo
     robots.ts · sitemap.ts
   components/
+    background/          campo de vías, hilos y haces (los tres diferidos)
     brand/ chrome/ intro/ cursor/ motif/
     catalog/ product/ builder/ cart/ checkout/ home/
-    render/              los dibujos vectoriales de cada componente
-    three/               la pieza WebGL
-    ui/
+    motion/              primitivas: entrada, imán, vitrina, celdas, canto energizado
+    render/              el dibujo propio de cada pieza + los degradados compartidos
+    three/               la pieza de ensamblaje
+    ui/ views/           las vistas de cada página
   config/site.ts         contacto, tipo de cambio y umbrales comerciales
   content/guides.ts      la sección editorial
   lib/
     catalog/             tipos, productos, categorías y estados derivados
     i18n/                idiomas y diccionario
+    motion.ts            el bucle de animación compartido y sus ganchos
     cart.ts build.ts compat.ts money.ts search.ts prefs.ts ui.ts
   proxy.ts               resuelve el idioma de quien entra sin prefijo
 tests/
@@ -161,6 +171,10 @@ Tres reglas que conviene no romper:
    interfaz calcula y muestra el porcentaje. Si no existe, no hay oferta.
 3. **`compat` cambia el comportamiento del configurador.** Un milímetro o un
    vatio distinto ahí cambia las advertencias; no hay una segunda copia del dato.
+4. **`render.variant` cambia el dibujo.** No es un matiz: elige entre diseños
+   distintos dentro de la familia (tres carcasas de placa de video, tres frentes
+   de gabinete, disipador de una torre o de dos). `render.seed` desplaza los
+   detalles menores de forma determinista.
 
 Para agregar una pieza basta con añadir un objeto al array: el catálogo, los
 filtros, el buscador, el configurador, el sitemap y las rutas estáticas se

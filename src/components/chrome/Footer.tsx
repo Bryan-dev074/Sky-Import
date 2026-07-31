@@ -1,42 +1,52 @@
+'use client'
+
 import Link from 'next/link'
 import { BrandMark, Wordmark } from '@/components/brand/Wordmark'
 import { Trace } from '@/components/motif/Trace'
+import { Marquee, Reveal } from '@/components/motion/Motion'
 import { CATEGORY_META, CATEGORY_ORDER } from '@/lib/catalog/categories'
+import { BRANDS } from '@/lib/catalog/products'
 import { GUIDES } from '@/content/guides'
-import { makeT } from '@/lib/i18n/dictionary'
-import type { Locale } from '@/lib/i18n/locales'
+import { useI18n } from '@/lib/i18n/context'
 import { CONTACT, SITE, hasWhatsapp, whatsappLink } from '@/config/site'
 
 /**
  * El trazado sale del sello hacia los bordes: es el cuarto y último lugar donde
- * aparece el motivo de la casa.
+ * aparece el motivo de la casa. Encima, una cinta con las marcas del catálogo
+ * que se detiene al acercar el puntero — un rótulo en movimiento, no un
+ * carrusel: no hay nada que perderse si pasa de largo.
  */
-export function Footer({ locale }: { locale: Locale }) {
-  const t = makeT(locale)
-  const p = (path: string) => `/${locale}${path}`
+export function Footer() {
+  const { t, l, locale, path } = useI18n()
 
   return (
     <footer className="relative border-t border-rule bg-surface">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 overflow-hidden text-steel opacity-25">
+      <div className="border-b border-rule py-5">
+        <Marquee items={BRANDS.map((brand) => brand)} duration={46} />
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-16 h-28 overflow-hidden text-steel opacity-25">
         <Trace width={1400} height={112} lines={4} seed={41} className="h-full w-full" />
       </div>
 
       <div className="u-page relative pt-24 pb-12">
         <div className="grid gap-12 md:grid-cols-12">
-          <div className="md:col-span-5">
+          <Reveal className="md:col-span-5">
             <div className="flex items-center gap-2.5 text-fg">
-              <BrandMark size={26} className="text-accent" />
+              <BrandMark size={26} className="text-accent" animate="hover" />
               <Wordmark className="text-sm" />
+              <span className="sr-only">{SITE.name}</span>
             </div>
             <p className="u-measure mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
-              {locale === 'es'
-                ? 'Importación de componentes para montar, mejorar y personalizar computadoras. Publicamos la ficha técnica antes que la promesa comercial.'
-                : 'Importação de componentes para montar, melhorar e personalizar computadores. Publicamos a ficha técnica antes da promessa comercial.'}
+              {l({
+                es: 'Importación de componentes para montar, mejorar y personalizar computadoras. Publicamos la ficha técnica antes que la promesa comercial.',
+                pt: 'Importação de componentes para montar, melhorar e personalizar computadores. Publicamos a ficha técnica antes da promessa comercial.',
+              })}
             </p>
             <p className="u-label mt-6">{t('brand.place')}</p>
-          </div>
+          </Reveal>
 
-          <nav className="md:col-span-3" aria-labelledby="pie-tienda">
+          <Reveal as="nav" delayIndex={1} className="md:col-span-3" aria-labelledby="pie-tienda">
             <h2 id="pie-tienda" className="u-label mb-4 text-fg">
               {t('footer.explore')}
             </h2>
@@ -48,11 +58,7 @@ export function Footer({ locale }: { locale: Locale }) {
                 { href: '/carrito', label: t('nav.cart') },
               ].map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={p(item.href)}
-                    data-cursor="link"
-                    className="u-link text-[0.875rem] text-fg-mid hover:text-fg"
-                  >
+                  <Link href={path(item.href)} className="u-link text-[0.875rem] text-fg-mid hover:text-fg">
                     {item.label}
                   </Link>
                 </li>
@@ -64,9 +70,8 @@ export function Footer({ locale }: { locale: Locale }) {
               {CATEGORY_ORDER.slice(0, 5).map((slug) => (
                 <li key={slug}>
                   <Link
-                    href={`${p('/catalogo')}?categoria=${slug}`}
+                    href={`${path('/catalogo')}?categoria=${slug}`}
                     prefetch={false}
-                    data-cursor="link"
                     className="u-link text-[0.8125rem] text-fg-low hover:text-fg"
                   >
                     {CATEGORY_META[slug].name[locale]}
@@ -74,9 +79,9 @@ export function Footer({ locale }: { locale: Locale }) {
                 </li>
               ))}
             </ul>
-          </nav>
+          </Reveal>
 
-          <nav className="md:col-span-2" aria-labelledby="pie-guias">
+          <Reveal as="nav" delayIndex={2} className="md:col-span-2" aria-labelledby="pie-guias">
             <h2 id="pie-guias" className="u-label mb-4 text-fg">
               {t('footer.help')}
             </h2>
@@ -84,8 +89,7 @@ export function Footer({ locale }: { locale: Locale }) {
               {GUIDES.map((guide) => (
                 <li key={guide.slug}>
                   <Link
-                    href={p(`/guias/${guide.slug}`)}
-                    data-cursor="link"
+                    href={path(`/guias/${guide.slug}`)}
                     className="u-link text-[0.8125rem] text-fg-mid hover:text-fg"
                   >
                     {guide.title[locale]}
@@ -93,9 +97,9 @@ export function Footer({ locale }: { locale: Locale }) {
                 </li>
               ))}
             </ul>
-          </nav>
+          </Reveal>
 
-          <div className="md:col-span-2">
+          <Reveal delayIndex={3} className="md:col-span-2">
             <h2 className="u-label mb-4 text-fg">{t('footer.contact')}</h2>
             {hasWhatsapp ? (
               <>
@@ -103,7 +107,6 @@ export function Footer({ locale }: { locale: Locale }) {
                   href={whatsappLink(t('wa.generic'))}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-cursor="link"
                   className="u-link font-mono text-[0.8125rem] tabular-nums text-fg"
                 >
                   {CONTACT.whatsappDisplay}
@@ -111,7 +114,7 @@ export function Footer({ locale }: { locale: Locale }) {
                 <p className="u-label mt-2 normal-case tracking-normal">WhatsApp</p>
               </>
             ) : null}
-          </div>
+          </Reveal>
         </div>
 
         <div className="u-rule mt-14" />

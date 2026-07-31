@@ -7,7 +7,7 @@ import { Trace } from '@/components/motif/Trace'
 import { Price } from '@/components/ui/Price'
 import { BrandMark } from '@/components/brand/Wordmark'
 import { useCart, resolveLines, totalsOf } from '@/lib/cart'
-import { useI18n, localePath } from '@/lib/i18n/context'
+import { useI18n } from '@/lib/i18n/context'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 import type { DictKey } from '@/lib/i18n/dictionary'
 
@@ -38,7 +38,7 @@ const PAYMENT = [
 type Step = 1 | 2 | 3
 
 export function CheckoutFlow() {
-  const { t, locale } = useI18n()
+  const { t, path } = useI18n()
   const lines = useCart((s) => s.lines)
   const hydrated = useCart((s) => s.hydrated)
   const clear = useCart((s) => s.clear)
@@ -68,7 +68,7 @@ export function CheckoutFlow() {
       <div className="u-page flex flex-col items-start gap-5 py-24">
         <h2 className="u-display-sm text-2xl">{t('checkout.emptyTitle')}</h2>
         <p className="u-measure text-[0.9375rem] text-fg-mid">{t('checkout.emptyBody')}</p>
-        <Link href={localePath(locale, '/catalogo')} className="u-btn u-btn-solid">
+        <Link href={path('/catalogo')} className="u-btn u-btn-solid">
           {t('cta.catalog')}
         </Link>
       </div>
@@ -139,9 +139,10 @@ export function CheckoutFlow() {
             ))}
           </ol>
 
-          <h1 className="u-display-sm mt-9 text-[clamp(1.6rem,3.5vw,2.25rem)]">
+          {/* El <h1> de la página es «Finalizar compra»; el paso es su subtítulo. */}
+          <h2 className="u-display-sm mt-9 text-[clamp(1.6rem,3.5vw,2.25rem)]">
             {t(`checkout.step${step}` as 'checkout.step1')}
-          </h1>
+          </h2>
           <p className="u-measure mt-3 text-[0.9375rem] leading-relaxed text-fg-mid">
             {t(`checkout.step${step}.lede` as 'checkout.step1.lede')}
           </p>
@@ -283,7 +284,7 @@ export function CheckoutFlow() {
                 {t('cta.back')}
               </button>
             ) : (
-              <Link href={localePath(locale, '/carrito')} className="u-btn u-btn-line">
+              <Link href={path('/carrito')} className="u-btn u-btn-line">
                 {t('cta.back')}
               </Link>
             )}
@@ -350,10 +351,10 @@ export function CheckoutFlow() {
             </p>
 
             <div className="mt-10 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
-              <Link href={localePath(locale, '/')} className="u-btn u-btn-solid">
+              <Link href={path('/')} className="u-btn u-btn-solid">
                 {t('reveal.backToStore')}
               </Link>
-              <Link href={localePath(locale, '/carrito')} className="u-btn u-btn-line">
+              <Link href={path('/carrito')} className="u-btn u-btn-line">
                 {t('reveal.reviewCart')}
               </Link>
               <button

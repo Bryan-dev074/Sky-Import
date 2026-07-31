@@ -343,3 +343,151 @@ puntero grueso.
   mismo peso de trazo y la misma gramática que el resto del sistema.
 - **Sin scroll suave por JavaScript.** El `scroll-behavior: smooth` nativo alcanza
   y se apaga solo con movimiento reducido.
+
+---
+
+## 6 · Segunda vuelta: movimiento, fondos y renders por producto
+
+El titular pidió una revisión con más movimiento en todo, fondos reactivos al
+cursor, intro que se desarme, idioma sin recarga, logo animado y un dibujo por
+producto. Además indicó cinco componentes concretos de React Bits para integrar:
+`DotField`, `Threads`, `Beams`, `BorderGlow` y `MagicBento`.
+
+### 6.1 · Sobre React Bits, ahora sí
+
+En la primera vuelta se descartó copiar componentes por su **Commons Clause** en
+un repositorio público. El titular respondió indicando la integración y
+aportando el código fuente. **Esa es su decisión y se ejecutó**, con el criterio
+de siempre: adaptados a la paleta y a las reglas del proyecto, y acreditados en
+`CREDITS.md`.
+
+| Componente | Cómo entró |
+|---|---|
+| `DotField` | Reescrito como **campo de vías** (`CircuitField`): canvas 2D, los puntos son pads de placa, se abomban al acercarse el puntero y una onda de energía cruza cada ~9 s. |
+| `Threads` | Portado a TypeScript, paleta de la casa, resolución interna acotada y **guardián de cuadros** propio. |
+| `Beams` | **Portado a three.js plano.** El original necesita `@react-three/fiber` y `@react-three/drei`; este proyecto ya usa `three` a secas, y traerse dos bibliotecas más —más de 150 KB— para un fondo habría sido la dependencia pesada que el brief prohíbe. |
+| `BorderGlow` | Reducido a **un solo color** (el cian de instrumento), radio de 3 px en vez de 28 (la casa no tiene píldoras) y sin el degradado de malla multicolor. Vive en una sola acción por vista. |
+| `MagicBento` | Reescrito **sin GSAP** sobre el bucle de animación propio, y **sin las partículas flotantes**: doce partículas por celda con temporizadores encadenados es exactamente el presupuesto de animaciones que `DESIGN.md` prohíbe reventar. El brillo por proximidad y la chispa al pulsar dan la misma vida por una fracción del coste. |
+
+Ninguna de las cinco entró como copia: en todas hubo que decidir qué se
+conservaba de la técnica y qué se tiraba por peso, por licencia o por
+contradecir el sistema visual.
+
+### 6.2 · Un solo `requestAnimationFrame` para todo
+
+Cursor, imán, inclinación, paralaje, contadores, campo de vías y celdas
+comparten **un único bucle** (`src/lib/motion.ts`). La alternativa —un `rAF` por
+componente— multiplica el trabajo por elemento en pantalla: con doce fichas
+visibles serían doce bucles disputándose el mismo hilo. El bucle además se apaga
+solo cuando no queda nadie suscrito o la pestaña se oculta.
+
+### 6.3 · Idioma sin recarga
+
+El idioma sigue **en la ruta** —para que las dos versiones se generen
+estáticamente y el primer pintado llegue traducido— pero **cambiarlo ya no
+navega**: es estado de cliente que se inicializa con el segmento de la URL. Al
+cambiarlo, todo el texto se relee del diccionario (que ya está en el paquete del
+cliente), la URL se corrige con `replaceState` y se guarda una cookie para la
+próxima visita. El scroll, el carrito y el armado se quedan donde estaban.
+
+La consecuencia de diseño es que **todo componente con texto traducible pasó a
+ser de cliente** y lo lee del contexto; ninguno recibe `locale` por prop. Las
+páginas siguen siendo de servidor: mantienen la metadata por idioma y la
+generación estática de las 96 rutas.
+
+Hay una prueba que lo verifica de la única forma fiable: marca la ventana antes
+de cambiar el idioma y comprueba que la marca sigue ahí después.
+
+### 6.4 · La intro se desarma
+
+La cortina pasó de subir en bloque a **doce lamas verticales que se retiran en
+secuencia**, alternando arriba y abajo. La tienda empieza a verse por franjas
+antes de que termine la salida. Sigue siendo CSS puro: si la hidratación fallara,
+las lamas se van igual y el script solo desmonta el nodo.
+
+### 6.5 · El cursor, arreglado
+
+El problema real de la primera versión no era el retardo: era que **solo
+reaccionaba a los pocos elementos con `data-cursor` escrito a mano**, así que la
+mayor parte de la interfaz no le decía nada y el retículo flotaba sin sentido.
+Ahora el estado se **deduce del elemento** (`a`, `button`, `label`, campos) y el
+retículo **se acopla al objetivo**: adopta su rectángulo como una mira que
+engancha. `data-cursor` queda solo para los casos con vocabulario propio.
+
+### 6.6 · Un dibujo por producto
+
+`variant` entra en la ficha de render y elige entre diseños **genuinamente
+distintos** dentro de la familia: tres carcasas de placa de video, tres frentes
+de gabinete, disipador de una torre o de dos, SSD con disipador o desnudo, fuente
+modular o de cableado fijo. La semilla sigue desplazando los detalles menores.
+
+El sombreado salió a `RenderDefs`: un `<svg>` oculto montado **una sola vez** con
+todos los degradados y patrones. Dos ganancias a la vez — la luz cae igual en
+todas las piezas (registro unificado) y el peine de aletas pasó de 44 líneas en
+el marcado a una referencia a un patrón.
+
+**Sobre fotografía real.** El titular pidió «la foto correspondiente» de cada
+producto. No hay fotografía de producto con derechos para este proyecto, y usar
+imágenes de prensa de terceros en un repositorio público es exactamente el
+problema de marcas que el resto del trabajo evita. Lo que se entregó en su lugar
+es lo más cercano defendible: **cada pieza tiene su propio dibujo**, distinto del
+de sus vecinas y derivado de su propia ficha. Si en algún momento hay fotografía
+propia con derechos, el sistema de renders se reemplaza pieza por pieza sin tocar
+nada más.
+
+### 6.7 · Mediciones de la segunda vuelta
+
+Compilación de producción, cuerpos decodificados (sobre la red van comprimidos a
+aproximadamente un tercio).
+
+| Página | Antes | Después | LCP | CLS | Tareas largas |
+|---|---|---|---|---|---|
+| Inicio | 1715 KB | **1205 KB** | 1484 ms | 0 | 0 |
+| Catálogo | 1109 KB | **942 KB** | 1180 ms | 0 | 0 |
+| Producto | 1378 KB | **997 KB** | 988 ms | 0 | 0 |
+| Inicio (390 px) | — | **1193 KB** | 1368 ms | 0 | 0 |
+
+La transferencia **bajó** pese a añadir tres fondos animados, por el dibujo único
+por pieza y los degradados compartidos.
+
+**Cuadros por segundo**, midiendo deltas de `requestAnimationFrame`:
+
+| Vista | Mediana | p95 | Cuadros > 33 ms |
+|---|---|---|---|
+| Portada 1440 px | 16,7 ms | 83,3 ms | 28/150 |
+| Portada 390 px | 16,7 ms | 16,7 ms | **0/150** |
+| Catálogo | 16,7 ms | 16,7 ms | **0/150** |
+| Movimiento reducido | 16,7 ms | 16,8 ms | **0/150** |
+
+Los picos de la portada a 1440 px vienen del sombreador de hilos **bajo
+rasterizado por software**: el navegador de las pruebas corre sin GPU y usa
+SwiftShader. Se comprobó bloqueando la creación de contextos WebGL — con el resto
+del movimiento intacto (campo de vías, cursor, imanes, cinta) la portada da
+16,7 ms de mediana y ni un cuadro lento. **No se midió en un equipo con GPU
+real**, así que el dato honesto es: todo lo que no es WebGL va a 60 cuadros, y el
+fondo de hilos trae su propio guardián que lo degrada si el equipo no lo sostiene.
+
+### 6.8 · Accesibilidad tras el rediseño
+
+`npm run a11y` vuelve a dar **cero infracciones** en las diez rutas, los dos
+idiomas y los dos dispositivos. En el camino aparecieron dos defectos reales que
+el rediseño introdujo:
+
+- **`aria-prohibited-attr`**: la marca denominativa llevaba `aria-label` sobre un
+  `<span>` genérico, que ARIA prohíbe. Las letras van partidas para poder
+  animarlas una a una, así que son decoración: ahora el conjunto es
+  `aria-hidden` y el nombre accesible lo pone quien la envuelve.
+- **Dos `<h1>` en el checkout**: el encabezado de página y el del paso. El paso
+  pasó a `<h2>`, que es lo que era.
+
+### 6.9 · El fallo que solo se ve mirando
+
+La clase del lienzo de fondo se llamó `.u-field` — el mismo nombre que el campo
+de formulario de la casa. Resultado: cada `input` y cada `select` heredaba
+`position: fixed; inset: 0` y se volvía un elemento a pantalla completa. El
+catálogo quedó con el buscador invisible y el selector de orden atravesando la
+columna de filtros.
+
+Ni los tipos, ni el lint, ni las 64 pruebas lo detectaron: los elementos existían
+y respondían. **Salió de mirar una captura**, que es exactamente para lo que está
+el barrido visual de `scripts/shots.mjs`.

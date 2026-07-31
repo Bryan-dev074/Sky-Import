@@ -10,6 +10,7 @@ import { prePaintScript } from '@/lib/prePaint'
 import { Header } from '@/components/chrome/Header'
 import { Footer } from '@/components/chrome/Footer'
 import { NotFoundView } from '@/components/chrome/NotFoundView'
+import { RenderDefs } from '@/components/render/RenderDefs'
 import { Cursor } from '@/components/cursor/Cursor'
 
 /**
@@ -60,17 +61,18 @@ export default async function GlobalNotFound() {
           }}
         />
       </head>
-      <body className="bg-surface text-fg antialiased">
-        <I18nProvider locale={locale}>
+      <body className="text-fg antialiased">
+        <I18nProvider initialLocale={locale}>
           <a href="#contenido" className="skip-link">
             {t('skip.toContent')}
           </a>
+          <RenderDefs />
           <Cursor />
           <Header />
           <main id="contenido" tabIndex={-1}>
-            <NotFoundView locale={locale} />
+            <NotFoundView />
           </main>
-          <Footer locale={locale} />
+          <Footer />
         </I18nProvider>
       </body>
     </html>

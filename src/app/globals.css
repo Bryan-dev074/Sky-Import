@@ -129,7 +129,9 @@
 
   body {
     margin: 0;
-    background: var(--bg);
+    /* Transparente a propósito: el color lo pone <html> y entre ambos vive el
+       campo de vías, en `z-index: -1`. */
+    background: transparent;
     color: var(--fg-hi);
     font-family: var(--font-display);
     font-size: 1rem;
@@ -500,16 +502,18 @@
   /* — entrada contenida: una sola vez, nunca en cada scroll — */
   .u-enter {
     opacity: 0;
-    transform: translateY(20px);
+    transform: var(--enter-from, translate3d(0, 22px, 0));
+    will-change: transform, opacity;
   }
 
   .u-enter[data-in='true'] {
     opacity: 1;
     transform: none;
     transition:
-      opacity 520ms var(--ease-rail),
-      transform 520ms var(--ease-rail);
+      opacity 620ms var(--ease-rail),
+      transform 620ms var(--ease-rail);
     transition-delay: var(--enter-delay, 0ms);
+    will-change: auto;
   }
 
   /* — el filete que se dibuja de izquierda a derecha — */
@@ -539,6 +543,464 @@ html[data-currency='USD'] [data-cur='USD'],
 html[data-currency='PYG'] [data-cur='PYG'],
 html[data-currency='BRL'] [data-cur='BRL'] {
   display: inline;
+}
+
+/* ─────────────────────────────────────────── el fondo vivo, detrás de todo
+   OJO con el nombre: `.u-field` ya existe y es el campo de formulario de la
+   casa. Llamar igual al lienzo de fondo convertía cada input y cada select en
+   un elemento fijo a pantalla completa. */
+
+.u-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════ LA MARCA CON VIDA
+   El sello no es una imagen quieta: sus pistas se trazan, una carga las
+   recorre y la vía late. En el encabezado el movimiento espera al puntero
+   para no competir con la lectura; en la intro va en bucle.              */
+
+.mark__trace,
+.mark__case {
+  stroke-dasharray: 46;
+  stroke-dashoffset: 0;
+}
+
+.mark__charge {
+  stroke-dasharray: 5 44;
+  stroke-dashoffset: 49;
+  opacity: 0;
+}
+
+.mark__via {
+  transform-origin: 26px 17px;
+}
+
+/* — trazado al aparecer — */
+.mark[data-motion='draw'] .mark__trace {
+  animation: mark-draw 900ms var(--ease-rail) forwards;
+}
+
+.mark[data-motion='draw'] .mark__trace--thin {
+  animation-delay: 140ms;
+}
+
+/* — carga en bucle: el modo de la intro — */
+.mark[data-motion='pulse'] .mark__charge {
+  opacity: 1;
+  animation: mark-run 2.4s linear infinite;
+}
+
+.mark[data-motion='pulse'] .mark__via {
+  animation: mark-via 2.4s var(--ease-rail) infinite;
+}
+
+/* — el encabezado: en reposo quieta, al acercarse sale la carga — */
+.mark[data-motion='hover'] .mark__charge {
+  transition: opacity 200ms var(--ease-rail);
+}
+
+a:hover .mark[data-motion='hover'] .mark__charge,
+a:focus-visible .mark[data-motion='hover'] .mark__charge,
+.mark[data-motion='hover']:hover .mark__charge {
+  opacity: 1;
+  animation: mark-run 1.5s linear infinite;
+}
+
+a:hover .mark[data-motion='hover'] .mark__via,
+.mark[data-motion='hover']:hover .mark__via {
+  animation: mark-via 1.5s var(--ease-rail) infinite;
+}
+
+@keyframes mark-draw {
+  from {
+    stroke-dashoffset: 46;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes mark-run {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes mark-via {
+  0%,
+  62%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  76% {
+    transform: scale(1.22);
+    opacity: 0.65;
+  }
+}
+
+/* — las letras del sello se levantan escalonadas — */
+.wordmark__l {
+  display: inline-block;
+  transition: transform 320ms var(--ease-rail);
+  white-space: pre;
+}
+
+a:hover .wordmark__l,
+a:focus-visible .wordmark__l {
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════ MOVIMIENTO DE LA CASA
+   Todo lo de acá comparte las dos curvas y se apaga de verdad con movimiento
+   reducido, en el bloque del final del archivo.                          */
+
+/* — palabra que sube desde su máscara — */
+.u-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.u-word__in {
+  display: inline-block;
+  transform: translate3d(0, 108%, 0);
+  transition: transform 740ms var(--ease-clamp);
+}
+
+[data-in='true'] > .u-word > .u-word__in {
+  transform: none;
+}
+
+/* — vitrina: la pieza gira siguiendo al puntero y recibe un roce de luz — */
+.u-tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.u-tilt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms var(--ease-rail);
+  background: radial-gradient(
+    380px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    color-mix(in oklab, var(--fg-hi) 9%, transparent),
+    transparent 62%
+  );
+}
+
+.u-tilt:hover::after {
+  opacity: 1;
+}
+
+/* — cinta continua — */
+.u-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.u-marquee__track {
+  display: flex;
+  width: max-content;
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.u-marquee:hover .u-marquee__track {
+  animation-play-state: paused;
+}
+
+.u-marquee__group {
+  display: flex;
+  flex: none;
+}
+
+.u-marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-inline: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-low);
+  white-space: nowrap;
+}
+
+.u-marquee__item::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+/* El contador del carrito acusa recibo. */
+.u-bump {
+  animation: bump 420ms var(--ease-clamp);
+}
+
+@keyframes bump {
+  40% {
+    transform: scale(1.42);
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ══════════════════════════════════ BORDE ENERGIZADO — el CTA principal
+   Adaptación de `BorderGlow` de React Bits a la paleta de la casa. Es la
+   ÚNICA excepción documentada a la prohibición de brillo del sistema: no es
+   decoración de fondo, es el canto de una pieza recibiendo corriente, y vive
+   en una sola acción de toda la tienda.                                   */
+
+.u-edge {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 22;
+  position: relative;
+  display: inline-grid;
+  border-radius: var(--radius-part);
+  isolation: isolate;
+  transform: translate3d(0, 0, 0.01px);
+}
+
+.u-edge__light {
+  position: absolute;
+  inset: -22px;
+  border-radius: calc(var(--radius-part) + 22px);
+  pointer-events: none;
+  z-index: 1;
+  mask-image: conic-gradient(
+    from var(--cursor-angle) at center,
+    black 3%,
+    transparent 12%,
+    transparent 88%,
+    black 97%
+  );
+  opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+  transition: opacity 260ms var(--ease-rail);
+}
+
+.u-edge__light::before {
+  content: '';
+  position: absolute;
+  inset: 22px;
+  border-radius: var(--radius-part);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--color-sky) 90%, transparent),
+    inset 0 0 6px 0 color-mix(in oklab, var(--color-sky) 45%, transparent),
+    0 0 3px 0 color-mix(in oklab, var(--color-sky) 55%, transparent),
+    0 0 14px 0 color-mix(in oklab, var(--color-sky) 28%, transparent),
+    0 0 34px 2px color-mix(in oklab, var(--color-sky) 14%, transparent);
+}
+
+/* Latido permanente del CTA: invita a pulsar sin decir «pulsá acá». */
+.u-edge[data-idle] .u-edge__light {
+  animation: edge-idle 3.6s var(--ease-rail) infinite;
+}
+
+.u-edge:hover .u-edge__light {
+  animation: none;
+}
+
+@keyframes edge-idle {
+  0%,
+  100% {
+    opacity: 0.16;
+    --cursor-angle: 0deg;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* El rótulo del CTA respira: un barrido de luz recorre las letras.
+   OJO: el degradado se apoya en `currentColor`, así que este elemento NO puede
+   ponerse `color: transparent` — se volvería un degradado transparente sobre
+   transparente y el texto desaparecería. Basta con
+   `-webkit-text-fill-color`, que vacía el relleno pero deja `currentColor`
+   heredado intacto. */
+.u-invite {
+  position: relative;
+  background-image: linear-gradient(
+    100deg,
+    currentColor 0%,
+    currentColor 42%,
+    color-mix(in oklab, var(--color-sky) 62%, currentColor) 50%,
+    currentColor 58%,
+    currentColor 100%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  background-repeat: repeat-x;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: invite 3.6s linear infinite;
+}
+
+@keyframes invite {
+  to {
+    background-position: -120% 0;
+  }
+}
+
+/* Flecha que insiste, con reposo largo. */
+.u-nudge {
+  display: inline-block;
+  animation: nudge 2.6s var(--ease-rail) infinite;
+}
+
+@keyframes nudge {
+  0%,
+  62%,
+  100% {
+    transform: translateX(0);
+  }
+  72% {
+    transform: translateX(4px);
+  }
+  82% {
+    transform: translateX(0);
+  }
+  90% {
+    transform: translateX(3px);
+  }
+}
+
+/* ═══════════════════════════════════════ CELDAS — el índice de categorías
+   Adaptación de `MagicBento` de React Bits: foco que sigue al puntero, canto
+   encendido por proximidad y chispas al pulsar. Reescrito sobre el bucle de
+   animación propio del proyecto —sin GSAP— y en la paleta de la casa.    */
+
+.u-cell {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-part);
+  background: var(--bg-lift);
+  transition:
+    border-color 320ms var(--ease-rail),
+    transform 420ms var(--ease-rail);
+  will-change: transform;
+}
+
+.u-cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    200px circle at var(--glow-x) var(--glow-y),
+    color-mix(in oklab, var(--color-sky) calc(var(--glow) * 6%), transparent),
+    transparent 58%
+  );
+  transition: opacity 260ms var(--ease-rail);
+}
+
+/* El canto se enciende por proximidad, no por hover: la celda responde antes
+   de que el puntero llegue. */
+.u-cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    260px circle at var(--glow-x) var(--glow-y),
+    color-mix(in oklab, var(--color-sky) calc(var(--glow) * 92%), transparent),
+    transparent 56%
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+}
+
+.u-cell > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Chispa al pulsar: nace donde se tocó y se apaga sola. */
+.u-spark {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-sky) 34%, transparent) 0%,
+    color-mix(in oklab, var(--color-sky) 14%, transparent) 34%,
+    transparent 68%
+  );
+  animation: spark 720ms var(--ease-rail) forwards;
+}
+
+@keyframes spark {
+  from {
+    transform: scale(0);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Foco global de la sección de celdas: un halo que sigue al puntero. */
+.u-spot {
+  position: fixed;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-sky) 11%, transparent) 0%,
+    color-mix(in oklab, var(--color-sky) 5%, transparent) 26%,
+    transparent 62%
+  );
+  transition: opacity 300ms var(--ease-rail);
 }
 
 /* ────────────────────────────────────────────────── enlace de salto */
@@ -644,11 +1106,14 @@ html[data-intro='skip'] .hero-line {
   }
 }
 
-/* ═══════════════════════════════════════════════ ENERGIZACIÓN — la intro
-   El paño sube por ANIMACIÓN CSS, no por JavaScript. Si la hidratación fallara,
-   el marcado del servidor seguiría ahí y la tienda quedaría tapada; con la
-   animación, la cortina se va igual a los 1,75 s pase lo que pase. El script
-   solo la adelanta a 1,25 s y desmonta el nodo.                            */
+/* ═══════════════════════════════════════════ ENERGIZACIÓN — la intro
+   La cortina no se corta: SE DESARMA. Está hecha de lamas verticales que se
+   retiran en secuencia, alternando arriba y abajo, y van dejando ver la tienda
+   por franjas. Es el mismo gesto de un panel lateral de gabinete saliendo.
+
+   El recorrido es CSS puro. Si la hidratación fallara, el marcado del servidor
+   seguiría en pantalla tapando la tienda; con la animación, las lamas se van
+   igual. El script solo desmonta el nodo al final y permite adelantarlo.     */
 
 .intro {
   position: fixed;
@@ -656,26 +1121,78 @@ html[data-intro='skip'] .hero-line {
   z-index: 90;
   display: grid;
   place-items: center;
-  background: var(--color-carbon);
   overflow: hidden;
-  animation: intro-out 1750ms var(--ease-clamp) forwards;
-  will-change: transform;
+  pointer-events: auto;
 }
 
 .intro[data-leaving] {
-  animation: none;
-  transform: translateY(-101%);
-  transition: transform 480ms var(--ease-clamp);
   pointer-events: none;
 }
 
-@keyframes intro-out {
-  0%,
-  80% {
-    transform: none;
+.intro__slats {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.intro__slat {
+  position: relative;
+  flex: 1;
+  background: var(--color-carbon);
+  animation: slat-up 460ms var(--ease-clamp) forwards;
+  animation-delay: calc(940ms + var(--i) * 34ms);
+  will-change: transform;
+}
+
+.intro__slat:nth-child(even) {
+  animation-name: slat-down;
+}
+
+/* El canto de cada lama lleva su hilo de corriente. */
+.intro__slat::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  bottom: 0;
+  background: var(--color-sky);
+  opacity: 0;
+  animation: slat-edge 460ms var(--ease-clamp) forwards;
+  animation-delay: calc(940ms + var(--i) * 34ms);
+}
+
+.intro__slat:nth-child(even)::after {
+  bottom: auto;
+  top: 0;
+}
+
+.intro[data-leaving] .intro__slat,
+.intro[data-leaving] .intro__slat::after {
+  animation-delay: calc(var(--i) * 24ms);
+  animation-duration: 340ms;
+}
+
+@keyframes slat-up {
+  to {
+    transform: translate3d(0, -101%, 0);
+  }
+}
+
+@keyframes slat-down {
+  to {
+    transform: translate3d(0, 101%, 0);
+  }
+}
+
+@keyframes slat-edge {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 1;
   }
   100% {
-    transform: translateY(-101%);
+    opacity: 0;
   }
 }
 
@@ -683,7 +1200,14 @@ html[data-intro='skip'] .hero-line {
   position: absolute;
   inset: 0;
   color: var(--color-sky);
-  opacity: 0.5;
+  opacity: 0.55;
+  animation: intro-field-out 380ms var(--ease-rail) 860ms forwards;
+}
+
+@keyframes intro-field-out {
+  to {
+    opacity: 0;
+  }
 }
 
 .intro__trace {
@@ -692,7 +1216,7 @@ html[data-intro='skip'] .hero-line {
 }
 
 .intro__trace [data-trace] {
-  animation: trace-draw 760ms var(--ease-rail) forwards;
+  animation: trace-draw 720ms var(--ease-rail) forwards;
   animation-delay: var(--trace-delay, 0ms);
 }
 
@@ -704,18 +1228,32 @@ html[data-intro='skip'] .hero-line {
 
 .intro__center {
   position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
   padding-inline: 24px;
   text-align: center;
+  animation: intro-center-out 340ms var(--ease-rail) 820ms forwards;
+}
+
+.intro[data-leaving] .intro__center {
+  animation-delay: 0ms;
+  animation-duration: 200ms;
+}
+
+@keyframes intro-center-out {
+  to {
+    opacity: 0;
+    transform: scale(1.06);
+  }
 }
 
 .intro__mark {
   color: var(--color-sky);
   opacity: 0;
-  animation: intro-fade 320ms var(--ease-rail) 120ms forwards;
+  animation: intro-fade 320ms var(--ease-rail) 110ms forwards;
 }
 
 .intro__seal {
@@ -739,7 +1277,7 @@ html[data-intro='skip'] .hero-line {
 .intro__letter {
   display: inline-block;
   transform: translateY(108%);
-  animation: intro-letter 440ms var(--ease-clamp) forwards;
+  animation: intro-letter 420ms var(--ease-clamp) forwards;
   white-space: pre;
 }
 
@@ -755,7 +1293,7 @@ html[data-intro='skip'] .hero-line {
   height: 1px;
   background: var(--color-sky);
   transform: scaleX(0);
-  animation: intro-line 560ms var(--ease-clamp) 440ms forwards;
+  animation: intro-line 520ms var(--ease-clamp) 400ms forwards;
 }
 
 @keyframes intro-line {
@@ -769,9 +1307,9 @@ html[data-intro='skip'] .hero-line {
   font-size: 0.625rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in oklab, #f2f0ec 52%, var(--color-carbon));
+  color: color-mix(in oklab, #f2f0ec 55%, var(--color-carbon));
   opacity: 0;
-  animation: intro-fade 420ms var(--ease-rail) 560ms forwards;
+  animation: intro-fade 400ms var(--ease-rail) 520ms forwards;
 }
 
 @keyframes intro-fade {
@@ -782,6 +1320,7 @@ html[data-intro='skip'] .hero-line {
 
 .intro__skip {
   position: absolute;
+  z-index: 3;
   right: 20px;
   bottom: 20px;
   min-height: 44px;
@@ -790,7 +1329,7 @@ html[data-intro='skip'] .hero-line {
   font-size: 0.625rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, #f2f0ec 60%, var(--color-carbon));
+  color: color-mix(in oklab, #f2f0ec 62%, var(--color-carbon));
   border: 1px solid color-mix(in oklab, #6e7a85 45%, transparent);
   border-radius: var(--radius-part);
   opacity: 0;
@@ -804,15 +1343,24 @@ html[data-intro='skip'] .hero-line {
   pointer-events: auto;
 }
 
+.intro[data-leaving] .intro__skip {
+  opacity: 0;
+}
+
 /* Con movimiento reducido la intro ni se pinta: el script previo al primer
    pintado marca el atributo y esto la retira antes de que exista. */
 html[data-intro='skip'] .intro {
   display: none;
 }
 
-/* ────────────────────────────────────────────────────── cursor propio
-   La clase la pone el propio componente cuando confirmó que se dibujó. Si el
-   componente no corre, el visitante conserva su puntero nativo.          */
+/* ══════════════════════════════════════════ CURSOR DE INSTRUMENTO
+   Un punto que va pegado al puntero y un retículo que llega con retardo y
+   **se acopla al objetivo**: al pasar sobre algo pulsable, el retículo adopta
+   su rectángulo, como una mira que engancha. Eso es lo que hace que el cursor
+   se sienta parte del instrumento y no un adorno que persigue al mouse.
+
+   La clase que apaga el puntero nativo la pone el propio componente cuando ya
+   dibujó sus nodos. Si el componente no corre, el visitante conserva el suyo. */
 
 html[data-cursor='on'],
 html[data-cursor='on'] * {
@@ -835,7 +1383,8 @@ html[data-cursor='on'] [contenteditable='true'] {
   z-index: 100;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 180ms var(--ease-rail);
+  transition: opacity 200ms var(--ease-rail);
+  will-change: transform;
 }
 
 .cur-dot[data-on],
@@ -844,68 +1393,134 @@ html[data-cursor='on'] [contenteditable='true'] {
 }
 
 .cur-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
   background: var(--color-sky);
   border-radius: var(--radius-hair);
+  transition:
+    opacity 200ms var(--ease-rail),
+    width 220ms var(--ease-rail),
+    height 220ms var(--ease-rail),
+    margin 220ms var(--ease-rail),
+    background-color 220ms var(--ease-rail);
 }
 
-/* Retículo cuadrado: es un instrumento de medida, no una burbuja. */
+/* Sobre un objetivo enganchado, el punto se retira: manda el retículo. */
+.cur-ring[data-lock] ~ .cur-dot,
+.cur-dot[data-lock] {
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+}
+
 .cur-ring {
   display: grid;
   place-items: center;
   width: 30px;
   height: 30px;
-  border: 1px solid color-mix(in oklab, #9aa5af 62%, transparent);
+  margin: -15px 0 0 -15px;
+  border: 1px solid color-mix(in oklab, #9aa5af 58%, transparent);
   border-radius: var(--radius-hair);
-  scale: 1;
   transition:
-    opacity 180ms var(--ease-rail),
-    scale 260ms var(--ease-rail),
+    opacity 200ms var(--ease-rail),
+    width 260ms var(--ease-rail),
+    height 260ms var(--ease-rail),
+    margin 260ms var(--ease-rail),
     border-color 260ms var(--ease-rail),
+    border-radius 260ms var(--ease-rail),
     background-color 260ms var(--ease-rail);
 }
 
-.cur-ring[data-press] {
-  scale: 0.82;
+/* Marcas de esquina: es una mira, no un aro. */
+.cur-ring::before,
+.cur-ring::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--color-sky);
+  opacity: 0;
+  transition: opacity 220ms var(--ease-rail);
 }
 
-.cur-ring[data-state='link'] {
-  scale: 0.55;
-  background: var(--color-sky);
-  border-color: var(--color-sky);
+.cur-ring::before {
+  top: -2px;
+  left: -2px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.cur-ring::after {
+  right: -2px;
+  bottom: -2px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.cur-ring[data-lock]::before,
+.cur-ring[data-lock]::after,
+.cur-ring[data-state='product']::before,
+.cur-ring[data-state='product']::after {
+  opacity: 1;
+}
+
+/* Enganchado a un control: el retículo toma su rectángulo. */
+.cur-ring[data-lock] {
+  border-color: color-mix(in oklab, var(--color-sky) 72%, transparent);
+  border-radius: var(--radius-part);
+  background: color-mix(in oklab, var(--color-sky) 7%, transparent);
 }
 
 .cur-ring[data-state='product'] {
-  scale: 2.1;
-  border-color: var(--color-sky);
+  width: 74px;
+  height: 74px;
+  margin: -37px 0 0 -37px;
+  border-color: color-mix(in oklab, var(--color-sky) 80%, transparent);
+  background: color-mix(in oklab, var(--color-sky) 9%, transparent);
 }
 
 .cur-ring[data-state='drag'] {
-  scale: 1.8;
-  border-color: var(--color-sky);
+  width: 62px;
+  height: 62px;
+  margin: -31px 0 0 -31px;
+  border-color: color-mix(in oklab, var(--color-sky) 70%, transparent);
 }
 
 .cur-ring[data-state='text'] {
-  scale: 0.3;
-  background: color-mix(in oklab, #9aa5af 62%, transparent);
+  width: 2px;
+  height: 24px;
+  margin: -12px 0 0 -1px;
+  border-color: transparent;
+  background: color-mix(in oklab, #9aa5af 80%, transparent);
+}
+
+.cur-ring[data-press] {
+  transform-origin: center;
+  border-color: var(--color-sky);
+  background: color-mix(in oklab, var(--color-sky) 16%, transparent);
 }
 
 .cur-label {
   font-family: var(--font-mono);
-  font-size: 4.4px;
+  font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-sky);
   opacity: 0;
-  transition: opacity 200ms var(--ease-rail);
+  transform: translateY(3px);
+  transition:
+    opacity 220ms var(--ease-rail),
+    transform 220ms var(--ease-rail);
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .cur-ring[data-state='product'] .cur-label,
 .cur-ring[data-state='drag'] .cur-label {
   opacity: 1;
+  transform: none;
 }
 
 /* ──────────────────────────────────────────────── movimiento reducido
@@ -932,5 +1547,30 @@ html[data-cursor='on'] [contenteditable='true'] {
 
   .u-draw {
     transform: scaleX(1);
+  }
+
+  .u-word__in {
+    transform: none;
+  }
+
+  .u-marquee__track,
+  .u-bump,
+  .u-edge[data-idle] .u-edge__light,
+  .u-invite,
+  .u-nudge,
+  .u-spark {
+    animation: none;
+  }
+
+  .u-invite {
+    -webkit-text-fill-color: currentColor;
+    color: inherit;
+    background: none;
+  }
+
+  .u-cell::before,
+  .u-cell::after,
+  .u-tilt::after {
+    display: none;
   }
 }

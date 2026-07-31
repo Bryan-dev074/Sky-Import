@@ -10,29 +10,28 @@ import { SITE } from '@/config/site'
  * ENERGIZACIÓN — la intro de marca.
  *
  * Cuatro compases: la placa se enciende, la corriente recorre el trazado, el
- * sello se escribe letra por letra desde sus máscaras, y el paño sube dejando el
- * hero limpio.
+ * sello se escribe letra por letra desde sus máscaras, y **la cortina se
+ * desarma**: está hecha de lamas verticales que se retiran en secuencia,
+ * alternando arriba y abajo, dejando ver la tienda por franjas. Es el gesto de
+ * un panel lateral de gabinete saliendo, no un corte.
  *
  * Reglas que se respetan al pie:
  *
  *   · Solo en carga completa o recarga real. Al navegar entre páginas no vuelve
- *     a aparecer, porque el componente vive en el layout del idioma y no se
- *     vuelve a montar.
- *   · Duración objetivo 1,25 s. TOPE DURO 1,75 s.
+ *     a aparecer, porque vive en el layout del idioma y no se vuelve a montar.
+ *   · La primera lama se va a los 0,94 s y la última a los ~1,7 s: la tienda
+ *     empieza a verse antes de que termine la salida.
  *   · No inventa un porcentaje de carga.
- *   · Con `prefers-reduced-motion` no llega a pintarse: un script previo al
- *     primer pintado marca `<html data-intro="skip">`, el CSS la oculta y este
- *     componente ni siquiera monta el nodo.
+ *   · Con `prefers-reduced-motion` no llega a pintarse.
  *   · Se puede omitir con un clic, con Escape o con el botón.
- *   · **Todo el movimiento es CSS.** Si la hidratación fallara, el marcado del
- *     servidor seguiría en pantalla; por eso el paño sube por animación y no por
- *     JavaScript. El script solo adelanta la salida y desmonta el nodo.
+ *   · **Todo el recorrido es CSS.** El script solo desmonta el nodo al final y
+ *     permite adelantarlo. Si la hidratación fallara, las lamas se van igual.
  */
 
-const HARD_CAP_MS = 1750
-const PLANNED_MS = 1250
+const SLATS = 12
+/** Última lama fuera de pantalla. Debe coincidir con el CSS. */
+const OUT_MS = 940 + (SLATS - 1) * 34 + 460 + 60
 
-/** Lee el atributo que escribió el script previo al pintado. */
 const skipStore = {
   subscribe: () => () => {},
   get: () => document.documentElement.getAttribute('data-intro') === 'skip',
@@ -50,8 +49,7 @@ export function Intro() {
     if (doneRef.current) return
     doneRef.current = true
     setPhase('leaving')
-    // El paño tarda 480 ms en salir; después se desmonta de verdad.
-    window.setTimeout(() => setPhase('gone'), 520)
+    window.setTimeout(() => setPhase('gone'), 460)
   }, [])
 
   useEffect(() => {
@@ -59,10 +57,14 @@ export function Intro() {
 
     document.documentElement.setAttribute('data-intro-running', '')
 
-    const planned = window.setTimeout(finish, PLANNED_MS)
-    // Tope duro: la tienda no queda nunca rehén de la animación.
-    const cap = window.setTimeout(finish, HARD_CAP_MS)
-    const hint = window.setTimeout(() => setSkipVisible(true), 600)
+    // Recorrido normal: las lamas se van solas por CSS y el nodo se retira
+    // cuando la última terminó.
+    const settle = window.setTimeout(() => {
+      doneRef.current = true
+      setPhase('gone')
+    }, OUT_MS)
+
+    const hint = window.setTimeout(() => setSkipVisible(true), 520)
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') finish()
@@ -70,8 +72,7 @@ export function Intro() {
     window.addEventListener('keydown', onKey)
 
     return () => {
-      window.clearTimeout(planned)
-      window.clearTimeout(cap)
+      window.clearTimeout(settle)
       window.clearTimeout(hint)
       window.removeEventListener('keydown', onKey)
       document.documentElement.removeAttribute('data-intro-running')
@@ -89,18 +90,25 @@ export function Intro() {
       onClick={finish}
       role="presentation"
     >
+      {/* Las lamas son la cortina. Se retiran alternando arriba y abajo. */}
+      <div className="intro__slats" aria-hidden="true">
+        {Array.from({ length: SLATS }, (_, i) => (
+          <span key={i} className="intro__slat" style={{ '--i': i } as React.CSSProperties} />
+        ))}
+      </div>
+
       <div className="intro__field" aria-hidden="true">
         <Trace width={1400} height={420} lines={7} seed={19} drawable className="intro__trace" />
       </div>
 
       <div className="intro__center">
         <span className="intro__mark" aria-hidden="true">
-          <BrandMark size={34} />
+          <BrandMark size={34} animate="pulse" />
         </span>
         <span className="intro__seal" aria-label={SITE.name}>
           {letters.map((letter, i) => (
             <span key={i} className="intro__mask" aria-hidden="true">
-              <span className="intro__letter" style={{ animationDelay: `${260 + i * 42}ms` }}>
+              <span className="intro__letter" style={{ animationDelay: `${240 + i * 38}ms` }}>
                 {letter === ' ' ? ' ' : letter}
               </span>
             </span>

@@ -54,10 +54,10 @@ test('el recorrido completo termina en la advertencia y sin ninguna solicitud de
   await panel.getByRole('link', { name: 'Finalizar compra' }).click()
   await expect(page).toHaveURL(/\/es\/checkout$/)
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Resumen del pedido')
+  await expect(page.getByRole('heading', { level: 2, name: 'Resumen del pedido' })).toBeVisible()
   await page.getByRole('button', { name: 'Continuar' }).click()
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Entrega y pago')
+  await expect(page.getByRole('heading', { level: 2, name: 'Entrega y pago' })).toBeVisible()
   // Los radios son `sr-only` y se operan por su etiqueta, igual que lo haría
   // cualquier visitante: se pulsa el texto, no el control invisible.
   await page.getByText('Envío dentro de Paraguay', { exact: true }).click()
@@ -66,7 +66,7 @@ test('el recorrido completo termina en la advertencia y sin ninguna solicitud de
   await expect(page.getByRole('radio', { name: 'Transferencia bancaria', exact: false })).toBeChecked()
   await page.getByRole('button', { name: 'Continuar' }).click()
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Confirmación')
+  await expect(page.getByRole('heading', { level: 2, name: 'Confirmación' })).toBeVisible()
 
   // Hasta acá, en ninguna pantalla se pidió un dato sensible.
   await expect(page.locator('input[type="password"]')).toHaveCount(0)

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CartContents } from '@/components/cart/CartContents'
+import { PageHeader } from '@/components/views/PageHeader'
 import { makeT } from '@/lib/i18n/dictionary'
 import { LOCALES, isLocale, type Locale } from '@/lib/i18n/locales'
 
@@ -23,17 +24,12 @@ export async function generateMetadata({
  * revisar cantidades a pantalla completa que dentro de un panel deslizante.
  */
 export default async function CartPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: raw } = await params
-  if (!isLocale(raw)) notFound()
-  const t = makeT(raw)
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
 
   return (
     <>
-      <header className="u-page pt-28 pb-8 lg:pt-36">
-        <p className="u-eyebrow">{t('checkout.orderSummary')}</p>
-        <h1 className="u-display mt-5 text-[clamp(2.2rem,5.5vw,3.5rem)]">{t('cart.title')}</h1>
-      </header>
-
+      <PageHeader eyebrow="checkout.orderSummary" title="cart.title" />
       <div className="u-page pb-24">
         <div className="mx-auto flex max-w-[720px] flex-col border-t border-rule">
           <CartContents />

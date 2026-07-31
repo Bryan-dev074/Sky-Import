@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Configurator } from '@/components/builder/Configurator'
-import { Trace } from '@/components/motif/Trace'
+import { PageHeader } from '@/components/views/PageHeader'
 import { makeT } from '@/lib/i18n/dictionary'
 import { LOCALES, isLocale, type Locale } from '@/lib/i18n/locales'
 
@@ -21,25 +21,12 @@ export async function generateMetadata({
 }
 
 export default async function BuilderPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: raw } = await params
-  if (!isLocale(raw)) notFound()
-  const t = makeT(raw)
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
 
   return (
     <>
-      <header className="relative overflow-hidden pt-28 pb-12 lg:pt-36">
-        <div className="pointer-events-none absolute inset-0 text-steel opacity-25" aria-hidden="true">
-          <Trace width={1400} height={360} lines={7} seed={53} className="h-full w-full" />
-        </div>
-        <div className="u-page relative">
-          <p className="u-eyebrow">{t('build.eyebrow')}</p>
-          <h1 className="u-display mt-5 text-[clamp(2.2rem,5.5vw,4rem)]">{t('build.title')}</h1>
-          <p className="u-measure mt-5 text-[1.0625rem] leading-relaxed text-fg-mid">
-            {t('build.lede')}
-          </p>
-        </div>
-      </header>
-
+      <PageHeader eyebrow="build.eyebrow" title="build.title" lede="build.lede" background="beams" />
       <Configurator />
     </>
   )

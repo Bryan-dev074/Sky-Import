@@ -1,0 +1,406 @@
+'use client'
+
+import Link from 'next/link'
+import dynamic from 'next/dynamic'
+import { useRef } from 'react'
+
+import { ComponentRender } from '@/components/render/ComponentRender'
+import { ProductCard } from '@/components/catalog/ProductCard'
+import { AssemblySection } from '@/components/home/AssemblySection'
+import { Trace } from '@/components/motif/Trace'
+import { Counter, Magnetic, Parallax, Reveal, SplitWords } from '@/components/motion/Motion'
+import { EdgeGlow } from '@/components/motion/EdgeGlow'
+import { Cell, CellGrid } from '@/components/motion/Cell'
+import { CATEGORY_META, CATEGORY_ORDER } from '@/lib/catalog/categories'
+import { PRODUCTS } from '@/lib/catalog/products'
+import { GUIDES } from '@/content/guides'
+import { useI18n } from '@/lib/i18n/context'
+import { useParallax } from '@/lib/motion'
+import { CONTACT, hasWhatsapp, whatsappLink } from '@/config/site'
+import { CURRENCIES } from '@/lib/money'
+
+/** Los hilos del primer viewport: pesados, así que solo en el cliente y diferidos. */
+const Threads = dynamic(() => import('@/components/background/Threads'), { ssr: false })
+
+const FEATURED = PRODUCTS.filter((product) => product.featured).slice(0, 6)
+const COUNT_BY_CATEGORY = new Map<string, number>()
+for (const product of PRODUCTS) {
+  COUNT_BY_CATEGORY.set(product.category, (COUNT_BY_CATEGORY.get(product.category) ?? 0) + 1)
+}
+const HERO_GPU = PRODUCTS.find((product) => product.slug === 'geforce-rtx-5080-16gb') ?? PRODUCTS[0]!
+
+/** Celdas que ocupan más de una posición: rompen la monotonía de la retícula. */
+const WIDE = new Set(['tarjetas-graficas', 'gabinetes'])
+
+export function HomeView() {
+  const { t, locale, path } = useI18n()
+  const heroArt = useRef<HTMLDivElement>(null)
+  useParallax(heroArt, { distance: 34 })
+
+  return (
+    <>
+      {/* ─────────────────────────────────────────────────────────── HERO ── */}
+      <section className="u-plate relative overflow-hidden pt-28 lg:pt-36" aria-labelledby="titular">
+        <div className="pointer-events-none absolute inset-0 opacity-[0.55]" aria-hidden="true">
+          <Threads className="h-full w-full" amplitude={1.15} distance={0.34} />
+        </div>
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-surface to-transparent"
+          aria-hidden="true"
+        />
+
+        <div className="u-page relative grid items-center gap-10 pb-14 lg:grid-cols-12 lg:gap-8 lg:pb-20">
+          <div className="lg:col-span-6 xl:col-span-5">
+            <Reveal from="left" distance={16}>
+              <p className="u-eyebrow">{t('home.hero.eyebrow')}</p>
+            </Reveal>
+
+            <h1 id="titular" className="u-display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]">
+              <SplitWords as="span" start="now" delay={560} step={64} text={t('home.hero.title1')} className="block" />
+              <SplitWords as="span" start="now" delay={680} step={64} text={t('home.hero.title2')} className="block" />
+              <SplitWords
+                as="span"
+                start="now"
+                delay={800}
+                step={64}
+                text={t('home.hero.title3')}
+                className="block text-fg-mid"
+              />
+            </h1>
+
+            <Reveal delayIndex={4}>
+              <p className="u-measure mt-7 text-[1.0625rem] leading-relaxed text-fg-mid">
+                {t('home.hero.lede')}
+              </p>
+
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+                {/* La acción principal de toda la tienda: canto energizado, rótulo
+                    que respira y flecha que insiste. */}
+                <EdgeGlow>
+                  <Link href={path('/catalogo')} className="u-btn u-btn-solid">
+                    <span className="u-invite">{t('cta.catalog')}</span>
+                    <span className="u-nudge" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </EdgeGlow>
+
+                <Magnetic strength={0.22}>
+                  <Link href={path('/armar')} className="u-btn u-btn-line">
+                    {t('cta.build')}
+                  </Link>
+                </Magnetic>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* El render desborda el margen: la pieza no está encajonada. */}
+          <div className="relative lg:col-span-6 xl:col-span-7 lg:-mr-[6vw]">
+            <div ref={heroArt} className="relative rounded-part">
+              <ComponentRender
+                {...HERO_GPU.render}
+                view="annotated"
+                dims={[
+                  HERO_GPU.compat.kind === 'gpu' ? `${HERO_GPU.compat.lengthMm} mm` : '',
+                  HERO_GPU.compat.kind === 'gpu' ? `${HERO_GPU.compat.tgpW} W` : '',
+                  HERO_GPU.compat.kind === 'gpu' ? HERO_GPU.compat.bus : '',
+                ].filter(Boolean)}
+                className="w-full"
+                title={t('home.hero.figureAlt')}
+              />
+              <span className="u-sweep" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+
+        {/* El manifiesto empieza antes del scroll, con las cifras subiendo. */}
+        <div className="u-rule" />
+        <dl className="u-page relative grid grid-cols-2 gap-x-6 py-6 sm:grid-cols-4">
+          {[
+            { label: t('home.manifest.pieces'), value: PRODUCTS.length },
+            { label: t('home.manifest.categories'), value: CATEGORY_ORDER.length },
+            { label: t('home.manifest.currencies'), text: CURRENCIES.join(' · ') },
+            { label: t('home.manifest.check'), text: t('home.manifest.checkValue') },
+          ].map((item, i) => (
+            <Reveal key={item.label} delayIndex={i} className="py-2">
+              <dt className="u-label">{item.label}</dt>
+              <dd className="mt-1.5 font-mono text-[0.9375rem] tabular-nums text-fg">
+                {item.value !== undefined ? <Counter value={item.value} /> : item.text}
+              </dd>
+            </Reveal>
+          ))}
+        </dl>
+      </section>
+
+      {/* ────────────────────────────────────────────────────── CATEGORÍAS ── */}
+      <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="categorias">
+        <div className="max-w-[62ch]">
+          <Reveal>
+            <p className="u-eyebrow">{t('home.categories.eyebrow')}</p>
+          </Reveal>
+          <SplitWords
+            as="h2"
+            text={t('home.categories.title')}
+            className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
+          />
+          <Reveal delayIndex={2}>
+            <p className="mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
+              {t('home.categories.lede')}
+            </p>
+          </Reveal>
+        </div>
+
+        {/* Retícula de celdas: cada una reacciona por proximidad, no por hover. */}
+        <CellGrid className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {CATEGORY_ORDER.map((slug, i) => {
+            const meta = CATEGORY_META[slug]
+            const wide = WIDE.has(slug)
+            return (
+              <Reveal
+                key={slug}
+                delayIndex={i}
+                from="scale"
+                className={wide ? 'sm:col-span-2' : undefined}
+              >
+                <Cell
+                  as="a"
+                  href={`${path('/catalogo')}?categoria=${slug}`}
+                  className="group flex h-full min-h-[168px] flex-col justify-between p-5"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="w-20 shrink-0 opacity-70 transition-all duration-500 ease-rail group-hover:-translate-y-1 group-hover:opacity-100">
+                      <ComponentRender shape={meta.shape} accent="#6E7A85" seed={i * 7 + 3} variant={i % 3} className="w-full" />
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-[1.0625rem] font-medium text-fg">{meta.name[locale]}</p>
+                    <p className="mt-1.5 text-[0.8125rem] leading-snug text-fg-low">
+                      {meta.role[locale]}
+                    </p>
+                    <p className="mt-3 flex items-center gap-2 font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low">
+                      {COUNT_BY_CATEGORY.get(slug) ?? 0} {t('home.categories.count')}
+                      <span
+                        className="inline-block transition-transform duration-300 ease-rail group-hover:translate-x-1"
+                        aria-hidden="true"
+                      >
+                        →
+                      </span>
+                    </p>
+                  </div>
+                </Cell>
+              </Reveal>
+            )
+          })}
+        </CellGrid>
+      </section>
+
+      {/* ────────────────────────────────────────────────────── DESTACADOS ── */}
+      <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="destacados">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <Reveal>
+              <p className="u-eyebrow">{t('home.featured.eyebrow')}</p>
+            </Reveal>
+            <SplitWords
+              as="h2"
+              text={t('home.featured.title')}
+              className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
+            />
+          </div>
+          <Reveal delayIndex={1}>
+            <Link
+              href={path('/catalogo')}
+              className="u-link font-mono text-[0.6875rem] tracking-[0.14em] uppercase text-fg-mid"
+            >
+              {t('cta.viewAll')}
+            </Link>
+          </Reveal>
+        </div>
+
+        <Reveal delayIndex={2}>
+          <p className="u-measure mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
+            {t('home.featured.lede')}
+          </p>
+        </Reveal>
+
+        <div className="mt-12 grid gap-x-6 gap-y-12 border-b border-rule pb-12 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURED.map((product, i) => (
+            <Reveal key={product.slug} delayIndex={i}>
+              <ProductCard product={product} index={i} />
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────── ENSAMBLAJE ── */}
+      <AssemblySection />
+
+      {/* ══ SEGUNDA SUPERFICIE ══ el configurador y las guías van sobre aluminio */}
+      <div data-surface="aluminio" className="bg-surface text-fg">
+        <section className="relative overflow-hidden" aria-labelledby="configurador">
+          <div className="pointer-events-none absolute inset-0 text-steel opacity-30">
+            <Trace width={1400} height={520} lines={9} seed={73} className="h-full w-full" />
+          </div>
+
+          <div className="u-page relative py-24 lg:py-32">
+            <div className="grid gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <Reveal>
+                  <p className="u-eyebrow">{t('home.builder.eyebrow')}</p>
+                </Reveal>
+                <SplitWords
+                  as="h2"
+                  text={t('home.builder.title')}
+                  className="u-display mt-5 text-[clamp(2rem,4.5vw,3.5rem)]"
+                />
+                <Reveal delayIndex={2}>
+                  <p className="u-measure mt-6 text-[1.0625rem] leading-relaxed text-fg-mid">
+                    {t('home.builder.lede')}
+                  </p>
+                  <Magnetic strength={0.24}>
+                    <Link href={path('/armar')} className="u-btn u-btn-solid mt-9">
+                      {t('home.builder.cta')}
+                      <span className="u-nudge" aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  </Magnetic>
+                </Reveal>
+              </div>
+
+              <div className="lg:col-span-5">
+                <ul className="border-t border-rule">
+                  {(
+                    [
+                      ['cpu', 'motherboard'],
+                      ['ram', 'motherboard'],
+                      ['gpu', 'psu'],
+                      ['gpu', 'case'],
+                    ] as const
+                  ).map(([a, b], i) => (
+                    <Reveal
+                      as="li"
+                      key={`${a}-${b}`}
+                      delayIndex={i}
+                      from="right"
+                      className="flex items-center gap-3 border-b border-rule py-4"
+                    >
+                      <span className="font-mono text-[0.625rem] tabular-nums text-accent">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="font-mono text-[0.75rem] text-fg">{t(`build.slot.${a}`)}</span>
+                      <span className="h-px flex-1 bg-rule" aria-hidden="true" />
+                      <span className="font-mono text-[0.75rem] text-fg">{t(`build.slot.${b}`)}</span>
+                    </Reveal>
+                  ))}
+                </ul>
+                <p className="u-label mt-4 leading-relaxed normal-case tracking-normal">
+                  {t('build.disclaimer')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="guias">
+          <Reveal>
+            <p className="u-eyebrow">{t('home.guides.eyebrow')}</p>
+          </Reveal>
+          <SplitWords
+            as="h2"
+            text={t('home.guides.title')}
+            className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
+          />
+          <Reveal delayIndex={2}>
+            <p className="u-measure mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
+              {t('home.guides.lede')}
+            </p>
+          </Reveal>
+
+          <ul className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+            {GUIDES.map((guide, i) => (
+              <Reveal as="li" key={guide.slug} delayIndex={i} className="border-t border-rule pt-6">
+                <Link href={path(`/guias/${guide.slug}`)} className="group block">
+                  <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
+                    {guide.index}
+                  </span>
+                  <h3 className="u-display-sm mt-3 text-[1.375rem]">
+                    <span className="relative inline">
+                      {guide.title[locale]}
+                      <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-[320ms] ease-rail group-hover:scale-x-100" />
+                    </span>
+                  </h3>
+                  <p className="u-measure mt-3 text-[0.9375rem] leading-relaxed text-fg-mid">
+                    {guide.standfirst[locale]}
+                  </p>
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      {/* ─────────────────────────────────────────────────────── BENEFICIOS ── */}
+      <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="beneficios">
+        <Reveal>
+          <p className="u-eyebrow">{t('home.benefits.eyebrow')}</p>
+        </Reveal>
+        <SplitWords
+          as="h2"
+          text={t('home.benefits.title')}
+          className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
+        />
+
+        <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((n, i) => (
+            <Reveal key={n} delayIndex={i} className="group border-t border-rule pt-5">
+              <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
+                {String(n).padStart(2, '0')}
+              </span>
+              <span className="mt-3 block h-px w-8 origin-left scale-x-100 bg-accent transition-transform duration-500 ease-rail group-hover:scale-x-[3]" />
+              <h3 className="mt-3 text-[1.0625rem] font-medium leading-snug text-fg">
+                {t(`home.benefit${n}.title` as 'home.benefit1.title')}
+              </h3>
+              <p className="mt-3 text-[0.875rem] leading-relaxed text-fg-mid">
+                {t(`home.benefit${n}.body` as 'home.benefit1.body')}
+              </p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ────────────────────────────────────────────────────────── CIERRE ── */}
+      {hasWhatsapp ? (
+        <section className="relative overflow-hidden border-t border-rule">
+          <Parallax distance={22} className="pointer-events-none absolute inset-0 text-steel opacity-20">
+            <Trace width={1400} height={260} lines={4} seed={7} className="h-full w-full" />
+          </Parallax>
+          <div className="u-page relative flex flex-col items-start gap-6 py-16 md:flex-row md:items-center md:justify-between">
+            <Reveal>
+              <p className="u-eyebrow">{t('footer.contact')}</p>
+              <p className="u-display-sm mt-4 text-[clamp(1.375rem,3vw,2rem)] tabular-nums">
+                {CONTACT.whatsappDisplay}
+              </p>
+            </Reveal>
+            <Reveal delayIndex={1}>
+              <Magnetic strength={0.26}>
+                <a
+                  href={whatsappLink(t('wa.generic'))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="u-btn u-btn-solid"
+                >
+                  {t('cta.whatsapp')}
+                </a>
+              </Magnetic>
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
+    </>
+  )
+}

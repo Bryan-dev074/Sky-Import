@@ -324,7 +324,11 @@ Fijados por el brief y ampliados por este sistema:
   la luz que cruza el render cada ~7 s (`.u-sweep`) es un degradado, pero no es
   decoración de fondo — es la luz de un estudio pasando sobre una pieza, y es
   el efecto que más vida aporta por peso en todo el proyecto.
-- Neón, glow, halo, `box-shadow` de color, bordes que brillan.
+- Neón, glow, halo, `box-shadow` de color, bordes que brillan. **Única
+  excepción documentada:** el canto energizado (`.u-edge`) de la acción
+  principal de una vista, en cian y por proximidad del puntero. Es el canto de
+  una pieza recibiendo corriente, vive en **una sola acción por vista** y está
+  pedido explícitamente por el titular.
 - Glassmorphism (`backdrop-filter: blur` como lenguaje general).
 - Páginas compuestas únicamente de tarjetas redondeadas.
 - `border-radius` mayor a 3 px; botones en forma de píldora.

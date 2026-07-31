@@ -138,6 +138,13 @@ export interface RenderSpec {
   accent: string
   /** Semilla estable para las variaciones de dibujo. Nunca aleatoria. */
   seed: number
+  /**
+   * Diseño concreto dentro de la familia. No es un matiz: cambia la pieza.
+   * En placas de video elige la carcasa, en gabinetes el frente, en disipadores
+   * si es de una torre o de dos. Es lo que hace que cada producto tenga SU
+   * dibujo y no el icono de su categoría.
+   */
+  variant?: number
   /** Cantidad de ventiladores donde la silueta los admite. */
   fans?: number
 }

@@ -344,7 +344,7 @@ export function CatalogBrowser() {
         ) : (
           <div className="mt-6 grid gap-x-6 gap-y-12 border-b border-rule pb-12 sm:grid-cols-2 xl:grid-cols-3">
             {results.map((product, i) => (
-              <ProductCard key={product.slug} product={product} locale={locale} index={i} />
+              <ProductCard key={product.slug} product={product} index={i} />
             ))}
           </div>
         )}

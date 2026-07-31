@@ -101,7 +101,7 @@ export function AssemblySection() {
                 accent="#414D58"
                 seed={12}
                 fans={3}
-                variant="annotated"
+                view="annotated"
                 dims={['336 mm', '3 ranuras', '1× 12V-2×6']}
                 className="w-full max-w-[560px]"
                 title={t('assembly.title')}
