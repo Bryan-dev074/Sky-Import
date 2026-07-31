@@ -319,6 +319,9 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-align: center;
+    /* La etiqueta de un botón no se parte a mitad de frase. Si no entra, el
+       problema es la etiqueta o el ancho, no el salto de línea. */
+    white-space: nowrap;
     cursor: pointer;
     transition:
       background-color 180ms var(--ease-rail),
