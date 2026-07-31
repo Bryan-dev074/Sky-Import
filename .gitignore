@@ -1,0 +1,36 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.*
+
+# next
+/.next/
+/out/
+next-env.d.ts
+
+# producción
+/build
+
+# pruebas
+/coverage
+/playwright-report/
+/test-results/
+/blob-report/
+/.playwright/
+
+# entorno — nunca subir valores reales
+.env
+.env.local
+.env.*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
