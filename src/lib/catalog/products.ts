@@ -1,5 +1,6 @@
 import type { L10n } from '@/lib/i18n/locales'
-import type { Product } from './types'
+import { attachProductMedia } from './media'
+import type { CatalogProduct, Product } from './types'
 
 /**
  * CATÁLOGO
@@ -64,8 +65,48 @@ const S = {
   size: L('Tamaño', 'Tamanho'),
 }
 
-export const PRODUCTS: Product[] = [
+const CATALOG_PRODUCTS: CatalogProduct[] = [
   // ─────────────────────────────────────────────────────── tarjetas gráficas
+  {
+    slug: 'geforce-rtx-5090-founders-edition-32gb',
+    ref: 'SI-VGA-0101',
+    name: 'GeForce RTX 5090 Founders Edition 32 GB',
+    brand: 'NVIDIA',
+    model: 'RTX 5090 Founders Edition',
+    category: 'tarjetas-graficas',
+    priceUsd: 1999,
+    units: 1,
+    featured: true,
+    arrivedRecently: true,
+    blurb: L(
+      'La GeForce más potente de la generación Blackwell. Sus 32 GB de GDDR7 y 575 W exigen una fuente de 1000 W y un gabinete con 304 mm libres, además de espacio frontal para que respiren sus ventiladores.',
+      'A GeForce mais potente da geração Blackwell. Seus 32 GB de GDDR7 e 575 W exigem uma fonte de 1000 W e um gabinete com 304 mm livres, além de espaço frontal para os ventiladores respirarem.',
+    ),
+    specs: [
+      { label: S.memory, value: '32 GB GDDR7' },
+      { label: S.busWidth, value: '512 bit' },
+      { label: L('Núcleos CUDA', 'Núcleos CUDA'), value: '21.760' },
+      { label: S.bus, value: 'PCIe 5.0 ×16' },
+      { label: S.tgp, value: '575 W' },
+      { label: S.psu, value: '1000 W' },
+      { label: S.power, value: '1× PCIe Gen 5 de 16 pines (600 W+)' },
+      { label: S.length, value: '304 mm' },
+      { label: S.slots, value: '2' },
+    ],
+    compat: {
+      kind: 'gpu',
+      lengthMm: 304,
+      slots: 2,
+      tgpW: 575,
+      recommendedPsuW: 1000,
+      power: '1× PCIe Gen 5 de 16 pines',
+      bus: 'PCIe 5.0 ×16',
+      vramGb: 32,
+      vramType: 'GDDR7',
+      busWidthBit: 512,
+    },
+    render: { shape: 'gpu', accent: NICKEL, seed: 5, fans: 2, variant: 1 },
+  },
   {
     slug: 'geforce-rtx-5080-16gb',
     ref: 'SI-VGA-0112',
@@ -1109,6 +1150,8 @@ export const PRODUCTS: Product[] = [
     render: { shape: 'fan', accent: STEEL, seed: 52 },
   },
 ]
+
+export const PRODUCTS: Product[] = attachProductMedia(CATALOG_PRODUCTS)
 
 export const PRODUCT_BY_SLUG: ReadonlyMap<string, Product> = new Map(
   PRODUCTS.map((product) => [product.slug, product]),

@@ -149,6 +149,15 @@ export interface RenderSpec {
   fans?: number
 }
 
+export interface ProductMedia {
+  primary: string
+  secondary?: string
+  alt: L10n
+  sourcePage: string
+  credit: string
+  objectPosition?: string
+}
+
 export interface Product {
   slug: string
   /** Código de referencia interno, estable y dictable por teléfono. */
@@ -173,7 +182,10 @@ export interface Product {
   specs: Spec[]
   compat: Compat
   render: RenderSpec
+  media: ProductMedia
 }
+
+export type CatalogProduct = Omit<Product, 'media'>
 
 /** Estado derivado — nunca declarado en los datos. */
 export type Availability = 'disponible' | 'ultimas-unidades' | 'agotado'
