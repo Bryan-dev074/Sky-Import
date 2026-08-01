@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { ComponentDims, ComponentRender } from '@/components/render/ComponentRender'
+import { ComponentDims } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
+import { Tilt } from '@/components/motion/Motion'
 import { renderDims } from '@/lib/catalog/derive'
 import { useI18n } from '@/lib/i18n/context'
 import type { Product } from '@/lib/catalog/types'
@@ -22,19 +24,23 @@ export function Gallery({ product }: { product: Product }) {
   return (
     <div>
       <div
-        className="u-plate group relative aspect-[4/3] overflow-hidden rounded-part border border-rule bg-surface-sunk"
+        className="u-plate u-product-interactive group relative aspect-[4/3] overflow-hidden rounded-part border border-rule bg-surface-sunk"
         data-cursor="drag"
         data-cursor-label={t('product.gallery.annotated')}
         onMouseEnter={() => setView('annotated')}
         onMouseLeave={() => setView('front')}
       >
-        <div className="absolute inset-0 grid place-items-center p-6">
-          <ComponentRender
-            {...product.render}
-            className="w-full max-w-[680px]"
-            title={`${product.name} — ${t('product.gallery.front')}`}
-          />
-        </div>
+        <Tilt className="absolute inset-0" max={5} scale={1.01}>
+          <div className="relative h-full w-full p-6 sm:p-10">
+            <ProductImage
+              product={product}
+              locale={locale}
+              priority
+              sizes="(min-width: 1024px) 58vw, 94vw"
+              className="h-full w-full"
+            />
+          </div>
+        </Tilt>
         {/* Las cotas se superponen sobre el mismo dibujo, no lo repiten. */}
         <div
           className="absolute inset-0 grid place-items-center p-6 transition-opacity duration-[400ms] ease-rail"

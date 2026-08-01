@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { ComponentDims, ComponentRender } from '@/components/render/ComponentRender'
+import { ComponentDims } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
 import { Price } from '@/components/ui/Price'
 import { AddToCart } from '@/components/product/AddToCart'
 import { Tilt } from '@/components/motion/Motion'
@@ -40,14 +41,15 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         className="flex flex-1 flex-col outline-offset-8"
       >
         <Tilt max={6} scale={1.012}>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-part bg-surface-sunk">
+          <div className="u-product-interactive relative aspect-[4/3] overflow-hidden rounded-part border border-rule/70 bg-surface-sunk">
             <div className="u-plate absolute inset-0 opacity-60" aria-hidden="true" />
 
-            <div className="absolute inset-0 flex items-center justify-center p-2 transition-transform duration-[520ms] ease-rail group-hover:scale-[1.06]">
-              <ComponentRender
-                {...product.render}
-                className="w-[112%] max-w-none"
-                title={`${product.name} — ${t('product.gallery.front')}`}
+            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-5">
+              <ProductImage
+                product={product}
+                locale={locale}
+                sizes="(min-width: 1280px) 22vw, (min-width: 640px) 45vw, 92vw"
+                className="h-full w-full"
               />
             </div>
 

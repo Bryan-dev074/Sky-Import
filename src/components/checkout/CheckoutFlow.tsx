@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useRef, useState } from 'react'
-import { ComponentRender } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
 import { Trace } from '@/components/motif/Trace'
 import { Price } from '@/components/ui/Price'
 import { BrandMark } from '@/components/brand/Wordmark'
@@ -38,7 +38,7 @@ const PAYMENT = [
 type Step = 1 | 2 | 3
 
 export function CheckoutFlow() {
-  const { t, path } = useI18n()
+  const { t, locale, path } = useI18n()
   const lines = useCart((s) => s.lines)
   const hydrated = useCart((s) => s.hydrated)
   const clear = useCart((s) => s.clear)
@@ -81,8 +81,8 @@ export function CheckoutFlow() {
       <ul className="mt-4">
         {resolved.map((line) => (
           <li key={line.slug} className="flex items-center gap-3 border-b border-rule py-3">
-            <span className="w-12 shrink-0">
-              <ComponentRender {...line.product.render} className="w-full" />
+            <span className="relative h-12 w-12 shrink-0">
+              <ProductImage product={line.product} locale={locale} sizes="48px" className="h-full w-full" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[0.875rem] text-fg">{line.product.name}</span>
@@ -151,8 +151,8 @@ export function CheckoutFlow() {
             <ul className="mt-8 border-t border-rule">
               {resolved.map((line) => (
                 <li key={line.slug} className="flex items-center gap-4 border-b border-rule py-4">
-                  <span className="w-16 shrink-0">
-                    <ComponentRender {...line.product.render} className="w-full" />
+                  <span className="relative h-16 w-16 shrink-0">
+                    <ProductImage product={line.product} locale={locale} sizes="64px" className="h-full w-full" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="u-label block">{line.product.brand}</span>

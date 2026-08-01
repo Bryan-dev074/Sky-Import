@@ -184,8 +184,8 @@ function mediaFor(product: CatalogProduct): ProductMedia {
     primary: `/products/${product.slug}/primary.webp`,
     secondary: source.secondary,
     alt: {
-      es: `Imagen oficial de ${product.model}`,
-      pt: `Imagem oficial de ${product.model}`,
+      es: `Fotografía real de ${product.model}`,
+      pt: `Fotografia real de ${product.model}`,
     },
     sourcePage: source.sourcePage,
     credit: source.credit,

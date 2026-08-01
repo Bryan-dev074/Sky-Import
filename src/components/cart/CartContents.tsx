@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ComponentRender } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
 import { Price } from '@/components/ui/Price'
 import { useCart, resolveLines, totalsOf } from '@/lib/cart'
 import { useUi } from '@/lib/ui'
@@ -63,7 +63,7 @@ export function CartContents({
   onNavigate?: () => void
   compact?: boolean
 }) {
-  const { t, path } = useI18n()
+  const { t, locale, path } = useI18n()
   const lines = useCart((s) => s.lines)
   const hydrated = useCart((s) => s.hydrated)
   const setQty = useCart((s) => s.setQty)
@@ -112,9 +112,14 @@ export function CartContents({
                 onClick={onNavigate}
                 data-cursor="product"
                 data-cursor-label={t('cta.view')}
-                className="block w-20 shrink-0 self-start bg-surface-sunk rounded-part"
+                className="u-product-interactive relative block h-20 w-20 shrink-0 self-start overflow-hidden bg-surface-sunk rounded-part"
               >
-                <ComponentRender {...line.product.render} className="w-full" />
+                <ProductImage
+                  product={line.product}
+                  locale={locale}
+                  sizes="80px"
+                  className="h-full w-full p-1"
+                />
               </Link>
 
               <div className="min-w-0 flex-1">

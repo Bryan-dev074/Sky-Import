@@ -5,11 +5,12 @@ import dynamic from 'next/dynamic'
 import { useRef } from 'react'
 
 import { FieldPatch } from '@/components/background/FieldPatch'
-import { ComponentRender } from '@/components/render/ComponentRender'
+import { ComponentDims } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { AssemblySection } from '@/components/home/AssemblySection'
 import { Trace } from '@/components/motif/Trace'
-import { Counter, Magnetic, Parallax, Reveal, SplitWords } from '@/components/motion/Motion'
+import { Counter, Magnetic, Parallax, Reveal, SplitWords, Tilt } from '@/components/motion/Motion'
 import { EdgeGlow } from '@/components/motion/EdgeGlow'
 import { Cell, CellGrid } from '@/components/motion/Cell'
 import { CtaBody } from '@/components/ui/Cta'
@@ -29,7 +30,14 @@ const COUNT_BY_CATEGORY = new Map<string, number>()
 for (const product of PRODUCTS) {
   COUNT_BY_CATEGORY.set(product.category, (COUNT_BY_CATEGORY.get(product.category) ?? 0) + 1)
 }
-const HERO_GPU = PRODUCTS.find((product) => product.slug === 'geforce-rtx-5080-16gb') ?? PRODUCTS[0]!
+const HERO_GPU =
+  PRODUCTS.find((product) => product.slug === 'geforce-rtx-5090-founders-edition-32gb') ?? PRODUCTS[0]!
+const CATEGORY_PRODUCT = new Map(
+  CATEGORY_ORDER.map((category) => [
+    category,
+    PRODUCTS.find((product) => product.category === category) ?? PRODUCTS[0]!,
+  ]),
+)
 
 /** Celdas que ocupan más de una posición: rompen la monotonía de la retícula. */
 const WIDE = new Set(['tarjetas-graficas', 'gabinetes'])
@@ -129,18 +137,31 @@ export function HomeView() {
           {/* El render desborda el margen: la pieza no está encajonada. */}
           <div className="relative lg:col-span-6 xl:col-span-7 lg:-mr-[6vw]">
             <div ref={heroArt} className="relative rounded-part">
-              <ComponentRender
-                {...HERO_GPU.render}
-                view="annotated"
-                dims={[
+              <Tilt max={5} scale={1.012}>
+                <div className="u-product-interactive u-hero-product u-plate relative aspect-[16/11] overflow-hidden rounded-part border border-rule bg-surface-sunk">
+                  <div className="absolute inset-[7%]">
+                    <ProductImage
+                      product={HERO_GPU}
+                      locale={locale}
+                      priority
+                      sizes="(min-width: 1280px) 58vw, (min-width: 1024px) 52vw, 94vw"
+                      className="h-full w-full"
+                    />
+                  </div>
+                  <ComponentDims
+                    dims={[
                   HERO_GPU.compat.kind === 'gpu' ? `${HERO_GPU.compat.lengthMm} mm` : '',
                   HERO_GPU.compat.kind === 'gpu' ? `${HERO_GPU.compat.tgpW} W` : '',
                   HERO_GPU.compat.kind === 'gpu' ? HERO_GPU.compat.bus : '',
                 ].filter(Boolean)}
-                className="w-full"
-                title={t('home.hero.figureAlt')}
-              />
-              <span className="u-sweep" aria-hidden="true" />
+                    className="pointer-events-none absolute inset-0 h-full w-full opacity-80"
+                  />
+                  <span className="u-hero-product__model" aria-hidden="true">
+                    RTX 5090 · 32 GB GDDR7
+                  </span>
+                  <span className="u-sweep" aria-hidden="true" />
+                </div>
+              </Tilt>
             </div>
           </div>
         </div>
@@ -186,6 +207,7 @@ export function HomeView() {
         <CellGrid className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {CATEGORY_ORDER.map((slug, i) => {
             const meta = CATEGORY_META[slug]
+            const representative = CATEGORY_PRODUCT.get(slug)!
             const wide = WIDE.has(slug)
             return (
               <Reveal
@@ -203,15 +225,16 @@ export function HomeView() {
                     <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className="w-20 shrink-0 opacity-70 transition-all duration-500 ease-rail group-hover:-translate-y-1 group-hover:opacity-100">
-                      <ComponentRender
-                        shape={meta.shape}
-                        accent="#6E7A85"
-                        seed={i * 7 + 3}
-                        variant={i % 3}
-                        className="w-full"
-                      />
-                    </span>
+                    <Tilt max={5} scale={1.03}>
+                      <span className="u-product-interactive relative block h-20 w-24 shrink-0 opacity-80 transition-opacity duration-500 ease-rail group-hover:opacity-100">
+                        <ProductImage
+                          product={representative}
+                          locale={locale}
+                          sizes="96px"
+                          className="h-full w-full"
+                        />
+                      </span>
+                    </Tilt>
                   </div>
 
                   {/* Jerarquía explícita: el nombre manda, la función explica y

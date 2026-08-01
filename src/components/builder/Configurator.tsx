@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ComponentRender } from '@/components/render/ComponentRender'
+import { ProductImage } from '@/components/product/ProductImage'
 import { Price } from '@/components/ui/Price'
 import { CtaBody } from '@/components/ui/Cta'
 import { useFocusTrap } from '@/lib/useFocusTrap'
@@ -126,8 +126,8 @@ export function Configurator() {
                       <p className="mt-2 text-[0.9375rem] text-fg-low">…</p>
                     ) : product ? (
                       <div className="mt-2 flex items-start gap-4">
-                        <span className="hidden w-16 shrink-0 sm:block">
-                          <ComponentRender {...product.render} className="w-full" />
+                        <span className="relative hidden h-16 w-16 shrink-0 sm:block">
+                          <ProductImage product={product} locale={locale} sizes="64px" className="h-full w-full" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <Link
@@ -315,8 +315,8 @@ export function Configurator() {
                       aria-pressed={selected}
                       className="flex w-full items-center gap-4 border-b border-rule px-5 py-4 text-left transition-colors hover:bg-surface-sunk aria-pressed:bg-surface-sunk"
                     >
-                      <span className="w-16 shrink-0">
-                        <ComponentRender {...product.render} className="w-full" />
+                      <span className="u-product-interactive relative h-16 w-16 shrink-0">
+                        <ProductImage product={product} locale={locale} sizes="64px" className="h-full w-full" />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="u-label block">{product.brand}</span>

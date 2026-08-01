@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
+import { normalizeProductPointer } from '@/lib/productMotion'
 
 /**
  * MOTOR DE MOVIMIENTO
@@ -280,10 +281,13 @@ export function useTilt<T extends HTMLElement>(
 
     const onMove = (event: PointerEvent) => {
       if (!rect) return
-      const px = (event.clientX - rect.left) / rect.width - 0.5
-      const py = (event.clientY - rect.top) / rect.height - 0.5
-      targetY = px * max * 2
-      targetX = -py * max * 2
+      const pointer = normalizeProductPointer(event.clientX, event.clientY, rect)
+      const px = pointer.x / 2
+      const py = pointer.y / 2
+      targetY = pointer.x * max
+      targetX = -pointer.y * max
+      node.style.setProperty('--product-x', pointer.x.toFixed(4))
+      node.style.setProperty('--product-y', pointer.y.toFixed(4))
       if (glare) {
         node.style.setProperty('--glare-x', `${((px + 0.5) * 100).toFixed(1)}%`)
         node.style.setProperty('--glare-y', `${((py + 0.5) * 100).toFixed(1)}%`)
@@ -294,6 +298,8 @@ export function useTilt<T extends HTMLElement>(
       targetX = 0
       targetY = 0
       targetScale = 1
+      node.style.setProperty('--product-x', '0')
+      node.style.setProperty('--product-y', '0')
       arrancar()
     }
 
@@ -307,6 +313,8 @@ export function useTilt<T extends HTMLElement>(
       node.removeEventListener('pointermove', onMove)
       node.removeEventListener('pointerleave', onLeave)
       node.style.transform = ''
+      node.style.removeProperty('--product-x')
+      node.style.removeProperty('--product-y')
     }
   }, [ref, reduced, fine, max, scale, glare])
 }
