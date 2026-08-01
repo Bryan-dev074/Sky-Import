@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.86,
+  "estimatedFidelity": 0.86,
+  "targetThreshold": 0.7,
+  "materialId": "thermal-black",
+  "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reference-zones\\zone-r1c1.png",
+  "outDir": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal",
+  "palette": [
+    "#52524E",
+    "#050603",
+    "#141A0B",
+    "#293815",
+    "#C9C8C2"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_albedo.png",
+      "url": "/3d/rtx5090/pbr/thermal/thermal-black_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_roughness.png",
+      "url": "/3d/rtx5090/pbr/thermal/thermal-black_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+      "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_normal.png",
+      "url": "/3d/rtx5090/pbr/thermal/thermal-black_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_ao.png",
+      "url": "/3d/rtx5090/pbr/thermal/thermal-black_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 533,
+    "sourceHeight": 300,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 533,
+      "height": 300
+    },
+    "mask": {
+      "backgroundColor": "#091003",
+      "backgroundNoise": 34.9,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.4644
+    },
+    "mapStats": {
+      "valueRange": 0.6168,
+      "heightP90Gradient": 0.05511,
+      "roughnessBase": 0.696,
+      "roughnessVariation": 0.104,
+      "normalStrength": 0.221,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#52524E",
+      "#050603",
+      "#141A0B",
+      "#293815",
+      "#C9C8C2"
+    ]
+  },
+  "warnings": [
+    "single-image inverse rendering cannot prove true physical PBR; confidence is capped"
+  ],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

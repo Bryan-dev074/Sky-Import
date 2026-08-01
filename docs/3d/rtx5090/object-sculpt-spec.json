@@ -1,0 +1,5966 @@
+{
+  "targetName": "NVIDIA GeForce RTX 5090 Founders Edition",
+  "targetId": "nvidia-geforce-rtx-5090-founders-edition",
+  "schemaVersion": "2.1",
+  "terminologyProfile": {
+    "domain": "real-time procedural Three.js asset",
+    "geometryTerms": [
+      "silhouette",
+      "topology",
+      "primitive",
+      "bevel",
+      "chamfer",
+      "taper",
+      "bend",
+      "boolean cut",
+      "edge loop",
+      "surface normal",
+      "displacement"
+    ],
+    "materialTerms": [
+      "albedo",
+      "baseColor",
+      "roughness",
+      "metalness",
+      "normal map",
+      "bump map",
+      "ambient occlusion",
+      "cavity dirt",
+      "edge wear",
+      "clearcoat"
+    ],
+    "lightingTerms": [
+      "key light",
+      "fill light",
+      "rim light",
+      "HDRI/environment reflection",
+      "contact shadow"
+    ],
+    "descriptionRule": "Use measurable 3D graphics terms. Avoid vague words unless they are paired with concrete geometry/material/shader parameters."
+  },
+  "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\public\\products\\geforce-rtx-5090-founders-edition-32gb\\primary.webp",
+  "referenceCamera": {
+    "solved": true,
+    "fovDegrees": 34.0,
+    "aspect": 1.7778,
+    "orientation": {
+      "yaw": -24.0,
+      "pitch": 17.0,
+      "roll": -4.0
+    },
+    "positionHint": [
+      0.0,
+      0.35,
+      8.2
+    ],
+    "note": "Manual single-view camera estimate aligned to the card's long axis and three-quarter top/side view; overlay review remains the acceptance authority."
+  },
+  "suitability": "conditional",
+  "scores": {
+    "object_isolation": 2,
+    "silhouette_readability": 3,
+    "depth_inference": 2,
+    "primitive_decomposition": 3,
+    "material_procedurality": 3,
+    "occlusion_risk": 2,
+    "interaction_fit": 3
+  },
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "dual-slot desktop graphics card",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "hard-surface",
+        "geometric",
+        "mechanical"
+      ],
+      "structureKind": [
+        "compound object",
+        "layered shell",
+        "repeated modules",
+        "detachable assembly"
+      ],
+      "motionPotential": [
+        "detachable",
+        "whole-object transform",
+        "effect-emitter"
+      ],
+      "materialFamilies": [
+        "brushed aluminum",
+        "anodized metal",
+        "painted metal",
+        "matte polymer"
+      ],
+      "notes": "Observed as a low rectangular GPU in three-quarter view. A silver die-cast X/hourglass frame bridges two rounded black thermal panels around a narrow center waist. The implementation is an honest browser-real-time approximation of the visible view; hidden underside and internal geometry are not claimed as exact."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 2,
+        "componentCount": 3,
+        "hierarchyDepth": 2,
+        "repetitionDensity": 3,
+        "materialLayerCount": 2,
+        "localDetailDensity": 3,
+        "occlusionRisk": 3,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 5,
+        "mesoComponents": 12,
+        "microFeatureGroups": 14,
+        "materialLayers": 5,
+        "repetitionSystems": 3
+      },
+      "reasoning": [
+        "The outer silhouette is simple at distance but interrupted by four diagonal frame arms, two rounded thermal apertures, and a narrow center waist.",
+        "The visible design needs separate shell, frame, thermal, bridge, rail, connector, marking, fastener, and fin systems so it can assemble in stages.",
+        "Dense diagonal fins and repeated edge hardware create high repetition density even though the macro form stays compact.",
+        "The single three-quarter reference hides the rear face, I/O bracket, PCB topology, and exact fan cavities, so those regions remain approximate."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Complex is justified by the layered frame and thermal hierarchy, dense repeated fins, multiple metallic responses, and detachable assembly requirement."
+    },
+    "unknownsToResolveBeforeImplementation": [],
+    "detailInventory": {
+      "scanMethod": "grid-3x3",
+      "targetMinDetails": 14,
+      "note": "Nine-zone inspection of the supplied official-style product hero. Black and green background waves are excluded from object geometry.",
+      "details": [
+        {
+          "id": "left-panel-rounded-rim",
+          "kind": "bevel",
+          "description": "Bright rounded metallic rim around the upper thermal panel.",
+          "region": {
+            "x": 0.32,
+            "y": 0.17,
+            "width": 0.22,
+            "height": 0.27,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "left-panel-chamfer"
+          },
+          "evidenceRef": "reference-zones/zone-r0c1.png",
+          "confidence": 0.96,
+          "realization": "unreported"
+        },
+        {
+          "id": "left-fin-lines",
+          "kind": "ridge",
+          "description": "Dense diagonal parallel fins inside the upper thermal aperture.",
+          "region": {
+            "x": 0.35,
+            "y": 0.2,
+            "width": 0.19,
+            "height": 0.2,
+            "units": "normalized"
+          },
+          "scale": "micro repeated",
+          "affects": "geometry and roughness",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "left-fin-bed"
+          },
+          "evidenceRef": "reference-zones/zone-r0c1.png",
+          "confidence": 0.96,
+          "realization": "unreported"
+        },
+        {
+          "id": "upper-frame-bright-edge",
+          "kind": "gloss",
+          "description": "Low-roughness silver highlight along the upper frame edge.",
+          "region": {
+            "x": 0.3,
+            "y": 0.17,
+            "width": 0.25,
+            "height": 0.18,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "roughness",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "frame-edge-gloss"
+          },
+          "evidenceRef": "reference-zones/zone-r0c1.png",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "center-waist-recess",
+          "kind": "groove",
+          "description": "Deep horizontal vent/recess through the center waist.",
+          "region": {
+            "x": 0.37,
+            "y": 0.49,
+            "width": 0.2,
+            "height": 0.12,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry and ambient occlusion",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "bridge-vent-slot"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.95,
+          "realization": "unreported"
+        },
+        {
+          "id": "power-socket-cavity",
+          "kind": "hole",
+          "description": "Dark rectangular power/connector cavity beside the waist vent.",
+          "region": {
+            "x": 0.52,
+            "y": 0.49,
+            "width": 0.06,
+            "height": 0.1,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "power-socket-opening"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.83,
+          "realization": "unreported"
+        },
+        {
+          "id": "rtx5090-marking",
+          "kind": "decal",
+          "description": "Small white RTX 5090 identifier on the center bridge.",
+          "region": {
+            "x": 0.4,
+            "y": 0.43,
+            "width": 0.08,
+            "height": 0.04,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "rtx5090-decal"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.98,
+          "realization": "unreported"
+        },
+        {
+          "id": "right-panel-rounded-rim",
+          "kind": "bevel",
+          "description": "Bright rounded metallic rim around the lower-right thermal panel.",
+          "region": {
+            "x": 0.56,
+            "y": 0.4,
+            "width": 0.25,
+            "height": 0.25,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "right-panel-chamfer"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.96,
+          "realization": "unreported"
+        },
+        {
+          "id": "right-fin-lines",
+          "kind": "ridge",
+          "description": "Dense diagonal parallel fins inside the lower-right thermal aperture.",
+          "region": {
+            "x": 0.59,
+            "y": 0.42,
+            "width": 0.2,
+            "height": 0.2,
+            "units": "normalized"
+          },
+          "scale": "micro repeated",
+          "affects": "geometry and roughness",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "right-fin-bed"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.96,
+          "realization": "unreported"
+        },
+        {
+          "id": "x-frame-crossing",
+          "kind": "ridge",
+          "description": "Four raised metallic arms form the distinctive X/hourglass bridge.",
+          "region": {
+            "x": 0.33,
+            "y": 0.3,
+            "width": 0.48,
+            "height": 0.37,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "silhouette and geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "x-frame-arms"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.94,
+          "realization": "unreported"
+        },
+        {
+          "id": "frame-panel-seam",
+          "kind": "seam",
+          "description": "Dark construction seam separates the X frame from both thermal panels.",
+          "region": {
+            "x": 0.32,
+            "y": 0.2,
+            "width": 0.48,
+            "height": 0.42,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry and ambient occlusion",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "frame-panel-seams"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.89,
+          "realization": "unreported"
+        },
+        {
+          "id": "geforce-side-mark",
+          "kind": "emissive",
+          "description": "GEFORCE RTX side wordmark reads as a bright white luminous strip.",
+          "region": {
+            "x": 0.63,
+            "y": 0.57,
+            "width": 0.15,
+            "height": 0.06,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "emissive and albedo",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "geforce-emissive-mark"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.95,
+          "realization": "unreported"
+        },
+        {
+          "id": "dark-anodized-center",
+          "kind": "stain",
+          "description": "Center bridge is darker and slightly more matte than the bright outer frame edges.",
+          "region": {
+            "x": 0.41,
+            "y": 0.35,
+            "width": 0.23,
+            "height": 0.25,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "albedo and roughness",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "bridge-darkening"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.88,
+          "realization": "unreported"
+        },
+        {
+          "id": "frame-edge-chamfers",
+          "kind": "bevel",
+          "description": "Continuous narrow chamfer catches light along exposed die-cast frame edges.",
+          "region": {
+            "x": 0.31,
+            "y": 0.17,
+            "width": 0.5,
+            "height": 0.48,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "frame-chamfers"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.93,
+          "realization": "unreported"
+        },
+        {
+          "id": "edge-fastener-row",
+          "kind": "fastener",
+          "description": "Tiny dark fastener accents repeat along the frame-panel perimeter.",
+          "region": {
+            "x": 0.31,
+            "y": 0.2,
+            "width": 0.5,
+            "height": 0.42,
+            "units": "normalized"
+          },
+          "scale": "micro repeated",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "edge-fasteners"
+          },
+          "evidenceRef": "reference-zones/zone-r1c1.png",
+          "confidence": 0.67,
+          "realization": "unreported"
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\public\\products\\geforce-rtx-5090-founders-edition-32gb\\primary.webp"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "At the reference three-quarter view, the model must immediately read as an RTX 5090 Founders Edition rather than a generic triple-fan card.",
+      "The browser model must preserve the low dual-slot proportion, two rounded thermal fields, silver X/hourglass frame, center waist, fin density, and two visible wordmarks.",
+      "Every assembly group must move from an exploded offset into a gap-free socketed final position during scroll and remain individually pickable.",
+      "Brushed metallic highlights, matte black thermal masses, edge seams, repeated fins, and luminous side marking must remain legible under neutral and grazing light."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 5,
+      "mesoComponents": 8,
+      "microFeatureGroups": 14,
+      "materialLayers": 5,
+      "repetitionSystems": 3,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Overall ratio follows the official 304 mm by 137 mm dual-slot envelope.",
+          "Four diagonal frame arms pinch toward the center waist and leave two rounded thermal apertures.",
+          "No triple-fan rectangle or oversized shroud replaces the Founders Edition silhouette."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic add-in-board card",
+          "frame loses the X/hourglass negative space",
+          "card becomes too thick or too tall"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Backplate, thermal blocks, fin beds, frame arms, bridge, side rail, connector, bracket, and markings exist as named parts.",
+          "Thermal panels sit behind the frame and both meet the center bridge without visible gaps.",
+          "Macro, meso, and micro levels are all represented in the component hierarchy."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every detachable assembly group defines parent socket, local start/end, overlap, and gap tolerance.",
+          "Final scroll positions embed frame arms, thermal modules, bridge, rail, and bracket into the backplate by at least 0.02 object units.",
+          "Exploded offsets originate from each final local socket so parts cannot drift or snap through the core."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Silver frame uses metallic response with directional brushing and a brighter low-roughness edge override.",
+          "Thermal panels and fins use separate near-black values and roughness so the fin relief remains readable.",
+          "Center bridge is darker and more matte than the exposed frame edges.",
+          "No albedo image is reused as roughness, normal, height, or ambient occlusion."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Reference-matched view uses a cool key, soft fill, cyan rim, ACES tone mapping, dark background, and contact shadow.",
+          "Neutral, grazing-angle, and two orbit renders prove the silhouette and metallic relief independently of the supplied image.",
+          "Reference-derived color decisions are procedural and explicitly limited because the hero source contains baked lighting and green environmental reflections."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "silver frame and black thermal fields collapse into one value",
+          "lighting is evenly ambient and hides chamfers or fin relief"
+        ]
+      },
+      {
+        "id": "identity-detail-system",
+        "name": "Founders Edition identity details",
+        "required": true,
+        "qualityCriteria": [
+          "Both dense diagonal fin fields, the center vent, power cavity, RTX 5090 decal, GEFORCE RTX luminous mark, panel seams, chamfers, and perimeter fasteners are represented.",
+          "At least fourteen inventoried details map to component local features or material local overrides."
+        ],
+        "evidenceRefs": [
+          "reference-zones/zone-r0c1.png",
+          "reference-zones/zone-r1c1.png"
+        ],
+        "failureModes": [
+          "recognizable micro details are replaced by generic noise",
+          "inventoried details exist only in prose"
+        ]
+      },
+      {
+        "id": "scroll-assembly-performance",
+        "name": "Interactive scroll assembly",
+        "required": true,
+        "qualityCriteria": [
+          "The section remains sticky until the full card is assembled, then releases normal document scroll.",
+          "Assembly progress is deterministic from section scroll distance and has a complete reduced-motion fallback.",
+          "The final assembled card can orbit subtly, spin its fans, and highlight a clicked group without layout jank."
+        ],
+        "evidenceRefs": [
+          "runtime-home-assembly"
+        ],
+        "failureModes": [
+          "page releases before assembly completes",
+          "scroll becomes trapped after completion",
+          "continuous React state updates cause visible stutter"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "dual-slot 304:137 silhouette and X-frame negative-space delta",
+      "rounded thermal panel placement and center-waist delta",
+      "diagonal fin density, angle, and distribution delta",
+      "silver frame versus black panel albedo and roughness delta",
+      "RTX 5090 and GEFORCE RTX marking placement delta",
+      "exploded-to-assembled socket and gap delta",
+      "reference view plus front, rear three-quarter, and grazing-light orbit delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ],
+    "mustNotDo": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "qualityTargets": {
+    "targetFidelity": 0.7,
+    "mustMatch": [
+      "macro silhouette and proportions",
+      "primary material albedo/roughness response",
+      "reference-derived PBR material response at or above 0.7 confidence when source pixels are usable",
+      "most recognizable local features"
+    ],
+    "niceToHave": [
+      "micro scratches, stains, chips, and dirt masks",
+      "secondary lighting match"
+    ],
+    "fpsTarget": 60,
+    "reviewViewpoints": [
+      "front",
+      "three-quarter",
+      "side",
+      "thickness-axis",
+      "long-axis"
+    ]
+  },
+  "selfCorrectLoop": {
+    "enabled": true,
+    "visualAcceptance": {
+      "reviewer": "ai-vision",
+      "threshold": 0.7,
+      "comparisonArtifactRequired": true,
+      "layerScoresRequired": true,
+      "codePixelDiffIsAcceptanceAuthority": false,
+      "scoringRule": "AI vision must inspect a side-by-side reference/render sheet and score the current pass from 0 to 1. Pixel-diff code may assist diagnostics but cannot approve a pass.",
+      "requiredLayerScores": [
+        "silhouetteProportion",
+        "componentStructure",
+        "formDetail",
+        "materialSurface",
+        "lightingCamera"
+      ],
+      "featureReviewPolicy": {
+        "enabled": true,
+        "reviewUnit": "semantic-subsystem",
+        "maxCriticalFeaturesPerPass": 5,
+        "maxImportantFeaturesPerPass": 3,
+        "criticalDefaultThreshold": 0.8,
+        "importantAverageThreshold": 0.65,
+        "adaptiveEscalation": true,
+        "singleImagePairOnly": true,
+        "selectionRule": "Choose only the most visually salient, identity-defining, user-prioritized, or high-risk semantic systems. Group repeated parts instead of reviewing every mesh. AI vision scores every selected feature from the same full reference/render pair."
+      }
+    },
+    "reviewAfterPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "allowedActions": [
+      "continue",
+      "refine-spec",
+      "refine-code",
+      "request-input",
+      "stop"
+    ],
+    "specRefineTriggers": [
+      "missing component",
+      "wrong primitive family",
+      "wrong proportions",
+      "material layer under-specified",
+      "local feature not traceable to viewEvidence",
+      "reference ambiguity discovered during implementation"
+    ],
+    "codeRefineTriggers": [
+      "spec is adequate but generated geometry/material does not match",
+      "browser render differs from reference",
+      "performance budget exceeded",
+      "lighting hides geometry or material response"
+    ],
+    "stopCriteria": [
+      "target fidelity reached or user accepts current approximation",
+      "remaining gaps require new reference images or manual art"
+    ],
+    "screenshotPolicy": {
+      "requiredForPasses": [
+        "blockout",
+        "structural-pass",
+        "form-refinement",
+        "material-pass",
+        "surface-pass",
+        "lighting-pass",
+        "interaction-pass"
+      ],
+      "preferredCapture": "in-app-browser-screenshot",
+      "fallbackCapture": "user-supplied-screenshot-path",
+      "minimumEvidence": "Each visual pass needs a reference image, rendered screenshot, side-by-side comparison sheet, AI vision score, layer scores, and critique before choosing continue.",
+      "reviewPairRule": "Compare the same camera/viewpoint whenever possible; do not judge a front reference against a random render angle.",
+      "acceptanceAuthority": "AI vision review of the comparison sheet. Code-generated pixel similarity is not sufficient evidence."
+    }
+  },
+  "featureReviewTargets": [
+    {
+      "id": "founders-dual-slot-silhouette",
+      "name": "Low dual-slot envelope and rounded thermal apertures",
+      "tier": "critical",
+      "passIds": [
+        "blockout",
+        "form-refinement"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "root",
+        "left-thermal",
+        "right-thermal"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "x-hourglass-frame-system",
+      "name": "Four-arm silver X frame and pinched center bridge",
+      "tier": "critical",
+      "passIds": [
+        "structural-pass",
+        "form-refinement"
+      ],
+      "minimumScore": 0.84,
+      "mustPass": true,
+      "componentRefs": [
+        "x-frame",
+        "center-bridge",
+        "side-rail"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "diagonal-thermal-fin-fields",
+      "name": "Twin dense diagonal fin fields and dark cavity depth",
+      "tier": "critical",
+      "passIds": [
+        "structural-pass",
+        "surface-pass"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "left-fin-bed",
+        "right-fin-bed"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "brushed-metal-contrast",
+      "name": "Brushed silver frame against matte graphite thermal masses",
+      "tier": "critical",
+      "passIds": [
+        "material-pass",
+        "lighting-pass"
+      ],
+      "minimumScore": 0.76,
+      "mustPass": true,
+      "componentRefs": [
+        "x-frame",
+        "left-thermal",
+        "right-thermal",
+        "center-bridge"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "product-markings-and-center-details",
+      "name": "RTX 5090 label, GEFORCE RTX rail, vent and power cavity",
+      "tier": "important",
+      "passIds": [
+        "surface-pass",
+        "interaction-pass"
+      ],
+      "minimumScore": 0.68,
+      "mustPass": false,
+      "componentRefs": [
+        "center-bridge",
+        "side-rail",
+        "power-socket"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    }
+  ],
+  "sculptPipeline": {
+    "passGateMode": "locked-sequential",
+    "passOrder": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "currentPass": "complete",
+    "completedPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "lastCompletedPass": "optimization-pass",
+    "blockedReason": "all build passes completed",
+    "nextRequiredEvidence": []
+  },
+  "lookDevTargets": {
+    "qualityPriority": "reference-fidelity",
+    "materialPass": {
+      "albedoPaletteRequired": true,
+      "roughnessVariationRequired": true,
+      "normalOrBumpRequired": true,
+      "localOverridesRequired": true,
+      "minimumTextureResolution": 1024,
+      "preferredTextureResolution": 2048,
+      "independentMapChannels": [
+        "albedo",
+        "roughness",
+        "height",
+        "normal",
+        "ambient-occlusion"
+      ],
+      "requiredSurfaceFrequencyBands": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "geometryReliefRequiredWhenSilhouetteAffected": true,
+      "referencePbrExtraction": {
+        "requiredWhenSourceImagePresent": true,
+        "targetThreshold": 0.7,
+        "stopOnLowConfidence": true,
+        "script": "forge/stage1_intake/extract_pbr_evidence.py",
+        "acceptedLimitation": "single-image extraction is reference-derived inference, not exact photogrammetry"
+      },
+      "mustAvoid": [
+        "single flat albedo per material",
+        "uniform roughness",
+        "albedo texture reused as roughness/height/normal/AO",
+        "single-frequency random noise",
+        "plastic-looking smooth bark, stone, cloth, foliage, or aged material",
+        "local color/detail described only in prose without material masks",
+        "claiming exact PBR recovery when confidence is below the target threshold"
+      ]
+    },
+    "lightingPass": {
+      "requiredTerms": [
+        "key light",
+        "fill light",
+        "rim or environment light",
+        "exposure",
+        "tone mapping",
+        "background",
+        "contact shadow"
+      ],
+      "mustAvoid": [
+        "ambient-only lighting",
+        "flat value range",
+        "missing contact shadow",
+        "reference lighting copied without separating material readability"
+      ]
+    },
+    "screenshotReview": [
+      "Compare albedo palette and local color zones.",
+      "Compare roughness/normal/bump response under light.",
+      "Compare cavity dirt, edge wear, stains, moss, scratches, or other local masks.",
+      "Compare key/fill/rim structure, exposure, tone mapping, background, and contact shadows.",
+      "Capture a neutral-light render to verify material readability without reference lighting.",
+      "Capture a grazing-light close-up to expose flat normals, uniform roughness, tiling, and plastic highlights.",
+      "Capture a reference-matched render from the same camera framing as the source."
+    ]
+  },
+  "actionReadiness": {
+    "contract": "Every macro/meso component should be generated as a stable named Object3D pivot node with a mesh child, action metadata, optional sockets, collider proxy, and destruction metadata.",
+    "defaultRigType": "action-ready-static-rig",
+    "rootMotionNode": "root",
+    "requiredComponentFields": [
+      "id",
+      "parent",
+      "transform",
+      "attachment for child appendages, connectors, limbs, tubes, handles, legs, horns, wings, branches, or cables",
+      "actionProfile.animationRole",
+      "actionProfile.pivot",
+      "actionProfile.collider",
+      "actionProfile.destruction"
+    ],
+    "transformChannels": [
+      "translate",
+      "rotate",
+      "scale",
+      "bend",
+      "twist",
+      "detach",
+      "visibility",
+      "material-state"
+    ],
+    "authoringRules": [
+      "Do not collapse independently movable parts into one mesh.",
+      "Put transforms on component pivot groups, not only on raw meshes.",
+      "For attached child parts, put the pivot at the semantic root/socket and build visible geometry from localStart to localEnd.",
+      "Represent hinge, socket, detachable, and breakable intent even when no animation is implemented yet.",
+      "Use simplified collider proxies for runtime physics instead of visual mesh colliders by default."
+    ],
+    "destructionPolicy": {
+      "defaultBreakable": false,
+      "fractureGroupNaming": "Use stable semantic names such as body-shell, left-hinge, glass-panel, branch-segment.",
+      "debrisStrategy": "Prefer detachable component groups and a small number of procedural fragments over random mesh explosion."
+    }
+  },
+  "assumptions": [
+    "Hidden underside and rear geometry use a restrained dark backplate and are intentionally approximate.",
+    "Internal PCB, vapor chamber, and fan cavities are simplified browser-real-time layers because the single hero view does not expose them.",
+    "The display bracket and port cutouts are recognizable silhouettes, not manufacturing drawings.",
+    "RTX 5090 and GEFORCE RTX labels use approximate browser decals; no exact typeface fidelity is claimed."
+  ],
+  "coordinateFrame": {
+    "front": "camera-facing side in the reference image",
+    "up": "image up direction",
+    "scaleReference": "unit scale; adjust after first browser render"
+  },
+  "silhouette": {
+    "boundingShape": "low rounded cuboid, 304:137 frontal ratio and approximately two-slot depth",
+    "aspectRatios": [
+      "width:height = 2.219:1",
+      "height:depth approximately 6.8:1"
+    ],
+    "symmetry": "near bilateral around the narrow center waist with intentionally opposing thermal modules",
+    "dominantCurves": [
+      "large corner radii on both thermal apertures",
+      "four straight diagonal frame arms converging at center"
+    ],
+    "negativeSpaces": [
+      "upper-left rounded thermal field",
+      "lower-right rounded thermal field",
+      "center vent slot",
+      "power socket cavity"
+    ],
+    "landmarks": [
+      "silver X/hourglass frame",
+      "dark center bridge",
+      "GEFORCE RTX side rail",
+      "small RTX 5090 bridge mark"
+    ]
+  },
+  "viewEvidence": [
+    {
+      "id": "full-object",
+      "view": "primary",
+      "imageRegion": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1.0,
+        "height": 1.0,
+        "units": "normalized"
+      },
+      "observations": [],
+      "confidence": 0.5
+    }
+  ],
+  "componentTree": [
+    {
+      "id": "root",
+      "name": "RTX 5090 assembly root",
+      "level": "macro",
+      "role": "body",
+      "importance": 1.0,
+      "confidence": 0.5,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The overall envelope is a rigid low rectangular chassis assembled from separately detachable hard-surface modules.",
+      "geometryDescriptor": {
+        "topologyIntent": "low-poly blockout with bevel-ready edges",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.035,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": null,
+      "attachment": null,
+      "dimensions": {
+        "width": 6.08,
+        "height": 2.74,
+        "depth": 0.4,
+        "units": "50mm normalized",
+        "confidence": 0.92
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "root",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.96
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": true,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "backplate-socket",
+            "localPosition": [
+              0,
+              0,
+              -0.1
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "left-thermal-socket",
+            "localPosition": [
+              -1.55,
+              0,
+              0.08
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "right-thermal-socket",
+            "localPosition": [
+              1.55,
+              0,
+              0.08
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "frame-socket",
+            "localPosition": [
+              0,
+              0,
+              0.23
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            6.08,
+            2.74,
+            0.4
+          ],
+          "isTrigger": false,
+          "notes": "Replace with sphere/capsule/compound proxy when the object shape demands it."
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "root",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "base"
+        }
+      },
+      "material": "chassis-black",
+      "materialLayers": [
+        "chassis-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(17, 20, 22, 1)",
+        "secondaryAlbedo": "rgba(36, 40, 43, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.88
+      },
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "blockout"
+    },
+    {
+      "id": "backplate",
+      "name": "dark rear chassis and PCB carrier",
+      "level": "macro",
+      "role": "chassis-module",
+      "importance": 0.9,
+      "confidence": 0.72,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "A thin continuous carrier spans both thermal modules. Its rounded, chamfered outer envelope preserves the Founders Edition silhouette while the inset surface structure creates the visual waist.",
+      "geometryDescriptor": {
+        "topologyIntent": "continuous low-profile hard-surface carrier with rounded chamfered outer corners",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.035,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated planar coordinates",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "root",
+      "attachment": {
+        "parentId": "root",
+        "parentSocket": "backplate-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          -0.1
+        ],
+        "contactType": "socket overlap",
+        "embedDepth": 0.03,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 6.0,
+        "height": 2.62,
+        "depth": 0.18,
+        "units": "relative",
+        "confidence": 0.72
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          -0.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable chassis module",
+        "pivot": {
+          "mode": "component-center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.85
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "io-bracket-socket",
+            "localPosition": [
+              -3.0,
+              0,
+              0
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            6,
+            2.62,
+            0.18
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "chassis",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "chassis-black"
+        }
+      },
+      "material": "chassis-black",
+      "materialLayers": [
+        "chassis-black",
+        "gold-contact"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(17, 20, 22, 1)",
+        "secondaryAlbedo": "rgba(37, 42, 45, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.82
+      },
+      "localFeatures": [
+        {
+          "id": "pcie-contact-row",
+          "type": "raised repeated contact fingers",
+          "count": 26
+        },
+        {
+          "id": "dual-slot-rail",
+          "type": "thin lower rail",
+          "depth": 0.05
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.52,
+        "microRoughness": 0.12,
+        "bumpAmplitude": 0.015,
+        "normalPattern": "fine powder coat",
+        "occlusionPattern": "edge seams"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "structural"
+    },
+    {
+      "id": "left-thermal",
+      "name": "upper-left rounded thermal module",
+      "level": "macro",
+      "role": "thermal-module",
+      "importance": 1,
+      "confidence": 0.95,
+      "primitive": "extrude",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The visible thermal field is a rigid rounded quadrilateral with independent depth and a bright rim.",
+      "geometryDescriptor": {
+        "topologyIntent": "rounded rectangular shallow extrusion",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.09,
+          "segments": 4
+        },
+        "deformationStack": [],
+        "profile2D": {
+          "points": [
+            [
+              -1.15,
+              -0.98
+            ],
+            [
+              0.95,
+              -0.98
+            ],
+            [
+              1.15,
+              -0.78
+            ],
+            [
+              1.15,
+              0.78
+            ],
+            [
+              0.95,
+              0.98
+            ],
+            [
+              -0.95,
+              0.98
+            ],
+            [
+              -1.15,
+              0.78
+            ]
+          ],
+          "depth": 0.34
+        },
+        "uvStrategy": "planar front projection",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "root",
+      "attachment": {
+        "parentId": "root",
+        "parentSocket": "left-thermal-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          -1.55,
+          0,
+          0.08
+        ],
+        "contactType": "socket overlap",
+        "embedDepth": 0.04,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 2.42,
+        "height": 2.26,
+        "depth": 0.34,
+        "units": "relative",
+        "confidence": 0.94
+      },
+      "transform": {
+        "position": [
+          -1.52,
+          0.08,
+          0.08
+        ],
+        "rotation": [
+          0,
+          0,
+          -0.1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable thermal module",
+        "pivot": {
+          "mode": "component-center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.92
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "left-fan-socket",
+            "localPosition": [
+              0,
+              0,
+              0.2
+            ],
+            "localRotation": [
+              1.5708,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "left-fin-socket",
+            "localPosition": [
+              0,
+              0,
+              0.17
+            ],
+            "localRotation": [
+              0,
+              0,
+              -0.72
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            2.42,
+            2.26,
+            0.34
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "left-thermal",
+          "seamRefs": [
+            "frame-panel-seams"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black",
+        "frame-metal"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(8, 10, 11, 1)",
+        "secondaryAlbedo": "rgba(35, 38, 39, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.91
+      },
+      "localFeatures": [
+        {
+          "id": "left-panel-chamfer",
+          "type": "continuous rounded metallic rim",
+          "bevelRadius": 0.09
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.38,
+        "microRoughness": 0.18,
+        "bumpAmplitude": 0.02,
+        "normalPattern": "diagonal fin relief",
+        "occlusionPattern": "dark rim seam"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "structural"
+    },
+    {
+      "id": "right-thermal",
+      "name": "lower-right rounded thermal module",
+      "level": "macro",
+      "role": "thermal-module",
+      "importance": 1,
+      "confidence": 0.95,
+      "primitive": "extrude",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The second visible thermal field mirrors the rigid rounded shallow volume across the center waist.",
+      "geometryDescriptor": {
+        "topologyIntent": "rounded rectangular shallow extrusion",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.09,
+          "segments": 4
+        },
+        "deformationStack": [],
+        "profile2D": {
+          "points": [
+            [
+              -1.15,
+              -0.78
+            ],
+            [
+              -0.95,
+              -0.98
+            ],
+            [
+              0.95,
+              -0.98
+            ],
+            [
+              1.15,
+              -0.78
+            ],
+            [
+              1.15,
+              0.78
+            ],
+            [
+              0.95,
+              0.98
+            ],
+            [
+              -0.95,
+              0.98
+            ]
+          ],
+          "depth": 0.34
+        },
+        "uvStrategy": "planar front projection",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "root",
+      "attachment": {
+        "parentId": "root",
+        "parentSocket": "right-thermal-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          1.55,
+          0,
+          0.08
+        ],
+        "contactType": "socket overlap",
+        "embedDepth": 0.04,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 2.42,
+        "height": 2.26,
+        "depth": 0.34,
+        "units": "relative",
+        "confidence": 0.94
+      },
+      "transform": {
+        "position": [
+          1.52,
+          -0.08,
+          0.08
+        ],
+        "rotation": [
+          0,
+          0,
+          -0.1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable thermal module",
+        "pivot": {
+          "mode": "component-center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.92
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "right-fan-socket",
+            "localPosition": [
+              0,
+              0,
+              0.2
+            ],
+            "localRotation": [
+              1.5708,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "right-fin-socket",
+            "localPosition": [
+              0,
+              0,
+              0.17
+            ],
+            "localRotation": [
+              0,
+              0,
+              -0.72
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            2.42,
+            2.26,
+            0.34
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "right-thermal",
+          "seamRefs": [
+            "frame-panel-seams"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black",
+        "frame-metal"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(8, 10, 11, 1)",
+        "secondaryAlbedo": "rgba(35, 38, 39, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.91
+      },
+      "localFeatures": [
+        {
+          "id": "right-panel-chamfer",
+          "type": "continuous rounded metallic rim",
+          "bevelRadius": 0.09
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.38,
+        "microRoughness": 0.18,
+        "bumpAmplitude": 0.02,
+        "normalPattern": "diagonal fin relief",
+        "occlusionPattern": "dark rim seam"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "structural"
+    },
+    {
+      "id": "x-frame",
+      "name": "silver die-cast X/hourglass frame",
+      "level": "macro",
+      "role": "frame-module",
+      "importance": 1,
+      "confidence": 0.95,
+      "primitive": "instanced-cluster",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Four discrete chamfered metallic arms bridge the thermal modules and define the observed negative space.",
+      "geometryDescriptor": {
+        "topologyIntent": "four beveled diagonal bars meeting at a narrow waist",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.055,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "object-space brushed direction",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "root",
+      "attachment": {
+        "parentId": "root",
+        "parentSocket": "frame-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.23
+        ],
+        "contactType": "multi-point overlap",
+        "embedDepth": 0.03,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 6.08,
+        "height": 2.74,
+        "depth": 0.16,
+        "units": "relative",
+        "confidence": 0.94
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.23
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable frame module",
+        "pivot": {
+          "mode": "center waist",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.95
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "bridge-socket",
+            "localPosition": [
+              0,
+              0,
+              0.05
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "rail-socket",
+            "localPosition": [
+              0,
+              -1.28,
+              -0.02
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            6.08,
+            2.74,
+            0.16
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "x-frame",
+          "seamRefs": [
+            "frame-panel-seams"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "frame-metal"
+        }
+      },
+      "material": "frame-metal",
+      "materialLayers": [
+        "frame-metal",
+        "chassis-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(160, 164, 165, 1)",
+        "secondaryAlbedo": "rgba(54, 58, 61, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.97
+      },
+      "localFeatures": [
+        {
+          "id": "x-frame-arms",
+          "type": "four raised diagonal arms",
+          "count": 4
+        },
+        {
+          "id": "frame-panel-seams",
+          "type": "dark recessed perimeter seams",
+          "depth": 0.025
+        },
+        {
+          "id": "frame-chamfers",
+          "type": "continuous bright edge chamfer",
+          "bevelRadius": 0.055
+        },
+        {
+          "id": "edge-fasteners",
+          "type": "small repeated recessed screws",
+          "count": 12
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.24,
+        "microRoughness": 0.09,
+        "bumpAmplitude": 0.012,
+        "normalPattern": "directional brushing",
+        "occlusionPattern": "panel seams",
+        "edgeWearPattern": "polished chamfer crests"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "form-refinement"
+    },
+    {
+      "id": "center-bridge",
+      "name": "dark pinched center bridge",
+      "level": "meso",
+      "role": "bridge-module",
+      "importance": 0.96,
+      "confidence": 0.92,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The central waist is a rigid beveled enclosure overlapping all four frame arms.",
+      "geometryDescriptor": {
+        "topologyIntent": "pinched beveled center enclosure",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.08,
+          "segments": 3
+        },
+        "deformationStack": [
+          "taper both ends toward center"
+        ],
+        "uvStrategy": "generated planar coordinates",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "x-frame",
+      "attachment": {
+        "parentId": "x-frame",
+        "parentSocket": "bridge-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.05
+        ],
+        "contactType": "overlap",
+        "embedDepth": 0.035,
+        "gapTolerance": 0.008,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 1.55,
+        "height": 1.12,
+        "depth": 0.3,
+        "units": "relative",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.05
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable bridge module",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.94
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "power-socket-socket",
+            "localPosition": [
+              0.45,
+              -0.2,
+              0.16
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1.55,
+            1.12,
+            0.3
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "bridge",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "chassis-black"
+        }
+      },
+      "material": "chassis-black",
+      "materialLayers": [
+        "chassis-black",
+        "emissive-white"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(39, 42, 43, 1)",
+        "secondaryAlbedo": "rgba(16, 18, 19, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.9
+      },
+      "localFeatures": [
+        {
+          "id": "bridge-vent-slot",
+          "type": "recessed horizontal slot",
+          "depth": 0.08
+        },
+        {
+          "id": "center-pinched-waist",
+          "type": "opposed taper",
+          "amount": 0.18
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.42,
+        "microRoughness": 0.1,
+        "bumpAmplitude": 0.01,
+        "normalPattern": "fine anodized grain",
+        "occlusionPattern": "vent recess"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "form-refinement"
+    },
+    {
+      "id": "side-rail",
+      "name": "lower GEFORCE RTX side rail",
+      "level": "meso",
+      "role": "branding-rail",
+      "importance": 0.82,
+      "confidence": 0.9,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The luminous wordmark sits on a discrete long rigid lower rail.",
+      "geometryDescriptor": {
+        "topologyIntent": "thin chamfered rail",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.04,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "planar label carrier",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "x-frame",
+      "attachment": {
+        "parentId": "x-frame",
+        "parentSocket": "rail-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          -1.28,
+          -0.02
+        ],
+        "contactType": "edge overlap",
+        "embedDepth": 0.025,
+        "gapTolerance": 0.008,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 2.25,
+        "height": 0.24,
+        "depth": 0.18,
+        "units": "relative",
+        "confidence": 0.86
+      },
+      "transform": {
+        "position": [
+          1.22,
+          -1.28,
+          -0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          -0.04
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable branding rail",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.9
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            2.25,
+            0.24,
+            0.18
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "rail",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "chassis-black"
+        }
+      },
+      "material": "chassis-black",
+      "materialLayers": [
+        "chassis-black",
+        "emissive-white"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(20, 23, 24, 1)",
+        "secondaryAlbedo": "rgba(219, 238, 239, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.86
+      },
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.4,
+        "microRoughness": 0.08,
+        "bumpAmplitude": 0.008,
+        "normalPattern": "fine powder coat",
+        "occlusionPattern": "rail contact"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "form-refinement"
+    },
+    {
+      "id": "io-bracket",
+      "name": "left dual-slot I/O bracket",
+      "level": "meso",
+      "role": "bracket-module",
+      "importance": 0.58,
+      "confidence": 0.55,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The cropped end still supports a thin rigid metal bracket silhouette with repeated port openings.",
+      "geometryDescriptor": {
+        "topologyIntent": "thin perforated bracket",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.025,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated planar coordinates",
+        "normalStrategy": "flat weighted normals"
+      },
+      "parent": "backplate",
+      "attachment": {
+        "parentId": "backplate",
+        "parentSocket": "io-bracket-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          -3,
+          0,
+          0
+        ],
+        "contactType": "butt overlap",
+        "embedDepth": 0.03,
+        "gapTolerance": 0.012,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 0.18,
+        "height": 2.4,
+        "depth": 0.34,
+        "units": "relative",
+        "confidence": 0.55
+      },
+      "transform": {
+        "position": [
+          -3,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable bracket module",
+        "pivot": {
+          "mode": "root edge",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.7
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            2.4,
+            0.34
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "io-bracket",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "frame-metal"
+        }
+      },
+      "material": "frame-metal",
+      "materialLayers": [
+        "frame-metal"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(122, 127, 130, 1)",
+        "secondaryAlbedo": "rgba(29, 32, 34, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.82
+      },
+      "localFeatures": [
+        {
+          "id": "io-port-cutouts",
+          "type": "repeated recessed slots",
+          "count": 4
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.3,
+        "microRoughness": 0.1,
+        "bumpAmplitude": 0.008,
+        "normalPattern": "brushed metal",
+        "occlusionPattern": "port cavities"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "structural"
+    },
+    {
+      "id": "power-socket",
+      "name": "center power connector cavity",
+      "level": "meso",
+      "role": "power-module",
+      "importance": 0.65,
+      "confidence": 0.78,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "A discrete dark rectangular connector and cavity are visible beside the center vent.",
+      "geometryDescriptor": {
+        "topologyIntent": "recessed connector block",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.025,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated planar coordinates",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "center-bridge",
+      "attachment": {
+        "parentId": "center-bridge",
+        "parentSocket": "power-socket-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0.45,
+          -0.2,
+          0.16
+        ],
+        "contactType": "embedded socket",
+        "embedDepth": 0.05,
+        "gapTolerance": 0.006,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 0.32,
+        "height": 0.26,
+        "depth": 0.18,
+        "units": "relative",
+        "confidence": 0.78
+      },
+      "transform": {
+        "position": [
+          0.45,
+          -0.2,
+          0.16
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable power module",
+        "pivot": {
+          "mode": "connector root",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "confidence": 0.82
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.32,
+            0.26,
+            0.18
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "power-socket",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "chassis-black"
+        }
+      },
+      "material": "chassis-black",
+      "materialLayers": [
+        "chassis-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(5, 7, 8, 1)",
+        "secondaryAlbedo": "rgba(31, 35, 36, 1)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.72
+      },
+      "localFeatures": [
+        {
+          "id": "power-socket-opening",
+          "type": "deep rectangular cavity",
+          "depth": 0.12
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.65,
+        "microRoughness": 0.1,
+        "bumpAmplitude": 0.005,
+        "normalPattern": "fine molded grain",
+        "occlusionPattern": "deep cavity"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "form-refinement"
+    },
+    {
+      "id": "left-fan",
+      "name": "left flow-through fan",
+      "level": "meso",
+      "role": "fan-module",
+      "importance": 0.72,
+      "confidence": 0.58,
+      "primitive": "cylinder",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "A circular rotating fan is a plausible action-ready layer behind the visible left fin field, but exact blade shape is hidden.",
+      "geometryDescriptor": {
+        "topologyIntent": "low-profile radial fan with separate blades",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.02,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "radial generated coordinates",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "left-thermal",
+      "attachment": {
+        "parentId": "left-thermal",
+        "parentSocket": "left-fan-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.2
+        ],
+        "contactType": "embedded bearing socket",
+        "embedDepth": 0.04,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "radius": 0.78,
+        "height": 0.09,
+        "depth": 0.09,
+        "units": "relative",
+        "confidence": 0.58
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.2
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "rotating fan module",
+        "pivot": {
+          "mode": "bearing center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "confidence": 0.88
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1.56,
+            1.56,
+            0.09
+          ],
+          "isTrigger": false
+        },
+        "constraints": [
+          "rotate only around local Z after assembly"
+        ],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "left-fan",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 8, 9, 1)",
+        "secondaryAlbedo": "rgba(42, 46, 48, 1)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.62
+      },
+      "localFeatures": [
+        {
+          "id": "fan-blade-array",
+          "type": "radial curved blade array",
+          "count": 9
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.48,
+        "microRoughness": 0.08,
+        "bumpAmplitude": 0.004,
+        "normalPattern": "molded satin",
+        "occlusionPattern": "hub recess"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "conditional-hidden"
+    },
+    {
+      "id": "right-fan",
+      "name": "right flow-through fan",
+      "level": "meso",
+      "role": "fan-module",
+      "importance": 0.72,
+      "confidence": 0.58,
+      "primitive": "cylinder",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "The opposite circular fan is inferred from the product's dual flow-through layout and remains intentionally approximate.",
+      "geometryDescriptor": {
+        "topologyIntent": "low-profile radial fan with separate blades",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.02,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "radial generated coordinates",
+        "normalStrategy": "weighted vertex normals"
+      },
+      "parent": "right-thermal",
+      "attachment": {
+        "parentId": "right-thermal",
+        "parentSocket": "right-fan-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.2
+        ],
+        "contactType": "embedded bearing socket",
+        "embedDepth": 0.04,
+        "gapTolerance": 0.01,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "radius": 0.78,
+        "height": 0.09,
+        "depth": 0.09,
+        "units": "relative",
+        "confidence": 0.58
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.2
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "rotating fan module",
+        "pivot": {
+          "mode": "bearing center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "confidence": 0.88
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1.56,
+            1.56,
+            0.09
+          ],
+          "isTrigger": false
+        },
+        "constraints": [
+          "rotate only around local Z after assembly"
+        ],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "right-fan",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 8, 9, 1)",
+        "secondaryAlbedo": "rgba(42, 46, 48, 1)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.62
+      },
+      "localFeatures": [
+        {
+          "id": "fan-blade-array-rear",
+          "type": "radial curved blade array",
+          "count": 9
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.48,
+        "microRoughness": 0.08,
+        "bumpAmplitude": 0.004,
+        "normalPattern": "molded satin",
+        "occlusionPattern": "hub recess"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "conditional-hidden"
+    },
+    {
+      "id": "left-fin-bed",
+      "name": "left diagonal thermal fin field",
+      "level": "meso",
+      "role": "fin-module",
+      "importance": 0.92,
+      "confidence": 0.96,
+      "primitive": "instanced-cluster",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "Dense parallel raised metal fins alter visible relief inside the rounded aperture and must be geometry, not a flat texture.",
+      "geometryDescriptor": {
+        "topologyIntent": "clipped parallel fin cluster",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated per instance",
+        "normalStrategy": "flat weighted normals"
+      },
+      "parent": "left-thermal",
+      "attachment": {
+        "parentId": "left-thermal",
+        "parentSocket": "left-fin-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.17
+        ],
+        "contactType": "embedded fin bed",
+        "embedDepth": 0.025,
+        "gapTolerance": 0.006,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 2.12,
+        "height": 1.95,
+        "depth": 0.1,
+        "units": "relative",
+        "confidence": 0.95
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.17
+        ],
+        "rotation": [
+          0,
+          0,
+          -0.72
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable fin module",
+        "pivot": {
+          "mode": "field center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.9
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            2.12,
+            1.95,
+            0.1
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "left-fins",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(9, 11, 12, 1)",
+        "secondaryAlbedo": "rgba(49, 52, 53, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.91
+      },
+      "localFeatures": [
+        {
+          "id": "left-fin-bed",
+          "type": "dense diagonal ridges",
+          "count": 42
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.34,
+        "microRoughness": 0.2,
+        "bumpAmplitude": 0.03,
+        "normalPattern": "parallel fin edges",
+        "occlusionPattern": "between fins"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "surface"
+    },
+    {
+      "id": "right-fin-bed",
+      "name": "right diagonal thermal fin field",
+      "level": "meso",
+      "role": "fin-module",
+      "importance": 0.92,
+      "confidence": 0.96,
+      "primitive": "instanced-cluster",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "The second dense parallel fin field is a mirrored geometric relief system inside the opposite aperture.",
+      "geometryDescriptor": {
+        "topologyIntent": "clipped parallel fin cluster",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated per instance",
+        "normalStrategy": "flat weighted normals"
+      },
+      "parent": "right-thermal",
+      "attachment": {
+        "parentId": "right-thermal",
+        "parentSocket": "right-fin-socket",
+        "localStart": [
+          0,
+          0,
+          0
+        ],
+        "localEnd": [
+          0,
+          0,
+          0.17
+        ],
+        "contactType": "embedded fin bed",
+        "embedDepth": 0.025,
+        "gapTolerance": 0.006,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 2.12,
+        "height": 1.95,
+        "depth": 0.1,
+        "units": "relative",
+        "confidence": 0.95
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.17
+        ],
+        "rotation": [
+          0,
+          0,
+          -0.72
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable fin module",
+        "pivot": {
+          "mode": "field center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.9
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            2.12,
+            1.95,
+            0.1
+          ],
+          "isTrigger": false
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "right-fins",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "thermal-black"
+        }
+      },
+      "material": "thermal-black",
+      "materialLayers": [
+        "thermal-black"
+      ],
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(9, 11, 12, 1)",
+        "secondaryAlbedo": "rgba(49, 52, 53, 1)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.91
+      },
+      "localFeatures": [
+        {
+          "id": "right-fin-bed",
+          "type": "dense diagonal ridges",
+          "count": 42
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.34,
+        "microRoughness": 0.2,
+        "bumpAmplitude": 0.03,
+        "normalPattern": "parallel fin edges",
+        "occlusionPattern": "between fins"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "fidelityTier": "surface"
+    }
+  ],
+  "materials": [
+    {
+      "id": "frame-metal",
+      "name": "Brushed die-cast silver frame",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial / brushed metallic approximation",
+      "qualityTier": "reference",
+      "baseColor": "#8B9093",
+      "color": "#8B9093",
+      "albedo": {
+        "dominant": "#212120",
+        "secondary": [
+          "#373736",
+          "#686562",
+          "#0B0B09"
+        ],
+        "samplingNotes": "Reference-derived from foreground pixels; de-lit to reduce baked shadows/highlights.",
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_albedo.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        }
+      },
+      "colorVariation": {
+        "palette": [
+          "#212120",
+          "#373736",
+          "#686562",
+          "#0B0B09",
+          "#DDD9D6"
+        ],
+        "pattern": "reference-derived pixel palette",
+        "amplitude": 0.25,
+        "heightCorrelation": 0.42
+      },
+      "textureResolution": 1024,
+      "textureProjection": {
+        "mode": "object-space planar",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "anisotropy": 8,
+        "texelDensityIntent": "Keep brushing at a stable 0.008 object-unit pitch along every frame arm."
+      },
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "frequency": 2.0,
+          "amplitude": 0.488,
+          "role": "reference-derived broad albedo and height breakup"
+        },
+        {
+          "id": "meso",
+          "frequency": 14.0,
+          "amplitude": 0.35,
+          "role": "reference-derived cracks, ridges, pores, grain, or leaf clusters"
+        },
+        {
+          "id": "micro",
+          "frequency": 72.0,
+          "amplitude": 0.14,
+          "role": "reference-derived micro highlight breakup under grazing light"
+        }
+      ],
+      "roughness": {
+        "base": 0.7,
+        "variation": 0.103,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_roughness.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "localResponse": "reference-derived roughness estimate; cavities and textured zones trend rougher, bright highlights trend smoother"
+      },
+      "metalness": {
+        "base": 0.95,
+        "variation": 0.03
+      },
+      "normal": {
+        "pattern": "reference-derived height-gradient normal map",
+        "strength": 0.221,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_normal.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "heightSource": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_height.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "space": "tangent"
+      },
+      "bump": {
+        "pattern": "reference-derived height field",
+        "amplitude": 0.025,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_height.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        }
+      },
+      "displacement": {
+        "pattern": "none",
+        "amplitude": 0.0,
+        "scale": 1.0,
+        "silhouetteAffects": false
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.38,
+        "contactShadowBias": 0.35,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_ao.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        },
+        "notes": "Reference-derived cavity estimate from local height minima; verify against grazing-light screenshot."
+      },
+      "wear": {
+        "edgeWear": 0.04,
+        "scratches": [
+          "sparse directional hairline brushing under grazing light"
+        ],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.01,
+        "cavityBias": 0.1,
+        "color": "#1B1D1E"
+      },
+      "localOverrides": [
+        {
+          "id": "frame-edge-gloss",
+          "region": "all exposed arm chamfer crests",
+          "roughness": 0.16,
+          "metalness": 0.98,
+          "evidenceRef": "full-object"
+        },
+        {
+          "id": "reference-pbr-pixel-evidence",
+          "type": "material-map-evidence",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "channels": [
+            "albedo",
+            "roughness",
+            "height",
+            "normal",
+            "ambient-occlusion"
+          ],
+          "notes": "Use generated maps as material evidence, then refine after browser screenshot comparison."
+        },
+        {
+          "id": "reference-pbr-pixel-evidence",
+          "type": "material-map-evidence",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "channels": [
+            "albedo",
+            "roughness",
+            "height",
+            "normal",
+            "ambient-occlusion"
+          ],
+          "notes": "Use generated maps as material evidence, then refine after browser screenshot comparison."
+        }
+      ],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there.",
+        "Reference-derived maps are estimates from image pixels; verify with neutral, grazing, and reference-matched renders.",
+        "Do not treat baked image shadows as final albedo; rerun extraction with a tighter material crop if highlights/shadows pollute the maps.",
+        "Reference-derived maps are estimates from image pixels; verify with neutral, grazing, and reference-matched renders.",
+        "Do not treat baked image shadows as final albedo; rerun extraction with a tighter material crop if highlights/shadows pollute the maps."
+      ],
+      "notes": "Single-image PBR evidence is used as directional reference and still requires neutral/grazing render review.",
+      "referencePbr": {
+        "version": "1.0",
+        "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reference-zones\\zone-r0c1.png",
+        "extractor": "stage1_intake/extract_pbr_evidence.py",
+        "method": "single-image pixel evidence with de-lighting estimate; not photogrammetry",
+        "usable": true,
+        "verdict": "pass",
+        "confidence": 0.86,
+        "estimatedFidelity": 0.86,
+        "targetThreshold": 0.7,
+        "hardLimit": "A single image cannot uniquely recover true albedo/roughness/normal/AO; maps are reference-derived estimates.",
+        "maps": {
+          "albedo": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_albedo.png",
+            "url": "/3d/rtx5090/pbr/frame/frame-metal_albedo.png",
+            "channel": "albedo",
+            "source": "reference-pixel-extraction"
+          },
+          "roughness": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_roughness.png",
+            "url": "/3d/rtx5090/pbr/frame/frame-metal_roughness.png",
+            "channel": "roughness",
+            "source": "reference-pixel-extraction"
+          },
+          "height": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_height.png",
+            "url": "/3d/rtx5090/pbr/frame/frame-metal_height.png",
+            "channel": "height",
+            "source": "reference-pixel-extraction"
+          },
+          "normal": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_normal.png",
+            "url": "/3d/rtx5090/pbr/frame/frame-metal_normal.png",
+            "channel": "normal",
+            "source": "reference-pixel-extraction"
+          },
+          "ao": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_ao.png",
+            "url": "/3d/rtx5090/pbr/frame/frame-metal_ao.png",
+            "channel": "ao",
+            "source": "reference-pixel-extraction"
+          }
+        },
+        "diagnostics": {
+          "sourceWidth": 533,
+          "sourceHeight": 300,
+          "mapSize": 1024,
+          "cropBBoxPixels": {
+            "x": 44,
+            "y": 141,
+            "width": 386,
+            "height": 159
+          },
+          "mask": {
+            "backgroundColor": "#010101",
+            "backgroundNoise": 1.732,
+            "transparentPixelFraction": 0.0,
+            "foregroundCoverage": 0.1807
+          },
+          "mapStats": {
+            "valueRange": 0.5944,
+            "heightP90Gradient": 0.05531,
+            "roughnessBase": 0.7,
+            "roughnessVariation": 0.103,
+            "normalStrength": 0.221,
+            "blurRadius": 21
+          },
+          "palette": [
+            "#212120",
+            "#373736",
+            "#686562",
+            "#0B0B09",
+            "#DDD9D6"
+          ]
+        },
+        "warnings": [
+          "single-image inverse rendering cannot prove true physical PBR; confidence is capped"
+        ]
+      }
+    },
+    {
+      "id": "thermal-black",
+      "name": "Black thermal panels and fins",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial / dark anodized metal approximation",
+      "qualityTier": "reference",
+      "baseColor": "#0A0D0F",
+      "color": "#0A0D0F",
+      "albedo": {
+        "dominant": "#52524E",
+        "secondary": [
+          "#050603",
+          "#141A0B",
+          "#293815"
+        ],
+        "samplingNotes": "Reference-derived from foreground pixels; de-lit to reduce baked shadows/highlights.",
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_albedo.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        }
+      },
+      "colorVariation": {
+        "palette": [
+          "#52524E",
+          "#050603",
+          "#141A0B",
+          "#293815",
+          "#C9C8C2"
+        ],
+        "pattern": "reference-derived pixel palette",
+        "amplitude": 0.259,
+        "heightCorrelation": 0.42
+      },
+      "textureResolution": 1024,
+      "textureProjection": {
+        "mode": "object-space planar",
+        "repeat": [
+          3,
+          3
+        ],
+        "anisotropy": 8,
+        "texelDensityIntent": "Maintain fin-adjacent microdetail at 0.006 object-unit pitch without stretching."
+      },
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "frequency": 2.0,
+          "amplitude": 0.496,
+          "role": "reference-derived broad albedo and height breakup"
+        },
+        {
+          "id": "meso",
+          "frequency": 14.0,
+          "amplitude": 0.35,
+          "role": "reference-derived cracks, ridges, pores, grain, or leaf clusters"
+        },
+        {
+          "id": "micro",
+          "frequency": 72.0,
+          "amplitude": 0.14,
+          "role": "reference-derived micro highlight breakup under grazing light"
+        }
+      ],
+      "roughness": {
+        "base": 0.696,
+        "variation": 0.104,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_roughness.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "localResponse": "reference-derived roughness estimate; cavities and textured zones trend rougher, bright highlights trend smoother"
+      },
+      "metalness": {
+        "base": 0.84,
+        "variation": 0.08
+      },
+      "normal": {
+        "pattern": "reference-derived height-gradient normal map",
+        "strength": 0.221,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_normal.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "heightSource": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "space": "tangent"
+      },
+      "bump": {
+        "pattern": "reference-derived height field",
+        "amplitude": 0.025,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        }
+      },
+      "displacement": {
+        "pattern": "geometry handles fin relief",
+        "amplitude": 0,
+        "scale": 1,
+        "silhouetteAffects": false
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.38,
+        "contactShadowBias": 0.35,
+        "map": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_ao.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        },
+        "notes": "Reference-derived cavity estimate from local height minima; verify against grazing-light screenshot."
+      },
+      "wear": {
+        "edgeWear": 0.015,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.012,
+        "cavityBias": 0.18,
+        "color": "#030405"
+      },
+      "localOverrides": [
+        {
+          "id": "fin-cavity-darkening",
+          "region": "between repeated fin geometry",
+          "roughness": 0.58,
+          "albedo": "#030506",
+          "evidenceRef": "full-object"
+        },
+        {
+          "id": "reference-pbr-pixel-evidence",
+          "type": "material-map-evidence",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "channels": [
+            "albedo",
+            "roughness",
+            "height",
+            "normal",
+            "ambient-occlusion"
+          ],
+          "notes": "Use generated maps as material evidence, then refine after browser screenshot comparison."
+        },
+        {
+          "id": "reference-pbr-pixel-evidence",
+          "type": "material-map-evidence",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "channels": [
+            "albedo",
+            "roughness",
+            "height",
+            "normal",
+            "ambient-occlusion"
+          ],
+          "notes": "Use generated maps as material evidence, then refine after browser screenshot comparison."
+        }
+      ],
+      "shaderNotes": [
+        "Use separate albedo, roughness, normal, and AO fields.",
+        "Fin ridges are real instanced geometry; the normal map only adds microresponse.",
+        "Reference-derived maps are estimates from image pixels; verify with neutral, grazing, and reference-matched renders.",
+        "Do not treat baked image shadows as final albedo; rerun extraction with a tighter material crop if highlights/shadows pollute the maps.",
+        "Reference-derived maps are estimates from image pixels; verify with neutral, grazing, and reference-matched renders.",
+        "Do not treat baked image shadows as final albedo; rerun extraction with a tighter material crop if highlights/shadows pollute the maps."
+      ],
+      "notes": "Reference-derived inference from a single baked-lighting image; validate under neutral and grazing light.",
+      "referencePbr": {
+        "version": "1.0",
+        "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reference-zones\\zone-r1c1.png",
+        "extractor": "stage1_intake/extract_pbr_evidence.py",
+        "method": "single-image pixel evidence with de-lighting estimate; not photogrammetry",
+        "usable": true,
+        "verdict": "pass",
+        "confidence": 0.86,
+        "estimatedFidelity": 0.86,
+        "targetThreshold": 0.7,
+        "hardLimit": "A single image cannot uniquely recover true albedo/roughness/normal/AO; maps are reference-derived estimates.",
+        "maps": {
+          "albedo": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_albedo.png",
+            "url": "/3d/rtx5090/pbr/thermal/thermal-black_albedo.png",
+            "channel": "albedo",
+            "source": "reference-pixel-extraction"
+          },
+          "roughness": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_roughness.png",
+            "url": "/3d/rtx5090/pbr/thermal/thermal-black_roughness.png",
+            "channel": "roughness",
+            "source": "reference-pixel-extraction"
+          },
+          "height": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+            "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+            "channel": "height",
+            "source": "reference-pixel-extraction"
+          },
+          "normal": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_normal.png",
+            "url": "/3d/rtx5090/pbr/thermal/thermal-black_normal.png",
+            "channel": "normal",
+            "source": "reference-pixel-extraction"
+          },
+          "ao": {
+            "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_ao.png",
+            "url": "/3d/rtx5090/pbr/thermal/thermal-black_ao.png",
+            "channel": "ao",
+            "source": "reference-pixel-extraction"
+          }
+        },
+        "diagnostics": {
+          "sourceWidth": 533,
+          "sourceHeight": 300,
+          "mapSize": 1024,
+          "cropBBoxPixels": {
+            "x": 0,
+            "y": 0,
+            "width": 533,
+            "height": 300
+          },
+          "mask": {
+            "backgroundColor": "#091003",
+            "backgroundNoise": 34.9,
+            "transparentPixelFraction": 0.0,
+            "foregroundCoverage": 0.4644
+          },
+          "mapStats": {
+            "valueRange": 0.6168,
+            "heightP90Gradient": 0.05511,
+            "roughnessBase": 0.696,
+            "roughnessVariation": 0.104,
+            "normalStrength": 0.221,
+            "blurRadius": 21
+          },
+          "palette": [
+            "#52524E",
+            "#050603",
+            "#141A0B",
+            "#293815",
+            "#C9C8C2"
+          ]
+        },
+        "warnings": [
+          "single-image inverse rendering cannot prove true physical PBR; confidence is capped"
+        ]
+      }
+    },
+    {
+      "id": "chassis-black",
+      "name": "Dark center chassis",
+      "type": "standard",
+      "shaderModel": "MeshStandardMaterial",
+      "qualityTier": "utility",
+      "baseColor": "#171B1D",
+      "color": "#171B1D",
+      "albedo": {
+        "dominant": "#171B1D",
+        "secondary": [
+          "#080A0B",
+          "#303538"
+        ],
+        "samplingNotes": "Dark neutral center bridge and backplate, deliberately excluding green environmental spill."
+      },
+      "colorVariation": {
+        "palette": [
+          "#101315",
+          "#202528",
+          "#34393C"
+        ],
+        "pattern": "fine powder coat",
+        "amplitude": 0.06,
+        "heightCorrelation": 0.08
+      },
+      "textureResolution": 1024,
+      "textureProjection": {
+        "mode": "triplanar-like procedural",
+        "repeat": [
+          2,
+          2
+        ],
+        "anisotropy": 4,
+        "texelDensityIntent": "Stable fine grain on differently scaled chassis pieces."
+      },
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "frequency": 2,
+          "amplitude": 0.06,
+          "role": "broad value separation"
+        },
+        {
+          "id": "meso",
+          "frequency": 14,
+          "amplitude": 0.08,
+          "role": "powder coat breakup"
+        },
+        {
+          "id": "micro",
+          "frequency": 64,
+          "amplitude": 0.035,
+          "role": "grazing highlight breakup"
+        }
+      ],
+      "roughness": {
+        "base": 0.52,
+        "variation": 0.08,
+        "map": "independent-procedural-field"
+      },
+      "metalness": {
+        "base": 0.72,
+        "variation": 0.06
+      },
+      "normal": {
+        "pattern": "independent powder-coat noise",
+        "strength": 0.11,
+        "scale": 64,
+        "space": "tangent"
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.38,
+        "contactShadowBias": 0.45,
+        "notes": "Bridge recess, ports, and backplate seams."
+      },
+      "wear": {
+        "edgeWear": 0.025,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.01,
+        "cavityBias": 0.14,
+        "color": "#050607"
+      },
+      "localOverrides": [
+        {
+          "id": "bridge-darkening",
+          "region": "center waist bridge",
+          "roughness": 0.56,
+          "albedo": "#111416",
+          "evidenceRef": "full-object"
+        }
+      ],
+      "notes": "Procedural utility material with independent roughness and normal response."
+    },
+    {
+      "id": "gold-contact",
+      "name": "PCIe contact gold",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "qualityTier": "utility",
+      "baseColor": "#C99A35",
+      "color": "#C99A35",
+      "albedo": {
+        "dominant": "#C99A35",
+        "secondary": [
+          "#7E5A18",
+          "#F2C866"
+        ],
+        "samplingNotes": "Warm metallic contact fingers are a familiar functional accent; mostly hidden in the reference."
+      },
+      "roughness": {
+        "base": 0.28,
+        "variation": 0.06,
+        "map": "independent-procedural-field"
+      },
+      "metalness": {
+        "base": 1,
+        "variation": 0
+      },
+      "normal": {
+        "pattern": "none",
+        "strength": 0,
+        "scale": 1,
+        "space": "tangent"
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.18,
+        "contactShadowBias": 0.25,
+        "notes": "Contact-root shadow only."
+      },
+      "localOverrides": [],
+      "notes": "Utility accent, intentionally simple."
+    },
+    {
+      "id": "emissive-white",
+      "name": "White product markings",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial with emissive decal carriers",
+      "qualityTier": "utility",
+      "baseColor": "#E9FBFF",
+      "color": "#E9FBFF",
+      "albedo": {
+        "dominant": "#E9FBFF",
+        "secondary": [
+          "#BDEDF5",
+          "#FFFFFF"
+        ],
+        "samplingNotes": "White RTX 5090 and GEFORCE RTX markings."
+      },
+      "roughness": {
+        "base": 0.22,
+        "variation": 0.04,
+        "map": "independent-procedural-field"
+      },
+      "metalness": {
+        "base": 0.05,
+        "variation": 0
+      },
+      "normal": {
+        "pattern": "none",
+        "strength": 0,
+        "scale": 1,
+        "space": "tangent"
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.05,
+        "contactShadowBias": 0.08,
+        "notes": "Thin raised decal carrier contact only."
+      },
+      "localOverrides": [
+        {
+          "id": "rtx5090-decal",
+          "region": "upper-left edge of center bridge",
+          "roughness": 0.18,
+          "emissive": "#E8FAFF",
+          "emissiveIntensity": 1.25,
+          "evidenceRef": "full-object"
+        },
+        {
+          "id": "geforce-emissive-mark",
+          "region": "lower side rail",
+          "roughness": 0.15,
+          "emissive": "#E9FFFF",
+          "emissiveIntensity": 1.8,
+          "evidenceRef": "full-object"
+        }
+      ],
+      "notes": "Utility decal carrier; exact typography is not claimed."
+    }
+  ],
+  "repetitionSystems": [
+    {
+      "id": "left-fin-array",
+      "name": "left parallel thermal fins",
+      "level": "meso",
+      "parent": "left-fin-bed",
+      "primitive": "box",
+      "material": "thermal-black",
+      "count": 42,
+      "instanceScale": [
+        0.035,
+        1.82,
+        0.075
+      ],
+      "placement": {
+        "mode": "linear",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "spacing": 0.052,
+        "rotationZ": -0.72
+      },
+      "geometry": {
+        "type": "instanced ridge",
+        "buildsSilhouette": true
+      },
+      "buildsGeometry": true
+    },
+    {
+      "id": "right-fin-array",
+      "name": "right parallel thermal fins",
+      "level": "meso",
+      "parent": "right-fin-bed",
+      "primitive": "box",
+      "material": "thermal-black",
+      "count": 42,
+      "instanceScale": [
+        0.035,
+        1.82,
+        0.075
+      ],
+      "placement": {
+        "mode": "linear",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "spacing": 0.052,
+        "rotationZ": -0.72
+      },
+      "geometry": {
+        "type": "instanced ridge",
+        "buildsSilhouette": true
+      },
+      "buildsGeometry": true
+    },
+    {
+      "id": "frame-fastener-array",
+      "name": "perimeter recessed fasteners",
+      "level": "micro",
+      "parent": "x-frame",
+      "primitive": "cylinder",
+      "material": "chassis-black",
+      "count": 12,
+      "instanceScale": [
+        0.038,
+        0.018,
+        0.038
+      ],
+      "placement": {
+        "mode": "perimeter",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "radius": 2.55,
+        "startAngleDeg": 12
+      },
+      "geometry": {
+        "type": "instanced dark screw head",
+        "buildsSilhouette": false
+      },
+      "buildsGeometry": true
+    },
+    {
+      "id": "left-fan-blades",
+      "name": "left radial fan blades",
+      "level": "meso",
+      "parent": "left-fan",
+      "primitive": "box",
+      "material": "thermal-black",
+      "count": 9,
+      "instanceScale": [
+        0.48,
+        0.12,
+        0.035
+      ],
+      "placement": {
+        "mode": "radial",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.66,
+        "startAngleDeg": 0
+      },
+      "geometry": {
+        "type": "curved blade approximation",
+        "buildsSilhouette": true
+      },
+      "buildsGeometry": true
+    },
+    {
+      "id": "right-fan-blades",
+      "name": "right radial fan blades",
+      "level": "meso",
+      "parent": "right-fan",
+      "primitive": "box",
+      "material": "thermal-black",
+      "count": 9,
+      "instanceScale": [
+        0.48,
+        0.12,
+        0.035
+      ],
+      "placement": {
+        "mode": "radial",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.66,
+        "startAngleDeg": 20
+      },
+      "geometry": {
+        "type": "curved blade approximation",
+        "buildsSilhouette": true
+      },
+      "buildsGeometry": true
+    }
+  ],
+  "buildPasses": [
+    {
+      "id": "blockout",
+      "goal": "Match macro silhouette and proportions.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Silhouette reads correctly without materials.",
+        "Quality contract has named all required macro feature groups before code generation.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "structural-pass",
+      "goal": "Build the component hierarchy implied by the pre-spec complexity assessment.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Macro, meso, and repeated structures meet qualityContract.minimumSpecDepth.",
+        "Parent-child relations, joints, seams, sockets, and contact points are explicit.",
+        "Every attached child appendage/connector has parentSocket, localStart/localEnd, contactType, embedDepth or overlap, and gapTolerance.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "form-refinement",
+      "goal": "Refine shape, deformation, bevels, tapers, curves, asymmetry, and visible local geometry.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Important visible forms are represented in component geometryDescriptor, deformations, localFeatures, or repetitionSystems.",
+        "Endpoint-based child parts are rooted at their attachment sockets and do not visibly float away from parents.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "material-pass",
+      "goal": "Match material color, roughness, bump, and local variation.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Reference-derived albedo palette records dominant, secondary, and accent colors per visible material.",
+        "Each important material defines roughness variation and at least one normal/bump/displacement response.",
+        "Local material overrides, dirt/wear/stains/moss/chips/scratches or equivalent masks are tied to evidenceRefs.",
+        "Thin, transparent, reflective, wet, or fibrous materials document alpha/transmission/clearcoat/metalness/fiber response when relevant.",
+        "Generated preview uses procedural albedo/roughness/bump texture or vertex color variation instead of one flat color.",
+        "Generated preview uses independent PBR maps at 1024px or higher for the quality-first tier.",
+        "If source pixels are available, referencePbr extraction passed at confidence >= 0.7 or the pass is stopped/requesting better references.",
+        "Macro, meso, and micro surface frequency bands are visible at the intended review distance without obvious tiling.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "surface-pass",
+      "goal": "Add procedural surface locality such as normal/bump/displacement, AO, dirt, stains, chips, grain, moss, scratches, and wear.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Every required material feature group has local overrides or surfaceDetail tied to evidenceRefs.",
+        "A grazing-angle close-up proves that normal/height detail breaks highlights naturally and does not read as smooth plastic.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "lighting-pass",
+      "goal": "Make material and form readable under neutral turntable lighting plus optional reference lighting.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "lightingFromPhoto identifies key light direction/color/intensity, fill light, rim or environment light, and ambient color.",
+        "Exposure, tone mapping, background color/gradient, shadow softness, and contact shadow behavior are specified.",
+        "Lighting does not hide geometry/material gaps and screenshots can be compared fairly to the reference.",
+        "Neutral, grazing, and reference-matched lighting checks distinguish material errors from lighting errors.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "interaction-pass",
+      "goal": "Make the model ready for future animation, transformation, physics, or destruction.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Macro and movable meso components have stable pivot nodes.",
+        "Sockets, collider proxies, and destruction metadata are present for future runtime actions.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "optimization-pass",
+      "goal": "Protect runtime performance after visual fidelity is accepted.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Triangle count, draw calls, instancing, LOD strategy, and FPS target are documented or verified.",
+        "Repeated detail is instanced or simplified where possible without breaking silhouette/material believability."
+      ]
+    }
+  ],
+  "visualEvidence": [
+    {
+      "timestamp": "2026-08-01T15:10:43.688932+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.72,
+      "aiVisionScore": 0.72,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.68,
+        "formDetail": 0.56,
+        "materialSurface": 0.44,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "founders-dual-slot-silhouette",
+          "score": 0.82,
+          "notes": "The continuous low carrier and paired rounded thermal zones now match the identity-defining envelope; remaining differences are interior frame topology."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/blockout-render-aligned-source.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/blockout-comparison-latest.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The outer carrier and paired thermal zones are recognizable and correctly proportioned for blockout. The reference has a subtler graphite bridge and tapered grille openings, which are deferred to structural and form passes."
+    },
+    {
+      "timestamp": "2026-08-01T15:14:22.585886+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.73,
+      "aiVisionScore": 0.73,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.79,
+        "formDetail": 0.68,
+        "materialSurface": 0.45,
+        "lightingCamera": 0.73
+      },
+      "featureReviews": [
+        {
+          "id": "x-hourglass-frame-system",
+          "score": 0.84,
+          "notes": "Four separately generated tapered arms converge on a compact bridge and are readable in match, front and grazing views."
+        },
+        {
+          "id": "diagonal-thermal-fin-fields",
+          "score": 0.8,
+          "notes": "Both thermal modules contain 34-piece repeated diagonal fin systems with cavity depth; clay lighting visually compresses their spacing."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/structural-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/structural-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The hierarchy and primary structure are complete and inspectable from the required axes. The clay pass intentionally does not attempt the black grille contrast, brushed metal, markings or final lighting."
+    },
+    {
+      "timestamp": "2026-08-01T15:15:52.405270+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.75,
+      "aiVisionScore": 0.75,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.82,
+        "formDetail": 0.77,
+        "materialSurface": 0.46,
+        "lightingCamera": 0.74
+      },
+      "featureReviews": [
+        {
+          "id": "founders-dual-slot-silhouette",
+          "score": 0.82,
+          "notes": "The continuous low body and paired rounded apertures preserve the identity-defining envelope."
+        },
+        {
+          "id": "x-hourglass-frame-system",
+          "score": 0.85,
+          "notes": "Four tapered plates now create a clear X/hourglass system around a compact bridge, side rail and recessed modules."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/form-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/form-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The model now reads as a deliberate Founders Edition form rather than a generic multi-fan GPU. The remaining visual gap is mainly material contrast, black fin density and lighting, not missing macro geometry."
+    },
+    {
+      "timestamp": "2026-08-01T15:19:19.692746+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.76,
+      "aiVisionScore": 0.76,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.82,
+        "formDetail": 0.75,
+        "materialSurface": 0.78,
+        "lightingCamera": 0.74
+      },
+      "featureReviews": [
+        {
+          "id": "brushed-metal-contrast",
+          "score": 0.78,
+          "notes": "Metallic graphite arms and bright rounded rim highlights stay clearly separated from matte black thermal fields in match and grazing views."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/material-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/material-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "Material zoning is clear and premium: graphite, silver edge reflections, black cavities and gold contacts read independently. Surface micro-response and denser fin relief are the remaining material gap."
+    },
+    {
+      "timestamp": "2026-08-01T15:24:25.250352+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.78,
+      "aiVisionScore": 0.78,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.83,
+        "formDetail": 0.79,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "diagonal-thermal-fin-fields",
+          "score": 0.82,
+          "notes": "Both apertures now contain separately repeated, evenly spaced diagonal metal fins with clear cavity depth."
+        },
+        {
+          "id": "product-markings-and-center-details",
+          "score": 0.71,
+          "notes": "RTX 5090 marking, bridge vents, power cavity, side rail and fasteners are all present; the side wordmark favors the thickness view."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/surface-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/surface-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The corrected fin orientation materially improves the reference match and avoids smooth black placeholder panels. Surface maps remain restrained, so highlights reveal micro-response without turning the card into noisy plastic."
+    },
+    {
+      "timestamp": "2026-08-01T15:26:15.167980+00:00",
+      "passId": "lighting-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.84,
+        "formDetail": 0.8,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.82
+      },
+      "featureReviews": [
+        {
+          "id": "brushed-metal-contrast",
+          "score": 0.8,
+          "notes": "Key, environment and rim lights separate brushed graphite planes, silver rim edges and matte black fin cavities without clipping."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/lighting-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/lighting-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "Lighting now exposes the intended hierarchy and material contrast in reference, front and grazing views. Neutral studio light is retained so green page effects do not contaminate the asset's base materials."
+    },
+    {
+      "timestamp": "2026-08-01T15:28:26.365557+00:00",
+      "passId": "interaction-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.85,
+        "formDetail": 0.81,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [
+        {
+          "id": "product-markings-and-center-details",
+          "score": 0.72,
+          "notes": "RTX marking, bridge vents, power socket, GEFORCE rail and fasteners persist as separately pickable detail systems."
+        }
+      ],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/interaction-render.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/interaction-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The final interactive asset preserves the reviewed visual hierarchy while adding deterministic exploded-to-assembled motion, pointer orbit, part picking and fan rotation. No interaction changes the base proportions or materials."
+    },
+    {
+      "timestamp": "2026-08-01T15:30:44.226400+00:00",
+      "passId": "optimization-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.86,
+        "formDetail": 0.81,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [],
+      "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+      "renderScreenshot": "docs/3d/rtx5090/reviews/final-match.png",
+      "comparisonImage": "docs/3d/rtx5090/reviews/final-comparison.png",
+      "cameraView": "match",
+      "notes": "",
+      "aiVisionNotes": "The final multi-angle review keeps the approved silhouette, complete detachable hierarchy, dense fins, material zoning and studio lighting. Coverage reports all 12 specified non-root components built, with no errors or warnings."
+    }
+  ],
+  "reviewHistory": [
+    {
+      "timestamp": "2026-08-01T15:10:43.688932+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.72,
+      "aiVisionScore": 0.72,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.68,
+        "formDetail": 0.56,
+        "materialSurface": 0.44,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "founders-dual-slot-silhouette",
+          "score": 0.82,
+          "notes": "The continuous low carrier and paired rounded thermal zones now match the identity-defining envelope; remaining differences are interior frame topology."
+        }
+      ],
+      "action": "continue",
+      "summary": "Continuous carrier now reads as a low Founders Edition card and the two rounded thermal apertures occupy the correct broad zones.",
+      "matched": [
+        "low continuous dual-slot envelope",
+        "two large rounded thermal zones",
+        "diagonal reference-matched presentation"
+      ],
+      "mismatches": [
+        "center frame is still too literal and wide",
+        "thermal apertures are rectangular rather than tapered",
+        "materials and fine fins intentionally absent in clay"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "taper thermal surfaces",
+        "reduce center bridge",
+        "introduce structural fin arrays in the next pass"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/blockout-render-aligned-source.png",
+        "docs/3d/rtx5090/reviews/blockout-long-axis.png",
+        "docs/3d/rtx5090/reviews/blockout-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/blockout-comparison-latest.png"
+      ],
+      "mapStrippedRender": "docs/3d/rtx5090/reviews/blockout-render-aligned-source.png",
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/blockout-render-aligned-source.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/blockout-comparison-latest.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The outer carrier and paired thermal zones are recognizable and correctly proportioned for blockout. The reference has a subtler graphite bridge and tapered grille openings, which are deferred to structural and form passes."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:14:22.585886+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.73,
+      "aiVisionScore": 0.73,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.79,
+        "formDetail": 0.68,
+        "materialSurface": 0.45,
+        "lightingCamera": 0.73
+      },
+      "featureReviews": [
+        {
+          "id": "x-hourglass-frame-system",
+          "score": 0.84,
+          "notes": "Four separately generated tapered arms converge on a compact bridge and are readable in match, front and grazing views."
+        },
+        {
+          "id": "diagonal-thermal-fin-fields",
+          "score": 0.8,
+          "notes": "Both thermal modules contain 34-piece repeated diagonal fin systems with cavity depth; clay lighting visually compresses their spacing."
+        }
+      ],
+      "action": "continue",
+      "summary": "The browser asset now has a continuous chassis plus detachable thermal, frame, bridge, rail, bracket, power and underside fan groups.",
+      "matched": [
+        "named four-arm frame hierarchy",
+        "twin repeated diagonal fin beds",
+        "continuous parent carrier and detachable child modules"
+      ],
+      "mismatches": [
+        "clay view compresses the dense fins into dark bands",
+        "panel taper and wordmarks wait for later passes"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "raise fin relief and introduce panel materials",
+        "add local markings and edge fasteners in form and surface passes"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/structural-render.png",
+        "docs/3d/rtx5090/reviews/structural-long-axis.png",
+        "docs/3d/rtx5090/reviews/structural-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/structural-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/structural-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/structural-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The hierarchy and primary structure are complete and inspectable from the required axes. The clay pass intentionally does not attempt the black grille contrast, brushed metal, markings or final lighting."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:15:52.405270+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.75,
+      "aiVisionScore": 0.75,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.82,
+        "formDetail": 0.77,
+        "materialSurface": 0.46,
+        "lightingCamera": 0.74
+      },
+      "featureReviews": [
+        {
+          "id": "founders-dual-slot-silhouette",
+          "score": 0.82,
+          "notes": "The continuous low body and paired rounded apertures preserve the identity-defining envelope."
+        },
+        {
+          "id": "x-hourglass-frame-system",
+          "score": 0.85,
+          "notes": "Four tapered plates now create a clear X/hourglass system around a compact bridge, side rail and recessed modules."
+        }
+      ],
+      "action": "continue",
+      "summary": "Tapered frame plates, compact center bridge, ports, contacts, fasteners and underside modules now resolve the Founders Edition form language.",
+      "matched": [
+        "continuous low carrier",
+        "four tapered frame plates",
+        "rounded paired apertures",
+        "compact bridge and side rail"
+      ],
+      "mismatches": [
+        "clay contrast exaggerates the frame brightness",
+        "thermal apertures still read simpler than the photographed tapered grilles"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "switch to graphite and brushed-metal material separation",
+        "use dense fin contrast and restrained normal response"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/form-render.png",
+        "docs/3d/rtx5090/reviews/form-long-axis.png",
+        "docs/3d/rtx5090/reviews/form-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/form-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/form-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/form-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The model now reads as a deliberate Founders Edition form rather than a generic multi-fan GPU. The remaining visual gap is mainly material contrast, black fin density and lighting, not missing macro geometry."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:19:19.692746+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.76,
+      "aiVisionScore": 0.76,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.82,
+        "formDetail": 0.75,
+        "materialSurface": 0.78,
+        "lightingCamera": 0.74
+      },
+      "featureReviews": [
+        {
+          "id": "brushed-metal-contrast",
+          "score": 0.78,
+          "notes": "Metallic graphite arms and bright rounded rim highlights stay clearly separated from matte black thermal fields in match and grazing views."
+        }
+      ],
+      "action": "continue",
+      "summary": "Graphite thermal fields, dark chassis, metallic frame edges, gold PCIe contacts and luminous markings are separated into dedicated PBR materials.",
+      "matched": [
+        "dark graphite against metallic frame",
+        "gold contact contrast",
+        "restrained cool-metal highlights",
+        "black thermal cavities"
+      ],
+      "mismatches": [
+        "reference grilles carry denser directional lines",
+        "surface response is intentionally still map-free in this pass"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "apply low-amplitude independent normal and roughness maps",
+        "verify grazing response without plastic glare"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/material-render.png",
+        "docs/3d/rtx5090/reviews/material-long-axis.png",
+        "docs/3d/rtx5090/reviews/material-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/material-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/material-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/material-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "Material zoning is clear and premium: graphite, silver edge reflections, black cavities and gold contacts read independently. Surface micro-response and denser fin relief are the remaining material gap."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:24:25.250352+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.78,
+      "aiVisionScore": 0.78,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.83,
+        "formDetail": 0.79,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "diagonal-thermal-fin-fields",
+          "score": 0.82,
+          "notes": "Both apertures now contain separately repeated, evenly spaced diagonal metal fins with clear cavity depth."
+        },
+        {
+          "id": "product-markings-and-center-details",
+          "score": 0.71,
+          "notes": "RTX 5090 marking, bridge vents, power cavity, side rail and fasteners are all present; the side wordmark favors the thickness view."
+        }
+      ],
+      "action": "continue",
+      "summary": "Independent low-amplitude roughness and normal maps now sit over explicit 34-fin fields on both thermal modules, with local labels, vents, ports and fasteners.",
+      "matched": [
+        "two dense diagonal fin fields",
+        "subtle non-plastic metal breakup",
+        "edge fasteners",
+        "RTX marking and power recess"
+      ],
+      "mismatches": [
+        "the real panel rims taper more organically",
+        "GEFORCE side wordmark is most legible from the side rather than the match view"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "preserve subtle map amplitude",
+        "use key and rim light to expose grille relief and side identity"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/surface-render.png",
+        "docs/3d/rtx5090/reviews/surface-long-axis.png",
+        "docs/3d/rtx5090/reviews/surface-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/surface-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/surface-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/surface-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The corrected fin orientation materially improves the reference match and avoids smooth black placeholder panels. Surface maps remain restrained, so highlights reveal micro-response without turning the card into noisy plastic."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:26:15.167980+00:00",
+      "passId": "lighting-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.84,
+        "formDetail": 0.8,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.82
+      },
+      "featureReviews": [
+        {
+          "id": "brushed-metal-contrast",
+          "score": 0.8,
+          "notes": "Key, environment and rim lights separate brushed graphite planes, silver rim edges and matte black fin cavities without clipping."
+        }
+      ],
+      "action": "continue",
+      "summary": "Cool studio key, restrained fill, cyan rim, ACES tone mapping, environment reflections and a soft contact shadow keep metal, fins and cavities readable.",
+      "matched": [
+        "bright controlled frame edges",
+        "dark cavities retain detail",
+        "fin relief reads from match and grazing views",
+        "soft grounded shadow"
+      ],
+      "mismatches": [
+        "reference carries strong green environmental spill that is deliberately not baked into the product material"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "keep neutral product lighting in the 3D review",
+        "let page-level cyan circuitry provide the branded accent"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/lighting-render.png",
+        "docs/3d/rtx5090/reviews/lighting-long-axis.png",
+        "docs/3d/rtx5090/reviews/lighting-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/lighting-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/lighting-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/lighting-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "Lighting now exposes the intended hierarchy and material contrast in reference, front and grazing views. Neutral studio light is retained so green page effects do not contaminate the asset's base materials."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:28:26.365557+00:00",
+      "passId": "interaction-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.85,
+        "formDetail": 0.81,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [
+        {
+          "id": "product-markings-and-center-details",
+          "score": 0.72,
+          "notes": "RTX marking, bridge vents, power socket, GEFORCE rail and fasteners persist as separately pickable detail systems."
+        }
+      ],
+      "action": "continue",
+      "summary": "Every assembly module now interpolates from a stable exploded transform, remains ray-pickable and follows the sticky scroll timeline; fin beds are selectable integral subparts.",
+      "matched": [
+        "scroll-staged assembly",
+        "pointer orbit",
+        "ray-picked part scale feedback",
+        "fan motion",
+        "named part manifest",
+        "multi-axis inspection"
+      ],
+      "mismatches": [
+        "selection feedback is deliberately subtle to preserve the premium product view"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "retain reduced-motion fallback and dispose all renderer resources",
+        "verify manifest coverage and final browser scroll"
+      ],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/interaction-render.png",
+        "docs/3d/rtx5090/reviews/interaction-long-axis.png",
+        "docs/3d/rtx5090/reviews/interaction-thickness-axis.png",
+        "docs/3d/rtx5090/reviews/interaction-comparison.png"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/interaction-render.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/interaction-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The final interactive asset preserves the reviewed visual hierarchy while adding deterministic exploded-to-assembled motion, pointer orbit, part picking and fan rotation. No interaction changes the base proportions or materials."
+      }
+    },
+    {
+      "timestamp": "2026-08-01T15:30:44.226400+00:00",
+      "passId": "optimization-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.81,
+        "componentStructure": 0.86,
+        "formDetail": 0.81,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [],
+      "action": "continue",
+      "summary": "Final browser asset uses instanced fin geometry, capped pixel ratio, visibility gating, deterministic disposal and complete named-part coverage.",
+      "matched": [
+        "15 named parts cover all specified macro and meso systems",
+        "0 unnamed meshes",
+        "instanced repeated fins",
+        "context loss fallback",
+        "reduced-motion path"
+      ],
+      "mismatches": [
+        "single-view reconstruction remains an explicit approximation of hidden rear and internal geometry"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "docs/3d/rtx5090/reviews/final-match.png",
+        "docs/3d/rtx5090/reviews/final-front.png",
+        "docs/3d/rtx5090/reviews/final-rear.png",
+        "docs/3d/rtx5090/reviews/final-grazing.png",
+        "docs/3d/rtx5090/reviews/final-comparison.png",
+        "docs/3d/rtx5090/reviews/part-coverage.json"
+      ],
+      "reviewViewpoints": [
+        "match",
+        "long-axis",
+        "thickness-axis",
+        "rear",
+        "grazing"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "docs/3d/rtx5090/reviews/reference-card-crop.png",
+        "renderScreenshot": "docs/3d/rtx5090/reviews/final-match.png",
+        "comparisonImage": "docs/3d/rtx5090/reviews/final-comparison.png",
+        "cameraView": "match",
+        "notes": "",
+        "aiVisionNotes": "The final multi-angle review keeps the approved silhouette, complete detachable hierarchy, dense fins, material zoning and studio lighting. Coverage reports all 12 specified non-root components built, with no errors or warnings."
+      }
+    }
+  ],
+  "lodPlan": [
+    {
+      "tier": "near",
+      "distance": 0,
+      "strategy": "full component tree and material layers"
+    },
+    {
+      "tier": "far",
+      "distance": 30,
+      "strategy": "merge static components and reduce local feature geometry"
+    }
+  ],
+  "performanceBudget": {
+    "qualityPriority": "reference-fidelity",
+    "targetTriangles": 250000,
+    "maxDrawCalls": 160,
+    "textureSize": 2048,
+    "fpsTarget": 30,
+    "optimizationPolicy": "Reach accepted visual fidelity first, then optimize without removing reference-critical geometry or surface layers."
+  },
+  "lightingFromPhoto": [
+    {
+      "id": "key-light",
+      "type": "rect-area key light",
+      "direction": [
+        -0.65,
+        0.82,
+        0.72
+      ],
+      "color": "#E8F6FF",
+      "colorTemperatureK": 7200,
+      "intensity": 4.6,
+      "shadowSoftness": 0.55,
+      "note": "Cool grazing key exposes the frame chamfers and fin ridges."
+    },
+    {
+      "id": "fill-light",
+      "type": "hemisphere and soft area fill",
+      "direction": [
+        0.45,
+        -0.2,
+        0.55
+      ],
+      "color": "#7FA8BA",
+      "intensity": 0.72,
+      "note": "Lift graphite panels without flattening center cavities."
+    },
+    {
+      "id": "rim-light",
+      "type": "cyan rear rim",
+      "direction": [
+        0.7,
+        0.45,
+        -0.8
+      ],
+      "color": "#45D9FF",
+      "intensity": 2.4,
+      "note": "Separate the two-slot silhouette from the near-black background."
+    },
+    {
+      "id": "render-response",
+      "type": "renderer and ground response",
+      "exposure": 1.05,
+      "toneMapping": "ACES Filmic",
+      "background": "radial gradient #071016 to #030607",
+      "contactShadow": "soft elliptical ground shadow at 0.2 opacity with AO under assembled overlaps",
+      "environment": "low-intensity cool studio reflections"
+    }
+  ],
+  "proceduralStrategy": [
+    "Block out macro silhouette first.",
+    "Add component hierarchy and joints.",
+    "Create stable pivot groups, sockets, collider proxies, and destruction metadata before visual polish.",
+    "Refine forms with bevels, tapers, bends, and procedural noise.",
+    "Run reference PBR extraction for important source-image materials and stop when confidence is below the target threshold.",
+    "Add material variation before adding expensive micro-geometry."
+  ],
+  "animationAnchors": [
+    "root pivot node supports whole-object translation, rotation, scale, and visibility changes",
+    "component pivot groups support later local transforms without rebuilding geometry"
+  ],
+  "destructionAnchors": [
+    "actionProfile.destruction.fractureGroup marks detachable or breakable component sets",
+    "component seams and sockets define plausible break points instead of random explosions"
+  ],
+  "risks": [],
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "NVIDIA GeForce RTX 5090 Founders Edition graphics card hard surface die-cast frame brushed aluminum thermal fins exploded assembly mechanical product layered shell fan modules browser real-time",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "ac4f0bc9028e34083dbb5d5531ae3df7699c8e7641d5f8e6d42e7492ea1be1d0"
+    },
+    "matches": [
+      {
+        "record_id": "core.description-controlled-vocabulary-aat-facets",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.description_conventions[5]",
+        "score": 5.515440457599,
+        "snippets": [
+          "... hồ hoặc không nhất quán. Recognition cues: Material/attribute terms should be drawn from a fixed enumerated list (e.g. 'brushed steel', 'anodized aluminum') rather than free-form phrasing that varies between descriptions of the same ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.description_conventions[5]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-anisotropy",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[6]",
+        "score": 4.035050394605,
+        "snippets": [
+          "Directional specular stretching seen on brushed or grooved metal, where reflections elongate along the grain direction. Hiện tượng phản xạ specular kéo dài theo một hướng, thấy trên kim loại được chải xước hoặc có rãnh, phản xạ kéo dài theo ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[6]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.description-honest-uncertainty-single-image-limits-convention",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.description_conventions[6]",
+        "score": 3.986222861816,
+        "snippets": [
+          "... định' thay vì bịa ra chi tiết trông hợp lý nhưng không thấy trong ảnh tham chiếu. Recognition cues: Any attribute for a surface not visible in the reference image should be flagged explicitly rather than filled with a guessed value; This is ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.description_conventions[6]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  },
+  "pbrExtractionHistory": [
+    {
+      "materialId": "frame-metal",
+      "confidence": 0.86,
+      "verdict": "pass",
+      "usable": true,
+      "maps": {
+        "albedo": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_albedo.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        },
+        "roughness": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_roughness.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "height": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_height.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "normal": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_normal.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "ao": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_ao.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        }
+      }
+    },
+    {
+      "materialId": "frame-metal",
+      "confidence": 0.86,
+      "verdict": "pass",
+      "usable": true,
+      "maps": {
+        "albedo": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_albedo.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        },
+        "roughness": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_roughness.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "height": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_height.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "normal": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_normal.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "ao": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\frame\\frame-metal_ao.png",
+          "url": "/3d/rtx5090/pbr/frame/frame-metal_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        }
+      }
+    },
+    {
+      "materialId": "thermal-black",
+      "confidence": 0.86,
+      "verdict": "pass",
+      "usable": true,
+      "maps": {
+        "albedo": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_albedo.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        },
+        "roughness": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_roughness.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "height": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "normal": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_normal.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "ao": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_ao.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        }
+      }
+    },
+    {
+      "materialId": "thermal-black",
+      "confidence": 0.86,
+      "verdict": "pass",
+      "usable": true,
+      "maps": {
+        "albedo": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_albedo.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_albedo.png",
+          "channel": "albedo",
+          "source": "reference-pixel-extraction"
+        },
+        "roughness": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_roughness.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_roughness.png",
+          "channel": "roughness",
+          "source": "reference-pixel-extraction"
+        },
+        "height": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_height.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_height.png",
+          "channel": "height",
+          "source": "reference-pixel-extraction"
+        },
+        "normal": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_normal.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_normal.png",
+          "channel": "normal",
+          "source": "reference-pixel-extraction"
+        },
+        "ao": {
+          "path": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\pbr\\thermal\\thermal-black_ao.png",
+          "url": "/3d/rtx5090/pbr/thermal/thermal-black_ao.png",
+          "channel": "ao",
+          "source": "reference-pixel-extraction"
+        }
+      }
+    }
+  ],
+  "tier1Results": [
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.4608,
+        "aspectRatioDelta": 0.1607,
+        "scaleDelta": 0.1915,
+        "bilateralSymmetryError": 0.0002,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 12.43,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.61
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.61
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.65
+            },
+            {
+              "componentId": null,
+              "deltaE": 10.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.43
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.15
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.19
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.19
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.461 is below threshold 0.85",
+        "aspect-ratio delta 0.161 exceeds threshold 0.05",
+        "scale delta 0.192 exceeds threshold 0.08"
+      ],
+      "renderHash": "3bc38538d6def1c5",
+      "passId": "blockout",
+      "mapStrippedRender": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reviews\\blockout-render.png"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.4608,
+        "aspectRatioDelta": 0.1607,
+        "scaleDelta": 0.1915,
+        "bilateralSymmetryError": 0.0002,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 12.43,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.61
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.61
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.65
+            },
+            {
+              "componentId": null,
+              "deltaE": 10.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.43
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.15
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.19
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.19
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.461 is below threshold 0.85",
+        "aspect-ratio delta 0.161 exceeds threshold 0.05",
+        "scale delta 0.192 exceeds threshold 0.08"
+      ],
+      "renderHash": "3bc38538d6def1c5",
+      "passId": "blockout",
+      "mapStrippedRender": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reviews\\blockout-render.png"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.318,
+        "aspectRatioDelta": 0.2089,
+        "scaleDelta": 0.6627,
+        "bilateralSymmetryError": 0.0079,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 12.5,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.44
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.44
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.5
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.35
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.79
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.06
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.99
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.99
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.18
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.18
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.318 is below threshold 0.85",
+        "aspect-ratio delta 0.209 exceeds threshold 0.05",
+        "scale delta 0.663 exceeds threshold 0.08"
+      ],
+      "renderHash": "0823f2d55e505ea1",
+      "passId": "blockout",
+      "mapStrippedRender": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\docs\\3d\\rtx5090\\reviews\\blockout-diagnostic.png"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 89.36,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 24.15
+            },
+            {
+              "componentId": null,
+              "deltaE": 74.39
+            },
+            {
+              "componentId": null,
+              "deltaE": 83.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 38.4
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.36
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "renderHash": "52be2bdd978cd4df",
+      "passId": "blockout",
+      "mapStrippedRender": "docs\\3d\\rtx5090\\reviews\\blockout-render-aligned-source.png"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 89.36,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 24.15
+            },
+            {
+              "componentId": null,
+              "deltaE": 74.39
+            },
+            {
+              "componentId": null,
+              "deltaE": 83.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 38.4
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.36
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "renderHash": "52be2bdd978cd4df",
+      "passId": "structural-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 89.36,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 85.08
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.54
+            },
+            {
+              "componentId": null,
+              "deltaE": 24.15
+            },
+            {
+              "componentId": null,
+              "deltaE": 74.39
+            },
+            {
+              "componentId": null,
+              "deltaE": 83.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 38.4
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.36
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 89.09
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 88.26
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "renderHash": "52be2bdd978cd4df",
+      "passId": "form-refinement"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 5.69,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.05
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.0
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.04
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [],
+      "renderHash": "04ad1ebbce307e25",
+      "passId": "material-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 5.69,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.05
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.0
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.04
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [],
+      "renderHash": "04ad1ebbce307e25",
+      "passId": "surface-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 5.69,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.05
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.0
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.04
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [],
+      "renderHash": "04ad1ebbce307e25",
+      "passId": "lighting-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 5.69,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.05
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.0
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.04
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [],
+      "renderHash": "04ad1ebbce307e25",
+      "passId": "interaction-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.8814,
+        "aspectRatioDelta": 0.0,
+        "scaleDelta": 0.0,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 13,
+          "maxDeltaE": 5.69,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.05
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.0
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.04
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.42
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.6
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [],
+      "renderHash": "04ad1ebbce307e25",
+      "passId": "optimization-pass"
+    }
+  ]
+}

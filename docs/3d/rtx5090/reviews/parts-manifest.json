@@ -1,0 +1,22 @@
+{
+  "model": "nvidia-geforce-rtx-5090-founders-edition",
+  "parts": [
+    { "name": "backplate", "kind": "part", "module": "backplate", "triangles": 2700 },
+    { "name": "left-thermal", "kind": "part", "module": "left-thermal", "triangles": 4464 },
+    { "name": "right-thermal", "kind": "part", "module": "right-thermal", "triangles": 4464 },
+    { "name": "x-frame", "kind": "part", "module": "x-frame", "triangles": 240 },
+    { "name": "center-bridge", "kind": "part", "module": "center-bridge", "triangles": 2352 },
+    { "name": "left-fan", "kind": "part", "module": "left-fan", "triangles": 4972 },
+    { "name": "right-fan", "kind": "part", "module": "right-fan", "triangles": 4972 },
+    { "name": "io-bracket", "kind": "part", "module": "io-bracket", "triangles": 1788 },
+    { "name": "side-rail", "kind": "part", "module": "side-rail", "triangles": 588 },
+    { "name": "power-socket", "kind": "part", "module": "power-socket", "triangles": 588 },
+    { "name": "pcie-contacts", "kind": "part", "module": "pcie-contacts", "triangles": 7500 },
+    { "name": "frame-fasteners", "kind": "part", "module": "frame-fasteners", "triangles": 576 },
+    { "name": "markings", "kind": "part", "module": "markings", "triangles": 4 },
+    { "name": "left-fin-bed", "kind": "integral-part", "module": "left-thermal", "triangles": 408 },
+    { "name": "right-fin-bed", "kind": "integral-part", "module": "right-thermal", "triangles": 408 }
+  ],
+  "unnamedMeshes": 0,
+  "integralMeshes": 79
+}

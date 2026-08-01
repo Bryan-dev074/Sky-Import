@@ -1,0 +1,362 @@
+{
+  "targetName": "NVIDIA GeForce RTX 5090 Founders Edition",
+  "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\public\\products\\geforce-rtx-5090-founders-edition-32gb\\primary.webp",
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "dual-slot desktop graphics card",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "hard-surface",
+        "geometric",
+        "mechanical"
+      ],
+      "structureKind": [
+        "compound object",
+        "layered shell",
+        "repeated modules",
+        "detachable assembly"
+      ],
+      "motionPotential": [
+        "detachable",
+        "whole-object transform",
+        "effect-emitter"
+      ],
+      "materialFamilies": [
+        "brushed aluminum",
+        "anodized metal",
+        "painted metal",
+        "matte polymer"
+      ],
+      "notes": "Observed as a low rectangular GPU in three-quarter view. A silver die-cast X/hourglass frame bridges two rounded black thermal panels around a narrow center waist. The implementation is an honest browser-real-time approximation of the visible view; hidden underside and internal geometry are not claimed as exact."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 2,
+        "componentCount": 3,
+        "hierarchyDepth": 2,
+        "repetitionDensity": 3,
+        "materialLayerCount": 2,
+        "localDetailDensity": 3,
+        "occlusionRisk": 3,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 5,
+        "mesoComponents": 12,
+        "microFeatureGroups": 14,
+        "materialLayers": 5,
+        "repetitionSystems": 3
+      },
+      "reasoning": [
+        "The outer silhouette is simple at distance but interrupted by four diagonal frame arms, two rounded thermal apertures, and a narrow center waist.",
+        "The visible design needs separate shell, frame, thermal, bridge, rail, connector, marking, fastener, and fin systems so it can assemble in stages.",
+        "Dense diagonal fins and repeated edge hardware create high repetition density even though the macro form stays compact.",
+        "The single three-quarter reference hides the rear face, I/O bracket, PCB topology, and exact fan cavities, so those regions remain approximate."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Complex is justified by the layered frame and thermal hierarchy, dense repeated fins, multiple metallic responses, and detachable assembly requirement."
+    },
+    "unknownsToResolveBeforeImplementation": [
+      "The underside and rear face are hidden; use a restrained dark backplate without claiming manufacturing accuracy.",
+      "The source hero image does not clearly expose the internal PCB, fan blades, or vapor chamber; represent these as plausible low-detail assembly layers.",
+      "The display bracket and exact port openings are cropped or occluded; include a recognizable bracket silhouette only.",
+      "Small inscriptions are legible only as RTX 5090 and GEFORCE RTX; reproduce them as simple browser text/decal carriers rather than exact typography."
+    ],
+    "detailInventory": {
+      "scanMethod": "grid-3x3",
+      "targetMinDetails": 14,
+      "note": "Nine-zone inspection of the supplied official-style product hero. Black and green background waves are excluded from object geometry.",
+      "details": [
+        {"id":"left-panel-rounded-rim","kind":"bevel","description":"Bright rounded metallic rim around the upper thermal panel.","region":{"x":0.32,"y":0.17,"width":0.22,"height":0.27,"units":"normalized"},"scale":"meso","affects":"geometry","mapsTo":{"type":"component.localFeatures","ref":"left-panel-chamfer"},"evidenceRef":"reference-zones/zone-r0c1.png","confidence":0.96},
+        {"id":"left-fin-lines","kind":"ridge","description":"Dense diagonal parallel fins inside the upper thermal aperture.","region":{"x":0.35,"y":0.2,"width":0.19,"height":0.2,"units":"normalized"},"scale":"micro repeated","affects":"geometry and roughness","mapsTo":{"type":"component.localFeatures","ref":"left-fin-bed"},"evidenceRef":"reference-zones/zone-r0c1.png","confidence":0.96},
+        {"id":"upper-frame-bright-edge","kind":"gloss","description":"Low-roughness silver highlight along the upper frame edge.","region":{"x":0.3,"y":0.17,"width":0.25,"height":0.18,"units":"normalized"},"scale":"meso","affects":"roughness","mapsTo":{"type":"material.localOverrides","ref":"frame-edge-gloss"},"evidenceRef":"reference-zones/zone-r0c1.png","confidence":0.9},
+        {"id":"center-waist-recess","kind":"groove","description":"Deep horizontal vent/recess through the center waist.","region":{"x":0.37,"y":0.49,"width":0.2,"height":0.12,"units":"normalized"},"scale":"meso","affects":"geometry and ambient occlusion","mapsTo":{"type":"component.localFeatures","ref":"bridge-vent-slot"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.95},
+        {"id":"power-socket-cavity","kind":"hole","description":"Dark rectangular power/connector cavity beside the waist vent.","region":{"x":0.52,"y":0.49,"width":0.06,"height":0.1,"units":"normalized"},"scale":"meso","affects":"geometry","mapsTo":{"type":"component.localFeatures","ref":"power-socket-opening"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.83},
+        {"id":"rtx5090-marking","kind":"decal","description":"Small white RTX 5090 identifier on the center bridge.","region":{"x":0.4,"y":0.43,"width":0.08,"height":0.04,"units":"normalized"},"scale":"micro","affects":"albedo","mapsTo":{"type":"material.localOverrides","ref":"rtx5090-decal"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.98},
+        {"id":"right-panel-rounded-rim","kind":"bevel","description":"Bright rounded metallic rim around the lower-right thermal panel.","region":{"x":0.56,"y":0.4,"width":0.25,"height":0.25,"units":"normalized"},"scale":"meso","affects":"geometry","mapsTo":{"type":"component.localFeatures","ref":"right-panel-chamfer"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.96},
+        {"id":"right-fin-lines","kind":"ridge","description":"Dense diagonal parallel fins inside the lower-right thermal aperture.","region":{"x":0.59,"y":0.42,"width":0.2,"height":0.2,"units":"normalized"},"scale":"micro repeated","affects":"geometry and roughness","mapsTo":{"type":"component.localFeatures","ref":"right-fin-bed"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.96},
+        {"id":"x-frame-crossing","kind":"ridge","description":"Four raised metallic arms form the distinctive X/hourglass bridge.","region":{"x":0.33,"y":0.3,"width":0.48,"height":0.37,"units":"normalized"},"scale":"macro","affects":"silhouette and geometry","mapsTo":{"type":"component.localFeatures","ref":"x-frame-arms"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.94},
+        {"id":"frame-panel-seam","kind":"seam","description":"Dark construction seam separates the X frame from both thermal panels.","region":{"x":0.32,"y":0.2,"width":0.48,"height":0.42,"units":"normalized"},"scale":"meso","affects":"geometry and ambient occlusion","mapsTo":{"type":"component.localFeatures","ref":"frame-panel-seams"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.89},
+        {"id":"geforce-side-mark","kind":"emissive","description":"GEFORCE RTX side wordmark reads as a bright white luminous strip.","region":{"x":0.63,"y":0.57,"width":0.15,"height":0.06,"units":"normalized"},"scale":"micro","affects":"emissive and albedo","mapsTo":{"type":"material.localOverrides","ref":"geforce-emissive-mark"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.95},
+        {"id":"dark-anodized-center","kind":"stain","description":"Center bridge is darker and slightly more matte than the bright outer frame edges.","region":{"x":0.41,"y":0.35,"width":0.23,"height":0.25,"units":"normalized"},"scale":"meso","affects":"albedo and roughness","mapsTo":{"type":"material.localOverrides","ref":"bridge-darkening"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.88},
+        {"id":"frame-edge-chamfers","kind":"bevel","description":"Continuous narrow chamfer catches light along exposed die-cast frame edges.","region":{"x":0.31,"y":0.17,"width":0.5,"height":0.48,"units":"normalized"},"scale":"meso","affects":"geometry","mapsTo":{"type":"component.localFeatures","ref":"frame-chamfers"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.93},
+        {"id":"edge-fastener-row","kind":"fastener","description":"Tiny dark fastener accents repeat along the frame-panel perimeter.","region":{"x":0.31,"y":0.2,"width":0.5,"height":0.42,"units":"normalized"},"scale":"micro repeated","affects":"geometry","mapsTo":{"type":"component.localFeatures","ref":"edge-fasteners"},"evidenceRef":"reference-zones/zone-r1c1.png","confidence":0.67}
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "D:\\CODE\\SkyImport\\.worktrees\\premium-store-3d\\public\\products\\geforce-rtx-5090-founders-edition-32gb\\primary.webp"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "At the reference three-quarter view, the model must immediately read as an RTX 5090 Founders Edition rather than a generic triple-fan card.",
+      "The browser model must preserve the low dual-slot proportion, two rounded thermal fields, silver X/hourglass frame, center waist, fin density, and two visible wordmarks.",
+      "Every assembly group must move from an exploded offset into a gap-free socketed final position during scroll and remain individually pickable.",
+      "Brushed metallic highlights, matte black thermal masses, edge seams, repeated fins, and luminous side marking must remain legible under neutral and grazing light."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 5,
+      "mesoComponents": 12,
+      "microFeatureGroups": 14,
+      "materialLayers": 5,
+      "repetitionSystems": 3,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Overall ratio follows the official 304 mm by 137 mm dual-slot envelope.",
+          "Four diagonal frame arms pinch toward the center waist and leave two rounded thermal apertures.",
+          "No triple-fan rectangle or oversized shroud replaces the Founders Edition silhouette."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic add-in-board card",
+          "frame loses the X/hourglass negative space",
+          "card becomes too thick or too tall"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Backplate, thermal blocks, fin beds, frame arms, bridge, side rail, connector, bracket, and markings exist as named parts.",
+          "Thermal panels sit behind the frame and both meet the center bridge without visible gaps.",
+          "Macro, meso, and micro levels are all represented in the component hierarchy."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every detachable assembly group defines parent socket, local start/end, overlap, and gap tolerance.",
+          "Final scroll positions embed frame arms, thermal modules, bridge, rail, and bracket into the backplate by at least 0.02 object units.",
+          "Exploded offsets originate from each final local socket so parts cannot drift or snap through the core."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Silver frame uses metallic response with directional brushing and a brighter low-roughness edge override.",
+          "Thermal panels and fins use separate near-black values and roughness so the fin relief remains readable.",
+          "Center bridge is darker and more matte than the exposed frame edges.",
+          "No albedo image is reused as roughness, normal, height, or ambient occlusion."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Reference-matched view uses a cool key, soft fill, cyan rim, ACES tone mapping, dark background, and contact shadow.",
+          "Neutral, grazing-angle, and two orbit renders prove the silhouette and metallic relief independently of the supplied image.",
+          "Reference-derived color decisions are procedural and explicitly limited because the hero source contains baked lighting and green environmental reflections."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "silver frame and black thermal fields collapse into one value",
+          "lighting is evenly ambient and hides chamfers or fin relief"
+        ]
+      },
+      {
+        "id": "identity-detail-system",
+        "name": "Founders Edition identity details",
+        "required": true,
+        "qualityCriteria": [
+          "Both dense diagonal fin fields, the center vent, power cavity, RTX 5090 decal, GEFORCE RTX luminous mark, panel seams, chamfers, and perimeter fasteners are represented.",
+          "At least fourteen inventoried details map to component local features or material local overrides."
+        ],
+        "evidenceRefs": ["reference-zones/zone-r0c1.png", "reference-zones/zone-r1c1.png"],
+        "failureModes": ["recognizable micro details are replaced by generic noise", "inventoried details exist only in prose"]
+      },
+      {
+        "id": "scroll-assembly-performance",
+        "name": "Interactive scroll assembly",
+        "required": true,
+        "qualityCriteria": [
+          "The section remains sticky until the full card is assembled, then releases normal document scroll.",
+          "Assembly progress is deterministic from section scroll distance and has a complete reduced-motion fallback.",
+          "The final assembled card can orbit subtly, spin its fans, and highlight a clicked group without layout jank."
+        ],
+        "evidenceRefs": ["runtime-home-assembly"],
+        "failureModes": ["page releases before assembly completes", "scroll becomes trapped after completion", "continuous React state updates cause visible stutter"]
+      }
+    ],
+    "visualDeltaChecks": [
+      "dual-slot 304:137 silhouette and X-frame negative-space delta",
+      "rounded thermal panel placement and center-waist delta",
+      "diagonal fin density, angle, and distribution delta",
+      "silver frame versus black panel albedo and roughness delta",
+      "RTX 5090 and GEFORCE RTX marking placement delta",
+      "exploded-to-assembled socket and gap delta",
+      "reference view plus front, rear three-quarter, and grazing-light orbit delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "authoringInstruction": "Fill observed object class, complexity reasoning, featureGroups, visualDeltaChecks, and unknowns before generating or implementing ObjectSculptSpec.",
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "NVIDIA GeForce RTX 5090 Founders Edition graphics card hard surface die-cast frame brushed aluminum thermal fins exploded assembly mechanical product layered shell fan modules browser real-time",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "ac4f0bc9028e34083dbb5d5531ae3df7699c8e7641d5f8e6d42e7492ea1be1d0"
+    },
+    "matches": [
+      {
+        "record_id": "core.description-controlled-vocabulary-aat-facets",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.description_conventions[5]",
+        "score": 5.515440457599,
+        "snippets": [
+          "... hồ hoặc không nhất quán. Recognition cues: Material/attribute terms should be drawn from a fixed enumerated list (e.g. 'brushed steel', 'anodized aluminum') rather than free-form phrasing that varies between descriptions of the same ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.description_conventions[5]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-anisotropy",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[6]",
+        "score": 4.035050394605,
+        "snippets": [
+          "Directional specular stretching seen on brushed or grooved metal, where reflections elongate along the grain direction. Hiện tượng phản xạ specular kéo dài theo một hướng, thấy trên kim loại được chải xước hoặc có rãnh, phản xạ kéo dài theo ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[6]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.description-honest-uncertainty-single-image-limits-convention",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.description_conventions[6]",
+        "score": 3.986222861816,
+        "snippets": [
+          "... định' thay vì bịa ra chi tiết trông hợp lý nhưng không thấy trong ảnh tham chiếu. Recognition cues: Any attribute for a surface not visible in the reference image should be flagged explicitly rather than filled with a guessed value; This is ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.description_conventions[6]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  }
+}
