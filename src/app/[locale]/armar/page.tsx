@@ -26,7 +26,13 @@ export default async function BuilderPage({ params }: { params: Promise<{ locale
 
   return (
     <>
-      <PageHeader eyebrow="build.eyebrow" title="build.title" lede="build.lede" background="beams" />
+      <PageHeader
+        eyebrow="build.eyebrow"
+        title="build.title"
+        lede="build.lede"
+        background="beams"
+        beamSpeed={2.8}
+      />
       <Configurator />
     </>
   )

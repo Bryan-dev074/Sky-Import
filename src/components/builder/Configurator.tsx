@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ProductImage } from '@/components/product/ProductImage'
@@ -21,6 +22,9 @@ import {
   type BuildSlot,
 } from '@/lib/compat'
 import type { CompatKind, Product } from '@/lib/catalog/types'
+import { getPcAssemblyPlan } from '@/lib/pcAssemblyPlan'
+
+const PcBuildScene = dynamic(() => import('@/components/builder/PcBuildScene'), { ssr: false })
 
 /**
  * TABLERO DE COMPATIBILIDAD
@@ -59,6 +63,7 @@ export function Configurator() {
   const toast = useUi((s) => s.toast)
 
   const [openSlot, setOpenSlot] = useState<BuildSlot | null>(null)
+  const [sceneReady, setSceneReady] = useState(false)
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeDialog = useCallback(() => setOpenSlot(null), [])
   useFocusTrap(dialogRef, openSlot !== null, closeDialog)
@@ -66,6 +71,7 @@ export function Configurator() {
   const build = useMemo(() => resolveBuild(picks), [picks])
   const issues = useMemo(() => checkBuild(build), [build])
   const status = summarize(issues)
+  const scenePlan = useMemo(() => getPcAssemblyPlan(picks, status.blocking), [picks, status.blocking])
   const draw = estimatedDrawW(build)
   const psu = suggestedPsuW(build)
 
@@ -85,9 +91,123 @@ export function Configurator() {
   }, [issues])
 
   const overall = chosen.length === 0 ? 'vacio' : status.status
+  const coolingType =
+    build.cooling?.compat.kind === 'cooling' ? build.cooling.compat.type : undefined
+  const sceneStatusKey = scenePlan.powered
+    ? 'build.scene.powered'
+    : scenePlan.complete && status.blocking > 0
+      ? 'build.scene.blocked'
+      : scenePlan.selectedCount > 0
+        ? 'build.scene.assembling'
+        : 'build.scene.idle'
+  const onSceneReady = useCallback(() => setSceneReady(true), [])
+  const onSceneLost = useCallback(() => setSceneReady(false), [])
 
   return (
-    <div className="u-page grid gap-10 pb-24 lg:grid-cols-12 lg:gap-12">
+    <div className="u-page pb-24">
+      <section
+        className="u-pc-lab relative mb-12 min-h-[660px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#05090c] shadow-[0_38px_120px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.06)] sm:min-h-[680px]"
+        aria-labelledby="pc-live-title"
+      >
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_66%_45%,rgba(43,196,237,0.13),transparent_38%),radial-gradient(circle_at_12%_88%,rgba(23,96,124,0.13),transparent_34%)]" />
+          <div className="u-pc-lab-grid absolute -inset-[30%] opacity-30 [background-image:linear-gradient(rgba(67,184,220,0.13)_1px,transparent_1px),linear-gradient(90deg,rgba(67,184,220,0.13)_1px,transparent_1px)] [background-size:46px_46px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+          <div className="u-pc-lab-scan absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
+        </div>
+
+        <div className="pointer-events-none absolute inset-x-5 top-5 z-20 flex flex-col items-start gap-3 sm:inset-x-7 sm:top-7 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="w-full sm:w-auto">
+            <p className="u-eyebrow">{t('build.scene.eyebrow')}</p>
+            <h2 id="pc-live-title" className="mt-3 max-w-md text-[clamp(1.35rem,3.2vw,2.45rem)] font-semibold leading-tight tracking-[-0.04em] text-fg">
+              {t('build.scene.title')}
+            </h2>
+          </div>
+          <div className="shrink-0 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-left backdrop-blur-sm sm:text-right">
+            <p className="font-mono text-[0.6rem] tracking-[0.15em] text-fg-low uppercase">
+              {scenePlan.selectedCount}/{scenePlan.totalSlots}
+            </p>
+            <p
+              className={`mt-1 font-mono text-[0.62rem] tracking-[0.12em] uppercase ${
+                scenePlan.powered
+                  ? 'text-accent drop-shadow-[0_0_10px_rgba(66,205,255,0.95)]'
+                  : scenePlan.complete && status.blocking > 0
+                    ? 'text-rust'
+                    : 'text-fg-mid'
+              }`}
+            >
+              {t(sceneStatusKey)}
+            </p>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 z-10 pt-40 sm:pt-20">
+          <PcBuildScene
+            picks={picks}
+            blockingIssues={status.blocking}
+            coolingType={coolingType}
+            onReady={onSceneReady}
+            onLost={onSceneLost}
+            className="h-full w-full transition-opacity duration-700"
+          />
+        </div>
+
+        <div
+          className={`pointer-events-none absolute inset-0 z-[5] grid place-items-center transition-opacity duration-700 ${sceneReady ? 'opacity-0' : 'opacity-100'}`}
+          aria-hidden="true"
+        >
+          <div className="h-40 w-40 animate-pulse rounded-full border border-accent/20 bg-accent/5 shadow-[0_0_80px_rgba(66,205,255,0.12)]" />
+        </div>
+
+        <div className="absolute inset-x-5 bottom-5 z-20 sm:inset-x-7 sm:bottom-7">
+          <div className="mb-4 flex min-h-12 items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+            {BUILD_SLOTS.map((slot) => {
+              const product = build[slot]
+              return product ? (
+                <div
+                  key={slot}
+                  className="group/thumb pointer-events-auto relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-white/12 bg-black/35 p-1.5 backdrop-blur-sm"
+                  title={`${t(`build.slot.${slot}`)}: ${product.name}`}
+                >
+                  <ProductImage product={product} locale={locale} sizes="48px" className="h-full w-full" />
+                  <span className="absolute inset-x-0 bottom-0 h-px bg-accent shadow-[0_0_8px_rgba(66,205,255,0.8)]" />
+                </div>
+              ) : (
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => setOpenSlot(slot)}
+                  className="pointer-events-auto grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-dashed border-white/10 bg-black/20 font-mono text-[0.58rem] text-fg-low transition-colors hover:border-accent/50 hover:text-accent"
+                  aria-label={`${t('build.choose')} ${t(`build.slot.${slot}`)}`}
+                >
+                  {String(BUILD_SLOTS.indexOf(slot) + 1).padStart(2, '0')}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex items-end justify-between gap-5 border-t border-white/10 pt-4">
+            <div>
+              <p className="font-mono text-[0.64rem] tracking-[0.13em] text-accent uppercase">
+                {scenePlan.nextSlot ? t(`build.slot.${scenePlan.nextSlot}`) : t(sceneStatusKey)}
+              </p>
+              <p className="mt-1 max-w-xl text-[0.75rem] leading-relaxed text-fg-low">
+                {scenePlan.powered ? t('build.scene.readyHint') : t('build.scene.hint')}
+              </p>
+            </div>
+            <p className="hidden max-w-xs text-right font-mono text-[0.58rem] leading-relaxed tracking-[0.05em] text-fg-low md:block">
+              {t('build.scene.approx')}
+            </p>
+          </div>
+          <div className="mt-3 h-px overflow-hidden bg-white/8" aria-hidden="true">
+            <span
+              className="block h-full bg-accent shadow-[0_0_12px_rgba(66,205,255,0.9)] transition-[width] duration-700 ease-rail"
+              style={{ width: `${scenePlan.progress * 100}%` }}
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
       {/* ── las ocho ranuras ── */}
       <div className="lg:col-span-7">
         <ul>
@@ -341,6 +461,7 @@ export function Configurator() {
           </div>
         </>
       ) : null}
+      </div>
     </div>
   )
 }

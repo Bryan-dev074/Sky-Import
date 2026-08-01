@@ -26,8 +26,8 @@ const RUTAS = [
 for (const ruta of RUTAS) {
   test(`sin infracciones de accesibilidad en ${ruta}`, async ({ page }) => {
     await page.goto(ruta)
-    // La cortina de entrada cubre la página durante 1,25 s.
-    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 4000 })
+    // La secuencia premium dura 3,86 s; dejamos margen para equipos lentos y CI.
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 8000 })
 
     const { violations } = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

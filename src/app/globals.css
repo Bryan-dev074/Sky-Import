@@ -2261,6 +2261,53 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   }
 }
 
+/* ───────────────────────────────────────────── armador 3D del gabinete */
+
+.u-pc-lab::after {
+  content: '';
+  position: absolute;
+  inset: -35%;
+  z-index: 0;
+  pointer-events: none;
+  background: conic-gradient(
+    from 45deg,
+    transparent 0 30%,
+    color-mix(in oklab, var(--color-sky) 18%, transparent) 38%,
+    transparent 46% 72%,
+    color-mix(in oklab, var(--color-sky) 11%, transparent) 79%,
+    transparent 87%
+  );
+  filter: blur(34px);
+  opacity: 0.42;
+  animation: pc-lab-aura 7s linear infinite;
+}
+
+.u-pc-lab-grid {
+  animation: pc-lab-grid 4.2s linear infinite;
+  will-change: transform;
+}
+
+.u-pc-lab-scan {
+  opacity: 0;
+  box-shadow: 0 0 24px color-mix(in oklab, var(--color-sky) 78%, transparent);
+  animation: pc-lab-scan 2.1s var(--ease-clamp) infinite;
+}
+
+@keyframes pc-lab-aura {
+  to { transform: rotate(1turn) scale(1.06); }
+}
+
+@keyframes pc-lab-grid {
+  to { transform: translate3d(46px, 46px, 0); }
+}
+
+@keyframes pc-lab-scan {
+  0% { opacity: 0; transform: translateY(2svh) scaleX(0.2); }
+  14% { opacity: 0.72; }
+  76% { opacity: 0.36; }
+  100% { opacity: 0; transform: translateY(88svh) scaleX(0.82); }
+}
+
 /* ──────────────────────────────────────────────── movimiento reducido
    No se acorta: se apaga.                                              */
 
@@ -2304,7 +2351,10 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   }
 
   .u-assembly-stage::before,
-  .u-assembly-scan {
+  .u-assembly-scan,
+  .u-pc-lab::after,
+  .u-pc-lab-grid,
+  .u-pc-lab-scan {
     animation: none;
   }
 

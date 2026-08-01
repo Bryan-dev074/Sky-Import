@@ -2,6 +2,8 @@ import { expect, test, type Page } from '@playwright/test'
 
 type BuildSlot = 'cpu' | 'motherboard' | 'ram' | 'gpu' | 'storage' | 'psu' | 'cooling' | 'case'
 
+const INTRO_EXIT_TIMEOUT = 8_000
+
 /**
  * Comprobaciones de la experiencia: intro, cursor, movimiento reducido, teclado,
  * moneda, idioma, configurador y estados vacíos. Son las promesas que un
@@ -18,9 +20,9 @@ test.describe('intro de marca', () => {
     await page.goto('/es')
     // Está en el marcado del servidor: no depende de la hidratación.
     await expect(page.locator('.intro')).toBeAttached()
-    // La cortina arranca a 1,36 s y la última lama sale a ~2,3 s. El tope de
-    // aquí es holgado a propósito: mide que se va sola, no el reloj exacto.
-    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 5000 })
+    // La secuencia premium completa dura 3,86 s. El tope incluye margen para
+    // equipos lentos y CI: mide que se va sola, no el reloj exacto.
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: INTRO_EXIT_TIMEOUT })
   })
 
   test('deja de capturar el puntero en cuanto la cortina se abre', async ({ page }) => {
@@ -38,7 +40,7 @@ test.describe('intro de marca', () => {
 
   test('no vuelve a aparecer al navegar entre páginas', async ({ page, isMobile }) => {
     await page.goto('/es')
-    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 4000 })
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: INTRO_EXIT_TIMEOUT })
 
     if (isMobile) await page.getByRole('button', { name: 'Abrir menú' }).click()
     await page.getByRole('banner').getByRole('link', { name: 'Catálogo' }).first().click()
@@ -104,7 +106,7 @@ test.describe('cursor propio', () => {
 test.describe('teclado', () => {
   test('el enlace de salto es el primer destino del tabulador', async ({ page }) => {
     await page.goto('/es')
-    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 4000 })
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: INTRO_EXIT_TIMEOUT })
 
     await page.keyboard.press('Tab')
     const enfocado = page.locator('.skip-link')

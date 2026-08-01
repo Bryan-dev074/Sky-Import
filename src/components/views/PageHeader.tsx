@@ -20,11 +20,13 @@ export function PageHeader({
   title,
   lede,
   background = 'none',
+  beamSpeed = 1.4,
 }: {
   eyebrow?: DictKey
   title: DictKey
   lede?: DictKey
   background?: 'none' | 'trace' | 'beams'
+  beamSpeed?: number
 }) {
   const { t } = useI18n()
 
@@ -39,7 +41,7 @@ export function PageHeader({
       {background === 'beams' ? (
         <>
           <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true">
-            <Beams className="h-full w-full" rotation={22} beamNumber={10} speed={1.4} />
+            <Beams className="h-full w-full" rotation={22} beamNumber={10} speed={beamSpeed} />
           </div>
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface to-transparent"
