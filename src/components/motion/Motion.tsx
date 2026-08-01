@@ -102,6 +102,12 @@ export function Reveal({
  * Cada palabra sube desde su propia máscara, escalonada. El texto sigue siendo
  * un único nodo legible: los lectores de pantalla lo leen entero y se puede
  * seleccionar y copiar normalmente.
+ *
+ * Con `alive`, además, una luz cruza el titular cada siete segundos y no para.
+ * El barrido va **por palabra** y no sobre el bloque: el recorte a glifos
+ * necesita que el elemento contenga el texto directamente, y aquí en medio hay
+ * máscaras con `overflow` y transformaciones de entrada. Escalonar el retardo
+ * palabra a palabra hace que se lea como una sola luz recorriendo la frase.
  */
 export function SplitWords({
   text,
@@ -110,6 +116,9 @@ export function SplitWords({
   delay = 0,
   step = 44,
   start = 'view',
+  alive = false,
+  aliveDelay = 0,
+  aliveStep = 190,
 }: {
   text: string
   as?: ElementType
@@ -118,6 +127,11 @@ export function SplitWords({
   step?: number
   /** `view` espera a entrar en pantalla; `now` arranca al montar. */
   start?: 'view' | 'now'
+  /** Barrido de luz permanente sobre las palabras. */
+  alive?: boolean
+  /** Desfase inicial del barrido: encadena varias líneas en una sola pasada. */
+  aliveDelay?: number
+  aliveStep?: number
 }) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, threshold: 0.15, rootMargin: '0px' })
@@ -130,8 +144,13 @@ export function SplitWords({
         <Fragment key={`${word}-${i}`}>
           <span className="u-word">
             <span
-              className="u-word__in"
-              style={{ transitionDelay: `${delay + i * step}ms` } as CSSProperties}
+              className={alive ? 'u-word__in u-alive' : 'u-word__in'}
+              style={
+                {
+                  transitionDelay: `${delay + i * step}ms`,
+                  ...(alive ? { '--alive-delay': `${aliveDelay + i * aliveStep}ms` } : null),
+                } as CSSProperties
+              }
             >
               {word}
             </span>

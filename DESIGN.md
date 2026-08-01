@@ -272,15 +272,27 @@ Dos curvas con nombre, y **ninguna animación fuera de ellas**:
 7. Lo caro (WebGL) se monta al acercarse y se libera de verdad al irse
    (`forceContextLoss()` **antes** de `dispose()`).
 
-### Momentos firma (cinco, y el resto sereno)
+### Momentos firma (siete, y el resto sereno)
 
-1. **Energización** — la intro de marca (0,8–1,4 s, tope duro 1,8 s).
+1. **Energización** — la intro de marca. El sello se escribe, la corriente lo
+   recorre una vez —ese compás de sostén es lo que la separa de un parpadeo— y
+   la cortina se desarma en lamas desde 1,36 s hasta ~2,3 s. **Desde que la
+   primera lama se mueve, el panel ya no captura el puntero**: el tiempo en
+   pantalla no se paga en usabilidad.
 2. **La luz que cruza el render** del hero cada ~7 s.
 3. **La ficha como manifiesto** — en hover, los filetes se dibujan de izquierda a derecha
    y cruza la vista anotada en 400 ms.
 4. **La placa de video en código** — pieza WebGL procedural que se ensambla al hacer scroll.
 5. **El tablero de compatibilidad** — el trazado que conecta las piezas elegidas y se
    vuelve ámbar en el segmento con problema.
+6. **El titular vivo** — una luz cruza «Cada pieza / con su ficha / delante.»
+   cada ~7 s, palabra a palabra, con reposo largo entre pasadas. Va **por
+   palabra**, no por bloque: el recorte a glifos necesita que el elemento
+   contenga el texto directamente.
+7. **La acción principal energizada** — carga recorriendo el perímetro, halo que
+   responde al lado por el que llega el puntero, relleno que entra barriendo y
+   escuadras que encuadran. **Una sola por vista.** Es la excepción documentada
+   a la prohibición de brillo, no una licencia general.
 
 ---
 
@@ -298,6 +310,8 @@ Dos curvas con nombre, y **ninguna animación fuera de ellas**:
 | `Field` | `--carbon-sunk`, filete inferior 1 px | Foco: filete a `--sky`, 2 px |
 | `Trace` | SVG 1 px, codos 45° | Ver §8.2 |
 | `PriceStack` | Tres valores, uno visible | Ver §12 |
+| `Cta` | Anillo de 2 px con carga recorriéndolo, superficie `--carbon-lift` | Una por vista. Lo único que brilla dentro es el canto: el interior nunca, o se pierde el rótulo |
+| `Cell` | Celda del índice; el **canto** se enciende por proximidad | El interior se aclara de forma uniforme, sin mancha centrada. Una mancha sobre el texto es un fallo, no un efecto |
 
 ---
 

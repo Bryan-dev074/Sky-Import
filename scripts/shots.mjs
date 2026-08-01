@@ -59,8 +59,8 @@ for (const viewport of VIEWPORTS) {
     page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`))
 
     await page.goto(`${base}${path}`, { waitUntil: 'networkidle' })
-    // La intro dura como mucho 1,75 s.
-    await page.waitForTimeout(2200)
+    // La cortina de la intro termina de salir a ~2,3 s.
+    await page.waitForTimeout(2900)
 
     const overflow = await page.evaluate(() => {
       const docWidth = document.documentElement.clientWidth

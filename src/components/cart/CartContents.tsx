@@ -144,7 +144,7 @@ export function CartContents({
                       run: undoRemove,
                     })
                   }}
-                  className="u-link mt-3 font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low hover:text-fg"
+                  className="u-link u-tap mt-3 font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low hover:text-fg"
                 >
                   {t('cart.remove')}
                 </button>
@@ -228,7 +228,7 @@ export function CartContents({
             href={path('/catalogo')}
             onClick={onNavigate}
             data-cursor="link"
-            className="u-link font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low"
+            className="u-link u-tap font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low"
           >
             {t('cart.continue')}
           </Link>

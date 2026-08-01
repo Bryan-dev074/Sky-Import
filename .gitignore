@@ -34,3 +34,6 @@ next-env.d.ts
 Thumbs.db
 *.log
 npm-debug.log*
+
+# configuración local de herramientas de edición
+.claude/

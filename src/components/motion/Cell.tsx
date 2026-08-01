@@ -14,23 +14,31 @@ import { damp, onFrame, useFinePointer, usePrefersReducedMotion } from '@/lib/mo
  * CELDAS — la retícula viva del índice de categorías.
  *
  * Cada celda reacciona por **proximidad**, no por hover: el canto empieza a
- * encenderse antes de que el puntero llegue, la celda se inclina y se acerca un
- * poco al cursor, y al pulsar nace una chispa donde se tocó. Sobre toda la
- * sección flota un foco que sigue al puntero.
+ * encenderse antes de que el puntero llegue, la celda se acerca un poco al
+ * cursor y al pulsar nace una chispa donde se tocó.
  *
- * Adaptado de `MagicBento` de React Bits (MIT + Commons Clause,
- * <https://reactbits.dev>). Dos diferencias de fondo, ambas deliberadas:
+ * Adaptado de `MagicBento` de React Bits (MIT + Commons Clause), sin GSAP y sin
+ * las partículas por celda. La atribución está en `CREDITS.md`.
  *
- *   · **Sin GSAP.** El original mueve todo con GSAP; acá va sobre el bucle de
- *     `requestAnimationFrame` compartido del proyecto, que es el mismo que usan
- *     el cursor, el imán y los fondos. Volver a instalar GSAP para esto habría
- *     contradicho la decisión registrada en `docs/decisiones-tecnicas.md`.
- *   · **Sin partículas flotantes.** Doce partículas por celda animadas con
- *     temporizadores encadenados es exactamente el presupuesto de animaciones
- *     que `DESIGN.md` prohíbe reventar. El brillo por proximidad y la chispa al
- *     pulsar dan la misma vida por una fracción del coste.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * POR QUÉ ESTE ARCHIVO SE REESCRIBIÓ: EL BAJÓN DE CUADROS
  *
- * Todo se apaga con `prefers-reduced-motion` y en punteros gruesos.
+ * La primera versión leía `getBoundingClientRect()` de las nueve celdas **en
+ * cada cuadro**, y en el mismo bucle escribía sus estilos. Leer geometría
+ * después de escribir estilos obliga al navegador a recalcular el layout en el
+ * acto: nueve recálculos forzados por cuadro, más los de las fichas de producto
+ * que también se movían. Eso es exactamente lo que trababa la página al llegar a
+ * esta sección.
+ *
+ * Ahora:
+ *   · Las geometrías se **miden una vez** y se guardan; solo se vuelven a medir
+ *     al desplazar o redimensionar, y siempre en un lote de solo lectura.
+ *   · El bucle por cuadro **solo escribe**. Nunca lee del DOM.
+ *   · Si el puntero está lejos de la retícula, el bucle **se da de baja** en
+ *     lugar de seguir corriendo en vacío.
+ *   · Se quitó el foco grande que seguía al cursor por toda la pantalla: además
+ *     de costar, tapaba la lectura del texto de la celda.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 interface CellRegistry {
@@ -41,7 +49,15 @@ interface CellRegistry {
 const CellContext = createContext<CellRegistry | null>(null)
 
 /** Radio dentro del cual una celda empieza a encenderse. */
-const REACH = 280
+const REACH = 300
+
+interface Medida {
+  node: HTMLElement
+  x: number
+  y: number
+  w: number
+  h: number
+}
 
 export function CellGrid({ children, className }: { children: ReactNode; className?: string }) {
   const cells = useRef(new Set<HTMLElement>())
@@ -61,65 +77,82 @@ export function CellGrid({ children, className }: { children: ReactNode; classNa
     const host = hostRef.current
     if (!host || !active) return
 
-    // El foco que sobrevuela la sección cuelga del body: dentro del contenedor
-    // quedaría atrapado en su contexto de apilado y no podría mezclarse.
-    const spot = document.createElement('div')
-    spot.className = 'u-spot'
-    document.body.appendChild(spot)
+    let medidas: Medida[] = []
+    let hostRect = { top: 0, bottom: 0, left: 0, right: 0 }
+    let necesitaMedir = true
+
+    /** Único punto donde se lee geometría, y siempre en lote. */
+    const medir = () => {
+      const r = host.getBoundingClientRect()
+      hostRect = { top: r.top, bottom: r.bottom, left: r.left, right: r.right }
+      medidas = Array.from(cells.current, (node) => {
+        const b = node.getBoundingClientRect()
+        return { node, x: b.left + b.width / 2, y: b.top + b.height / 2, w: b.width, h: b.height }
+      })
+      necesitaMedir = false
+    }
+
+    const invalidar = () => {
+      necesitaMedir = true
+    }
+    window.addEventListener('scroll', invalidar, { passive: true })
+    window.addEventListener('resize', invalidar)
+    const ro = new ResizeObserver(invalidar)
+    ro.observe(host)
 
     let px = -9999
     let py = -9999
-    let sx = -9999
-    let sy = -9999
-    let inside = false
+    let suscrito: (() => void) | null = null
+    let apagado = true
+
+    const apagar = () => {
+      if (apagado) return
+      apagado = true
+      for (const cell of cells.current) cell.style.setProperty('--glow', '0')
+    }
+
+    const paso = () => {
+      if (necesitaMedir) medir()
+
+      const cerca =
+        px > hostRect.left - REACH &&
+        px < hostRect.right + REACH &&
+        py > hostRect.top - REACH &&
+        py < hostRect.bottom + REACH
+
+      if (!cerca) {
+        apagar()
+        // Nadie cerca: el bucle se da de baja hasta que el puntero vuelva.
+        suscrito?.()
+        suscrito = null
+        return
+      }
+
+      apagado = false
+      for (const m of medidas) {
+        const d = Math.max(0, Math.hypot(px - m.x, py - m.y) - Math.max(m.w, m.h) / 2)
+        const glow = d <= REACH * 0.35 ? 1 : Math.max(0, 1 - (d - REACH * 0.35) / (REACH * 0.65))
+        // Solo escritura: ni una lectura del DOM en todo el bucle.
+        m.node.style.setProperty('--glow', glow.toFixed(3))
+        m.node.style.setProperty('--glow-x', `${(((px - m.x) / m.w + 0.5) * 100).toFixed(1)}%`)
+        m.node.style.setProperty('--glow-y', `${(((py - m.y) / m.h + 0.5) * 100).toFixed(1)}%`)
+      }
+    }
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return
       px = event.clientX
       py = event.clientY
+      if (!suscrito) suscrito = onFrame(paso)
     }
     window.addEventListener('pointermove', onMove, { passive: true })
 
-    const stop = onFrame((_, delta) => {
-      const rect = host.getBoundingClientRect()
-      const near =
-        px > rect.left - REACH &&
-        px < rect.right + REACH &&
-        py > rect.top - REACH &&
-        py < rect.bottom + REACH
-
-      if (near !== inside) {
-        inside = near
-        spot.style.opacity = near ? '1' : '0'
-      }
-      if (!near) {
-        for (const cell of cells.current) cell.style.setProperty('--glow', '0')
-        return
-      }
-
-      sx = damp(sx, px, 26, delta)
-      sy = damp(sy, py, 26, delta)
-      spot.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0) translate(-50%, -50%)`
-
-      for (const cell of cells.current) {
-        const r = cell.getBoundingClientRect()
-        const cx = r.left + r.width / 2
-        const cy = r.top + r.height / 2
-        const distance = Math.max(
-          0,
-          Math.hypot(px - cx, py - cy) - Math.max(r.width, r.height) / 2,
-        )
-        const glow = distance <= REACH * 0.4 ? 1 : Math.max(0, 1 - (distance - REACH * 0.4) / (REACH * 0.6))
-        cell.style.setProperty('--glow', glow.toFixed(3))
-        cell.style.setProperty('--glow-x', `${(((px - r.left) / r.width) * 100).toFixed(1)}%`)
-        cell.style.setProperty('--glow-y', `${(((py - r.top) / r.height) * 100).toFixed(1)}%`)
-      }
-    })
-
     return () => {
-      stop()
+      suscrito?.()
       window.removeEventListener('pointermove', onMove)
-      spot.remove()
+      window.removeEventListener('scroll', invalidar)
+      window.removeEventListener('resize', invalidar)
+      ro.disconnect()
     }
   }, [active])
 
@@ -154,7 +187,12 @@ export function Cell({
     return registry.register(node)
   }, [registry])
 
-  // Imán y roce: la celda se acerca un poco al puntero mientras lo tiene encima.
+  /**
+   * Imán: la celda se acerca un poco al puntero mientras lo tiene encima. El
+   * bucle **solo existe mientras hace falta** — se suscribe al entrar el puntero
+   * y se da de baja cuando la celda volvió a su sitio. Nueve bucles corriendo en
+   * vacío es justamente lo que hay que evitar.
+   */
   useEffect(() => {
     const node = ref.current
     if (!node || !registry?.active) return
@@ -163,38 +201,47 @@ export function Cell({
     let ty = 0
     let cx = 0
     let cy = 0
-    let over = false
+    let rect: DOMRect | null = null
+    let suscrito: (() => void) | null = null
+
+    const paso = (_: number, delta: number) => {
+      cx = damp(cx, tx, 12, delta)
+      cy = damp(cy, ty, 12, delta)
+      if (tx === 0 && ty === 0 && Math.abs(cx) < 0.05 && Math.abs(cy) < 0.05) {
+        node.style.transform = ''
+        suscrito?.()
+        suscrito = null
+        return
+      }
+      node.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`
+    }
+
+    const arrancar = () => {
+      if (!suscrito) suscrito = onFrame(paso)
+    }
 
     const onEnter = () => {
-      over = true
+      // Una sola lectura por entrada, no una por cuadro.
+      rect = node.getBoundingClientRect()
+      arrancar()
     }
     const onMove = (event: PointerEvent) => {
-      const rect = node.getBoundingClientRect()
+      if (!rect) return
       tx = ((event.clientX - rect.left) / rect.width - 0.5) * 9
       ty = ((event.clientY - rect.top) / rect.height - 0.5) * 9
     }
     const onLeave = () => {
-      over = false
       tx = 0
       ty = 0
+      arrancar()
     }
 
     node.addEventListener('pointerenter', onEnter)
     node.addEventListener('pointermove', onMove)
     node.addEventListener('pointerleave', onLeave)
 
-    const stop = onFrame((_, delta) => {
-      cx = damp(cx, tx, 12, delta)
-      cy = damp(cy, ty, 12, delta)
-      if (!over && Math.abs(cx) < 0.02 && Math.abs(cy) < 0.02) {
-        node.style.transform = ''
-        return
-      }
-      node.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`
-    })
-
     return () => {
-      stop()
+      suscrito?.()
       node.removeEventListener('pointerenter', onEnter)
       node.removeEventListener('pointermove', onMove)
       node.removeEventListener('pointerleave', onLeave)

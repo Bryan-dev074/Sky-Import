@@ -161,7 +161,7 @@ export function Configurator() {
                         type="button"
                         onClick={() => unpick(slot)}
                         data-cursor="link"
-                        className="u-link font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low hover:text-fg"
+                        className="u-link u-tap font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low hover:text-fg"
                       >
                         {t('build.clearSlot')}
                       </button>

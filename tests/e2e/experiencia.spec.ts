@@ -18,8 +18,22 @@ test.describe('intro de marca', () => {
     await page.goto('/es')
     // Está en el marcado del servidor: no depende de la hidratación.
     await expect(page.locator('.intro')).toBeAttached()
-    // Y se va sola dentro del tope duro de 1,75 s, con margen de holgura.
-    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 4000 })
+    // La cortina arranca a 1,36 s y la última lama sale a ~2,3 s. El tope de
+    // aquí es holgado a propósito: mide que se va sola, no el reloj exacto.
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: 5000 })
+  })
+
+  test('deja de capturar el puntero en cuanto la cortina se abre', async ({ page }) => {
+    await page.goto('/es')
+    // Lo que de verdad importa no es cuándo desaparece el nodo, sino desde
+    // cuándo la tienda es usable. En el instante en que la primera lama se
+    // mueve, el panel suelta el puntero aunque siga desmontándose.
+    await page.waitForTimeout(2500)
+    const libre = await page.evaluate(() => {
+      const nodo = document.querySelector('.intro')
+      return !nodo || getComputedStyle(nodo).pointerEvents === 'none'
+    })
+    expect(libre).toBe(true)
   })
 
   test('no vuelve a aparecer al navegar entre páginas', async ({ page, isMobile }) => {
@@ -62,12 +76,28 @@ test.describe('cursor propio', () => {
     await page.mouse.move(400, 400)
 
     if (isMobile) {
-      await expect(page.locator('html')).not.toHaveAttribute('data-cursor', 'on')
+      await expect(page.locator('html')).not.toHaveAttribute('data-pointer', 'hidden')
       await expect(page.locator('.cur-dot')).toHaveCount(0)
     } else {
-      await expect(page.locator('html')).toHaveAttribute('data-cursor', 'on')
+      await expect(page.locator('html')).toHaveAttribute('data-pointer', 'hidden')
       await expect(page.locator('.cur-dot')).toBeAttached()
     }
+  })
+
+  test('el retículo nunca se traga la pantalla', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'no hay cursor propio en táctil')
+    await page.goto('/es')
+
+    // Sobre una ficha de producto —el elemento grande donde antes el retículo
+    // adoptaba el rectángulo del objetivo y ocupaba media ventana.
+    const ficha = page.locator('[data-cursor="product"]').first()
+    await ficha.scrollIntoViewIfNeeded()
+    await ficha.hover()
+
+    const caja = await page.locator('.cur-ring').boundingBox()
+    expect(caja).not.toBeNull()
+    expect(caja!.width).toBeLessThan(120)
+    expect(caja!.height).toBeLessThan(120)
   })
 })
 

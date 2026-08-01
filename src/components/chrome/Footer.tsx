@@ -50,7 +50,7 @@ export function Footer() {
             <h2 id="pie-tienda" className="u-label mb-4 text-fg">
               {t('footer.explore')}
             </h2>
-            <ul className="space-y-2.5">
+            <ul>
               {[
                 { href: '/catalogo', label: t('nav.catalog') },
                 { href: '/armar', label: t('nav.build') },
@@ -58,7 +58,10 @@ export function Footer() {
                 { href: '/carrito', label: t('nav.cart') },
               ].map((item) => (
                 <li key={item.href}>
-                  <Link href={path(item.href)} className="u-link text-[0.875rem] text-fg-mid hover:text-fg">
+                  <Link
+                    href={path(item.href)}
+                    className="u-link u-tap text-[0.875rem] text-fg-mid hover:text-fg"
+                  >
                     {item.label}
                   </Link>
                 </li>
@@ -66,13 +69,13 @@ export function Footer() {
             </ul>
 
             <h2 className="u-label mt-8 mb-4 text-fg">{t('catalog.category')}</h2>
-            <ul className="space-y-2">
+            <ul>
               {CATEGORY_ORDER.slice(0, 5).map((slug) => (
                 <li key={slug}>
                   <Link
                     href={`${path('/catalogo')}?categoria=${slug}`}
                     prefetch={false}
-                    className="u-link text-[0.8125rem] text-fg-low hover:text-fg"
+                    className="u-link u-tap text-[0.8125rem] text-fg-low hover:text-fg"
                   >
                     {CATEGORY_META[slug].name[locale]}
                   </Link>
@@ -85,12 +88,15 @@ export function Footer() {
             <h2 id="pie-guias" className="u-label mb-4 text-fg">
               {t('footer.help')}
             </h2>
-            <ul className="space-y-2.5">
+            {/* Aquí sí hace falta separación: varios títulos ocupan dos líneas y
+                sin ella se tocan. Las otras listas son de una línea y el alto de
+                44 px ya les da el ritmo. */}
+            <ul className="space-y-2">
               {GUIDES.map((guide) => (
                 <li key={guide.slug}>
                   <Link
                     href={path(`/guias/${guide.slug}`)}
-                    className="u-link text-[0.8125rem] text-fg-mid hover:text-fg"
+                    className="u-link u-tap text-[0.8125rem] text-fg-mid hover:text-fg"
                   >
                     {guide.title[locale]}
                   </Link>
@@ -107,7 +113,7 @@ export function Footer() {
                   href={whatsappLink(t('wa.generic'))}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="u-link font-mono text-[0.8125rem] tabular-nums text-fg"
+                  className="u-link u-tap font-mono text-[0.8125rem] tabular-nums text-fg"
                 >
                   {CONTACT.whatsappDisplay}
                 </a>

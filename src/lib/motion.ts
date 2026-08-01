@@ -156,10 +156,35 @@ export function useMagnetic<T extends HTMLElement>(
     let ty = 0
     let cx = 0
     let cy = 0
-    let active = false
+    let rect: DOMRect | null = null
+    let suscrito: (() => void) | null = null
+
+    const paso = (_: number, delta: number) => {
+      cx = damp(cx, tx, 14, delta)
+      cy = damp(cy, ty, 14, delta)
+      if (tx === 0 && ty === 0 && Math.abs(cx) < 0.05 && Math.abs(cy) < 0.05) {
+        node.style.transform = ''
+        suscrito?.()
+        suscrito = null
+        return
+      }
+      node.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`
+    }
+
+    const arrancar = () => {
+      if (!suscrito) suscrito = onFrame(paso)
+    }
+
+    // La geometría se relee al desplazar o redimensionar, no en cada cuadro.
+    const invalidar = () => {
+      rect = null
+    }
+    window.addEventListener('scroll', invalidar, { passive: true })
+    window.addEventListener('resize', invalidar)
 
     const onMove = (event: PointerEvent) => {
-      const rect = node.getBoundingClientRect()
+      if (event.pointerType !== 'mouse') return
+      if (!rect) rect = node.getBoundingClientRect()
       const dx = event.clientX - (rect.left + rect.width / 2)
       const dy = event.clientY - (rect.top + rect.height / 2)
       const reach = Math.max(rect.width, rect.height) / 2 + radius
@@ -168,35 +193,28 @@ export function useMagnetic<T extends HTMLElement>(
         const falloff = 1 - distance / reach
         tx = dx * strength * falloff
         ty = dy * strength * falloff
-        active = true
-      } else if (active) {
+        arrancar()
+      } else if (tx !== 0 || ty !== 0) {
         tx = 0
         ty = 0
+        arrancar()
       }
     }
 
     const onLeave = () => {
       tx = 0
       ty = 0
+      arrancar()
     }
 
     window.addEventListener('pointermove', onMove, { passive: true })
     document.addEventListener('pointerleave', onLeave)
 
-    const stop = onFrame((_, delta) => {
-      cx = damp(cx, tx, 14, delta)
-      cy = damp(cy, ty, 14, delta)
-      if (Math.abs(cx) < 0.01 && Math.abs(cy) < 0.01 && tx === 0 && ty === 0) {
-        node.style.transform = ''
-        active = false
-        return
-      }
-      node.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`
-    })
-
     return () => {
-      stop()
+      suscrito?.()
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('scroll', invalidar)
+      window.removeEventListener('resize', invalidar)
       document.removeEventListener('pointerleave', onLeave)
       node.style.transform = ''
     }
@@ -227,15 +245,41 @@ export function useTilt<T extends HTMLElement>(
     let currentY = 0
     let targetScale = 1
     let currentScale = 1
-    let inside = false
+    let rect: DOMRect | null = null
+    let suscrito: (() => void) | null = null
+
+    const paso = (_: number, delta: number) => {
+      currentX = damp(currentX, targetX, 12, delta)
+      currentY = damp(currentY, targetY, 12, delta)
+      currentScale = damp(currentScale, targetScale, 12, delta)
+      if (
+        targetX === 0 &&
+        targetY === 0 &&
+        Math.abs(currentX) < 0.05 &&
+        Math.abs(currentY) < 0.05 &&
+        Math.abs(currentScale - 1) < 0.001
+      ) {
+        node.style.transform = ''
+        suscrito?.()
+        suscrito = null
+        return
+      }
+      node.style.transform = `perspective(1000px) rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg) scale(${currentScale.toFixed(4)})`
+    }
+
+    const arrancar = () => {
+      if (!suscrito) suscrito = onFrame(paso)
+    }
 
     const onEnter = () => {
-      inside = true
+      // Una lectura por entrada; el bucle después solo escribe.
+      rect = node.getBoundingClientRect()
       targetScale = scale
+      arrancar()
     }
 
     const onMove = (event: PointerEvent) => {
-      const rect = node.getBoundingClientRect()
+      if (!rect) return
       const px = (event.clientX - rect.left) / rect.width - 0.5
       const py = (event.clientY - rect.top) / rect.height - 0.5
       targetY = px * max * 2
@@ -247,29 +291,18 @@ export function useTilt<T extends HTMLElement>(
     }
 
     const onLeave = () => {
-      inside = false
       targetX = 0
       targetY = 0
       targetScale = 1
+      arrancar()
     }
 
     node.addEventListener('pointerenter', onEnter)
     node.addEventListener('pointermove', onMove)
     node.addEventListener('pointerleave', onLeave)
 
-    const stop = onFrame((_, delta) => {
-      currentX = damp(currentX, targetX, 12, delta)
-      currentY = damp(currentY, targetY, 12, delta)
-      currentScale = damp(currentScale, targetScale, 12, delta)
-      if (!inside && Math.abs(currentX) < 0.02 && Math.abs(currentY) < 0.02) {
-        node.style.transform = ''
-        return
-      }
-      node.style.transform = `perspective(1000px) rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg) scale(${currentScale.toFixed(4)})`
-    })
-
     return () => {
-      stop()
+      suscrito?.()
       node.removeEventListener('pointerenter', onEnter)
       node.removeEventListener('pointermove', onMove)
       node.removeEventListener('pointerleave', onLeave)
@@ -295,28 +328,36 @@ export function useParallax<T extends HTMLElement>(
     const node = ref.current
     if (!node || reduced) return
 
-    let visible = false
+    let suscrito: (() => void) | null = null
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) visible = entry.isIntersecting
+        for (const entry of entries) {
+          // Fuera de pantalla el bucle se da de baja, no se queda mirando.
+          if (entry.isIntersecting) {
+            if (!suscrito) suscrito = onFrame(paso)
+          } else {
+            suscrito?.()
+            suscrito = null
+          }
+        }
       },
       { rootMargin: '20% 0px' },
     )
-    observer.observe(node)
 
-    const stop = onFrame(() => {
-      if (!visible) return
-      const rect = node.getBoundingClientRect()
+    function paso() {
+      const rect = node!.getBoundingClientRect()
       const centre = rect.top + rect.height / 2
       // −1 arriba de la pantalla, +1 abajo.
       const progress = (centre / window.innerHeight - 0.5) * 2
       const offset = (progress * distance).toFixed(2)
-      node.style.transform =
+      node!.style.transform =
         axis === 'y' ? `translate3d(0, ${offset}px, 0)` : `translate3d(${offset}px, 0, 0)`
-    })
+    }
+
+    observer.observe(node)
 
     return () => {
-      stop()
+      suscrito?.()
       observer.disconnect()
       node.style.transform = ''
     }

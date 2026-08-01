@@ -78,7 +78,7 @@ export function GuideView({ slug }: { slug: string }) {
   return (
     <div data-surface="aluminio" className="bg-surface text-fg">
       <article className="u-page pt-28 pb-20 lg:pt-36">
-        <Link href={path('/guias')} className="u-link u-label hover:text-fg">
+        <Link href={path('/guias')} className="u-link u-tap u-label hover:text-fg">
           ← {t('guides.back')}
         </Link>
 

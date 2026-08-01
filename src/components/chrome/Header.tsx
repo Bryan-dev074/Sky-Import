@@ -62,7 +62,7 @@ function CurrencySwitch() {
           onClick={() => setCurrency(code)}
           aria-pressed={currency === code}
           title={CURRENCY_META[code].label}
-          className="min-h-[32px] min-w-[42px] px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
+          className="min-h-[44px] min-w-[44px] px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
         >
           {code}
         </button>
@@ -93,7 +93,7 @@ function LocaleSwitch() {
           aria-pressed={locale === code}
           lang={LOCALE_META[code].htmlLang}
           title={LOCALE_META[code].label}
-          className="min-h-[32px] min-w-[34px] grid place-items-center px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
+          className="min-h-[44px] min-w-[44px] grid place-items-center px-1.5 font-mono text-[0.625rem] font-medium tracking-[0.1em] uppercase text-fg-low transition-colors aria-pressed:bg-fg aria-pressed:text-surface hover:text-fg"
         >
           {LOCALE_META[code].short}
         </button>
@@ -129,7 +129,7 @@ function CartButton() {
       <button
         type="button"
         onClick={openCart}
-        className="u-btn u-btn-line min-h-[40px] px-3 gap-2"
+        className="u-btn u-btn-line min-h-[44px] min-w-[44px] px-3 gap-2"
         aria-label={t('nav.openCart')}
       >
         <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor">
@@ -177,7 +177,13 @@ export function Header() {
       data-scrolled={scrolled ? '' : undefined}
     >
       <div className="u-page flex h-16 items-center justify-between gap-4 lg:h-[72px]">
-        <Link href={path('/')} className="flex items-center gap-2.5 text-fg" aria-label={`Sky Import — ${t('brand.role')}`}>
+        {/* `min-h-[44px]` no cambia nada a la vista —el sello ya va centrado en
+            una barra de 64 px— pero lleva el objetivo táctil al mínimo. */}
+        <Link
+          href={path('/')}
+          className="flex min-h-[44px] items-center gap-2.5 text-fg"
+          aria-label={`Sky Import — ${t('brand.role')}`}
+        >
           <BrandMark size={24} className="text-accent" animate="hover" />
           <Wordmark className="text-[0.8125rem] lg:text-sm" />
         </Link>
@@ -197,7 +203,7 @@ export function Header() {
             onClick={() => toggleMenu()}
             aria-expanded={menuOpen}
             aria-controls="menu-movil"
-            className="u-btn u-btn-line min-h-[40px] px-3 lg:hidden"
+            className="u-btn u-btn-line min-h-[44px] min-w-[44px] px-3 lg:hidden"
             aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
             <svg viewBox="0 0 18 18" width="16" height="16" aria-hidden="true" stroke="currentColor" strokeWidth="1.4">

@@ -35,7 +35,7 @@ export function Toaster() {
                 dismiss(toast.id)
               }}
               data-cursor="link"
-              className="u-link font-mono text-[0.625rem] font-medium tracking-[0.14em] uppercase text-accent"
+              className="u-link u-tap font-mono text-[0.625rem] font-medium tracking-[0.14em] uppercase text-accent"
             >
               {toast.action.label}
             </button>

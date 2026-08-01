@@ -31,11 +31,14 @@ export function ProductView({ slug }: { slug: string }) {
     <>
       <div className="u-page pt-24 lg:pt-32">
         <nav aria-label="breadcrumb" className="u-label flex flex-wrap items-center gap-2">
-          <Link href={path('/catalogo')} className="u-link hover:text-fg">
+          <Link href={path('/catalogo')} className="u-link u-tap hover:text-fg">
             {t('catalog.title')}
           </Link>
           <span aria-hidden="true">/</span>
-          <Link href={`${path('/catalogo')}?categoria=${product.category}`} className="u-link hover:text-fg">
+          <Link
+            href={`${path('/catalogo')}?categoria=${product.category}`}
+            className="u-link u-tap hover:text-fg"
+          >
             {category.name[locale]}
           </Link>
         </nav>

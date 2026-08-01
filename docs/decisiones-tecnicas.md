@@ -491,3 +491,220 @@ columna de filtros.
 Ni los tipos, ni el lint, ni las 64 pruebas lo detectaron: los elementos existían
 y respondían. **Salió de mirar una captura**, que es exactamente para lo que está
 el barrido visual de `scripts/shots.mjs`.
+
+---
+
+## 7 · Tercera vuelta: cuadros, legibilidad y presencia
+
+La revisión anterior se entregó con animación por todas partes. Al usarla
+aparecieron cuatro cosas, todas reales, y tres de ellas eran errores míos que las
+capturas anteriores no habían destapado.
+
+### 7.1 · El bajón de cuadros de la retícula de categorías
+
+**Síntoma.** Al llegar a la sección de categorías la página se trababa.
+
+**Causa.** Layout thrashing. `CellGrid` leía `getBoundingClientRect()` de las
+nueve celdas **en cada cuadro** y en el mismo bucle escribía sus estilos. Leer
+geometría después de escribir estilos obliga al navegador a recalcular el layout
+en el acto: nueve recálculos forzados por cuadro. Encima corrían nueve bucles de
+imán por celda y seis de inclinación, todos permanentes, midieran o no algo.
+
+**Arreglo.**
+
+- Las geometrías se miden **una vez**, en un lote de solo lectura, y se vuelven a
+  medir solo al desplazar o redimensionar.
+- El bucle por cuadro **solo escribe**. Ni una lectura del DOM.
+- `useMagnetic`, `useTilt` y `useParallax` se **suscriben bajo demanda** y se dan
+  de baja cuando el elemento ya volvió a su sitio. Antes existían siempre.
+- Se quitó el foco grande que seguía al cursor por toda la pantalla: costaba y
+  además tapaba el texto de la celda.
+
+### 7.2 · La celda encendida no se podía leer
+
+**Síntoma.** «Cuando ilumina el punto cuesta leer qué dice realmente.»
+
+**Causa.** Un error de CSS, no de diseño. El anillo de luz de `.u-cell::after` se
+recorta con dos capas de máscara y `mask-composite: exclude`. La abreviatura
+`-webkit-mask` estaba declarada **después** de `mask-composite`, y como en los
+navegadores actuales `-webkit-mask` es un alias de `mask`, la pisaba y la dejaba
+en `add`. Con `add` las dos capas se suman en vez de restarse: la máscara deja de
+recortar el anillo y el degradado se pinta entero. La celda se llenaba de una
+mancha cian encima del texto.
+
+**Comprobado con** `getComputedStyle(celda, '::after').maskComposite`, que
+devolvía `"add, add"` y tras el arreglo devuelve `"exclude, exclude"`.
+
+**Regla que queda:** las abreviaturas de máscara van primero; los `composite`, al
+final. Aplica también a `.u-cta::before`, que tenía el mismo orden.
+
+Aparte, la celda se rehizo: nombre con más cuerpo, función en `--fg-mid` en vez
+de `--fg-low`, recuento separado por un filete, y una lectura de proximidad al
+pie que se llena con `transform: scaleX(var(--glow))`.
+
+### 7.3 · El fondo de puntos no se veía
+
+**Síntoma.** «Que el fondo donde están los productos tenga el fondo ese de los
+puntitos.» Estaba puesto desde la vuelta anterior… y aun así no se veía.
+
+**Causa.** `.u-backdrop` era `position: fixed; inset: 0` sobre un `<canvas>`.
+**`inset: 0` no estira un `<canvas>`**: sus atributos `width` y `height` entran
+como valores CSS presentacionales —300 × 150 por defecto—, la caja queda
+sobrerrestringida y el navegador descarta `right` y `bottom`. El fondo vivo se
+estuvo pintando en un rectángulo de 300 × 150 en la esquina superior izquierda.
+
+**Comprobado con** `canvas.getBoundingClientRect()`, que devolvía `300 × 150` en
+una ventana de 1440 × 900.
+
+**Arreglo.** `width: 100%; height: 100%` explícitos. Además se subió el reposo
+del campo —los dos niveles bajos pasaron de 0,20 / 0,34 a 0,34 / 0,50 de alfa—,
+que es lo que se ve lejos del puntero.
+
+Y para los tramos de color liso que sí tapan el lienzo global —la superficie de
+aluminio es opaca— se añadió `FieldPatch`: el mismo campo dentro de la sección,
+que **se desmonta** cuando la sección sale de pantalla en vez de limitarse a
+pausarse.
+
+### 7.4 · El cursor que agarraba toda la pantalla
+
+**Síntoma.** «Eso de que el cursor agarra toda la pantalla no me gusta.»
+
+**Causa doble.** La primera, de diseño: el retículo adoptaba el rectángulo del
+objetivo, y sobre una ficha de producto eso es medio viewport. La segunda, un
+error: el selector de objetivos incluye `[data-cursor]`, y el propio `<html>`
+llevaba `data-cursor="on"` como marca para apagar el puntero nativo. `closest()`
+subía hasta la raíz y la devolvía como objetivo válido — el retículo se enganchaba
+literalmente al documento entero.
+
+**Arreglo.** Se quitó el enganche: el retículo tiene tamaño fijo y solo cambia de
+estado. Y la marca de la raíz pasó a llamarse `data-pointer="hidden"`, que es un
+vocabulario distinto y no debe compartir nombre con el de los elementos. Queda una
+prueba de regresión que pasa el puntero por una ficha de producto y comprueba que
+el retículo no supera 120 px.
+
+### 7.5 · La intro dura más y la salida se sostiene
+
+La cortina arrancaba a 0,94 s, encima de la última letra del sello, y se sentía un
+parpadeo. Ahora hay un compás de sostén —la corriente recorre el sello y la línea
+una vez— y la cortina arranca a 1,36 s; la última lama sale a ~2,3 s.
+
+Para no pagar ese tiempo en usabilidad, `.intro` suelta el puntero con una
+animación discreta (`intro-release`) en el mismo instante en que la primera lama
+se mueve: desde 1,36 s la tienda se puede usar aunque el nodo siga
+desmontándose. Hay una prueba que lo comprueba.
+
+### 7.6 · El titular con luz permanente, y por qué va por palabra
+
+`.u-alive` recorta un degradado a los glifos y apaga el relleno del texto. Tres
+precauciones, las tres por haberlas roto antes:
+
+- **Va envuelto en `@supports`.** Donde `background-clip: text` no exista, el
+  titular quedaría invisible. Es el mismo fallo que tuvo `.u-invite` en la segunda
+  vuelta.
+- **El recorrido vive entre 0 % y 100 % de `background-position`.** El primer
+  intento animaba de `130 %` a `-70 %` con `no-repeat`: fuera de ese rango queda
+  superficie sin degradado, y como el relleno del texto está apagado esas letras
+  se vuelven transparentes. Media frase desaparecía. Se vio en la primera captura.
+- **Se aplica a la palabra, no al bloque.** El elemento con el recorte contiene el
+  nodo de texto directamente; en medio hay máscaras con `overflow` y
+  transformaciones de entrada, y ahí el recorte a glifos es impredecible.
+  Escalonar el retardo palabra a palabra se lee igual: una sola luz recorriendo la
+  frase.
+
+### 7.7 · La acción principal
+
+«Ver catálogo» era un botón sólido y corriente. Ahora es una pieza conectada:
+canto permanente, una carga de corriente dando la vuelta al perímetro con su luz
+escapándose por fuera, halo que responde al lado por el que se acerca el puntero,
+relleno que entra barriendo desde la izquierda con el rótulo invirtiéndose,
+escuadras que encuadran, y el rótulo con su barrido y la flecha insistiendo.
+
+En táctil la carga y el halo se quedan quietos: un desenfoque de 10 px
+repintándose a cada cuadro es de lo poco que todavía se nota en un teléfono, y ahí
+no hay puntero al que responder.
+
+Sigue siendo **una sola acción por vista**: la excepción documentada a la
+prohibición de brillo del sistema, no una licencia general.
+
+### 7.8 · Mediciones de la tercera vuelta
+
+Compilación de producción servida en `127.0.0.1:3100`, Chromium sin ventana a
+1440 × 900, moviendo el puntero durante toda la medida, 150 cuadros por sección
+descartando los seis primeros. Una vuelta de calentamiento por sección para no
+contar el montaje de lo que se carga bajo demanda.
+
+| Sección | p50 | p75 | p95 | máx | `getBoundingClientRect` por cuadro |
+|---|---|---|---|---|---|
+| Hero (Threads + pieza) | 16,7 ms | 16,7 ms | 16,7 ms | 16,8 ms | 1,46 |
+| Categorías (la que se trababa) | 16,7 ms | 16,7 ms | 16,8 ms | 33,4 ms | 0,58 |
+| Destacados | 16,7 ms | 16,7 ms | 16,7 ms | 33,4 ms | 0,53 |
+| Aluminio (con `FieldPatch`) | 16,7 ms | 16,7 ms | 16,7 ms | 16,8 ms | 1,25 |
+
+16,7 ms es el cuadro completo a 60 Hz: las cuatro secciones van al tope del
+refresco. La columna de la derecha es la que importa para el diagnóstico: menos de
+dos lecturas de geometría por cuadro donde antes había nueve solo en la retícula,
+más las de cada celda y cada inclinación.
+
+**Lo que estas cifras NO dicen.** Es Chromium sin ventana, con rasterizado por
+software. No son una medición en un equipo real ni en un teléfono, y no hay
+ninguna ejecución de Lighthouse detrás. Sirven para comparar antes y después del
+arreglo, que es para lo que se tomaron.
+
+### 7.9 · Lo que estos tres fallos tienen en común
+
+Los tres —la máscara, el lienzo de 300 × 150 y el degradado fuera de rango— son
+CSS que **no falla**: no hay error de tipos, no hay aviso del lint, las pruebas
+pasan y el elemento existe y responde. Los tres salieron de mirar una captura y de
+preguntarle al navegador por el valor computado. Es el mismo patrón que el choque
+de `.u-field` de la vuelta anterior, y por eso el barrido visual no es un extra al
+final: es parte de la verificación.
+
+### 7.10 · Objetivos táctiles: una corrección a lo que dije antes
+
+El brief pide **44 × 44 px** de destino táctil. En las vueltas anteriores lo di
+por cumplido sin medirlo elemento por elemento. Al añadir esa comprobación al
+barrido —recorrer cada `a[href]`, `button` y `[role="button"]` y quedarse con los
+que miden menos de 44 en cualquier lado— aparecieron **27 casos reales**,
+repetidos en todas las páginas:
+
+| Elemento | Medía | Ahora |
+|---|---|---|
+| Enlace de salto | 201 × 42 | 201 × 44 |
+| Sello de la cabecera | 145 × 24 | 145 × 44 |
+| Botón del carrito | 66 × 40 | 66 × 44 |
+| Botón del menú | 42 × 40 | 44 × 44 |
+| Conmutador de moneda (cada pastilla) | 42 × 32 | 44 × 44 |
+| Conmutador de idioma (cada pastilla) | 34 × 32 | 44 × 44 |
+| Enlaces del pie | 37–71 × 22 | ≥ 44 × 44 |
+| Migas de la ficha | 65–138 × 16 | ≥ 44 × 44 |
+| «Ver todo el catálogo» | 174 × 18 | 174 × 44 |
+| «Volver a las guías» | 170 × 16 | 170 × 44 |
+| Vistas de la galería | 126 × 40 | 126 × 44 |
+
+La clase `.u-tap` hace el trabajo: convierte el ancla en una caja de 44 × 44 sin
+mover el rótulo ni un píxel, porque no lleva fondo. Se aplica a los enlaces que
+son **un destino en sí mismos** —navegación del pie, migas, «volver», «ver
+todo»—. **No** a los que van dentro de una frase: ahí inflar la caja rompería el
+interlineado del párrafo, y es la excepción que la propia norma contempla para
+enlaces en línea.
+
+Para que quede dicho con precisión: la norma AA (WCAG 2.5.8) pide 24 × 24 y
+varios de estos casos ya la cumplían. **44 × 44 es el listón que se impuso este
+proyecto**, más estricto, y es el que no se estaba cumpliendo.
+
+### 7.11 · Verificación de esta vuelta
+
+Todo contra la compilación de producción servida en `127.0.0.1:3100`.
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin avisos.
+- `npm test` — 47 pruebas unitarias, todas pasan.
+- `npm run build` — 98 páginas estáticas en dos idiomas.
+- `npx playwright test` — 67 pasan, 1 omitida (la prueba nueva del retículo no
+  aplica en táctil, donde no hay cursor propio).
+- Barrido de 9 rutas × 5 tamaños (360, 390, 768, 1366, 1440): **sin
+  desbordamiento horizontal, sin errores de consola y sin objetivos táctiles por
+  debajo de 44 × 44** en ninguna de las 45 combinaciones.
+- Cuadros por sección: ver §7.8.
+
+**No se ejecutó Lighthouse.** No hay ninguna puntuación detrás de este documento.

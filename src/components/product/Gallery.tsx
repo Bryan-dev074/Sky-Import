@@ -54,7 +54,7 @@ export function Gallery({ product }: { product: Product }) {
             type="button"
             onClick={() => setView(option)}
             aria-pressed={view === option}
-            className="u-tag min-h-[40px] border-rule px-3 text-fg-low transition-colors hover:text-fg aria-pressed:border-fg aria-pressed:text-fg"
+            className="u-tag min-h-[44px] min-w-[44px] border-rule px-3 text-fg-low transition-colors hover:text-fg aria-pressed:border-fg aria-pressed:text-fg"
           >
             {option === 'front' ? t('product.gallery.front') : t('product.gallery.annotated')}
           </button>

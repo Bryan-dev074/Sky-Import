@@ -19,8 +19,13 @@ import { SITE } from '@/config/site'
  *
  *   · Solo en carga completa o recarga real. Al navegar entre páginas no vuelve
  *     a aparecer, porque vive en el layout del idioma y no se vuelve a montar.
- *   · La primera lama se va a los 0,94 s y la última a los ~1,7 s: la tienda
- *     empieza a verse antes de que termine la salida.
+ *   · Entre que el sello termina de escribirse y la cortina arranca hay un
+ *     compás de sostén: la corriente recorre el sello y la línea una vez. Sin
+ *     él la intro se sentía un parpadeo —era la queja— porque la cortina se
+ *     abría encima de la última letra.
+ *   · La primera lama se va a los 1,36 s y la última termina a los ~2,3 s: la
+ *     tienda empieza a verse mucho antes de que acabe la salida, y desde el
+ *     primer movimiento de lama el panel ya no captura el puntero.
  *   · No inventa un porcentaje de carga.
  *   · Con `prefers-reduced-motion` no llega a pintarse.
  *   · Se puede omitir con un clic, con Escape o con el botón.
@@ -29,8 +34,10 @@ import { SITE } from '@/config/site'
  */
 
 const SLATS = 12
+/** Cuándo arranca la primera lama. Debe coincidir con el CSS. */
+const CURTAIN_MS = 1360
 /** Última lama fuera de pantalla. Debe coincidir con el CSS. */
-const OUT_MS = 940 + (SLATS - 1) * 34 + 460 + 60
+const OUT_MS = CURTAIN_MS + (SLATS - 1) * 38 + 520 + 60
 
 const skipStore = {
   subscribe: () => () => {},
@@ -64,7 +71,7 @@ export function Intro() {
       setPhase('gone')
     }, OUT_MS)
 
-    const hint = window.setTimeout(() => setSkipVisible(true), 520)
+    const hint = window.setTimeout(() => setSkipVisible(true), 460)
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') finish()
@@ -108,7 +115,7 @@ export function Intro() {
         <span className="intro__seal" aria-label={SITE.name}>
           {letters.map((letter, i) => (
             <span key={i} className="intro__mask" aria-hidden="true">
-              <span className="intro__letter" style={{ animationDelay: `${240 + i * 38}ms` }}>
+              <span className="intro__letter" style={{ animationDelay: `${300 + i * 42}ms` }}>
                 {letter === ' ' ? ' ' : letter}
               </span>
             </span>

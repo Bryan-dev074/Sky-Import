@@ -553,6 +553,14 @@ html[data-currency='BRL'] [data-cur='BRL'] {
 .u-backdrop {
   position: fixed;
   inset: 0;
+  /* `inset: 0` NO estira un `<canvas>`. Los atributos `width`/`height` del
+     elemento entran como valores CSS presentacionales (300 × 150 por defecto),
+     así que la caja queda sobrerrestringida y el navegador descarta el `right`
+     y el `bottom`: el fondo vivo se pintaba en un rectángulo de 300 × 150 en la
+     esquina superior izquierda. Por eso «no se veía» en el resto de la página.
+     Hay que declarar el tamaño explícitamente. */
+  width: 100%;
+  height: 100%;
   z-index: -1;
   pointer-events: none;
 }
@@ -905,30 +913,26 @@ a:focus-visible .wordmark__l {
   overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: var(--radius-part);
-  background: var(--bg-lift);
+  /* La superficie se aclara de forma UNIFORME con la proximidad, en vez de
+     recibir una mancha de luz en el centro. El texto conserva su contraste. */
+  background-color: color-mix(in oklab, var(--color-steel) calc(var(--glow) * 9%), var(--bg-lift));
   transition:
     border-color 320ms var(--ease-rail),
-    transform 420ms var(--ease-rail);
+    background-color 320ms var(--ease-rail);
   will-change: transform;
 }
 
-.u-cell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    200px circle at var(--glow-x) var(--glow-y),
-    color-mix(in oklab, var(--color-sky) calc(var(--glow) * 6%), transparent),
-    transparent 58%
-  );
-  transition: opacity 260ms var(--ease-rail);
-}
+/* El canto se enciende por proximidad, no por hover: la celda responde antes de
+   que el puntero llegue. Es lo único que brilla — el interior se queda quieto
+   para que el texto se pueda leer.
 
-/* El canto se enciende por proximidad, no por hover: la celda responde antes
-   de que el puntero llegue. */
+   OJO CON EL ORDEN DE LAS MÁSCARAS. `-webkit-mask` es un alias de `mask` en los
+   navegadores actuales: si la abreviatura va DESPUÉS de `mask-composite`, la
+   pisa y la deja en `add`. El resultado es que las dos capas se suman en vez de
+   restarse, la máscara deja de recortar el anillo y el degradado se pinta
+   entero: la celda se llenaba de una mancha cian que se comía el texto. Era
+   justamente la queja. Las abreviaturas van primero; los `composite`, al
+   final. */
 .u-cell::after {
   content: '';
   position: absolute;
@@ -938,23 +942,38 @@ a:focus-visible .wordmark__l {
   pointer-events: none;
   z-index: 1;
   background: radial-gradient(
-    260px circle at var(--glow-x) var(--glow-y),
-    color-mix(in oklab, var(--color-sky) calc(var(--glow) * 92%), transparent),
-    transparent 56%
+    300px circle at var(--glow-x) var(--glow-y),
+    color-mix(in oklab, var(--color-sky) calc(var(--glow) * 95%), transparent),
+    transparent 62%
   );
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .u-cell > * {
   position: relative;
   z-index: 2;
+}
+
+/* La lectura de proximidad, como un instrumento: un filete al pie que se llena
+   con la cercanía del puntero. Es la única parte de la celda que responde al
+   `--glow` con movimiento, y va sobre `transform`, no sobre geometría. */
+.u-cell__rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: 1px;
+  background: var(--color-sky);
+  transform: scaleX(var(--glow, 0));
+  transform-origin: left;
 }
 
 /* Chispa al pulsar: nace donde se tocó y se apaga sola. */
@@ -983,24 +1002,281 @@ a:focus-visible .wordmark__l {
   }
 }
 
-/* Foco global de la sección de celdas: un halo que sigue al puntero. */
-.u-spot {
-  position: fixed;
-  width: 640px;
-  height: 640px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--color-sky) 11%, transparent) 0%,
-    color-mix(in oklab, var(--color-sky) 5%, transparent) 26%,
-    transparent 62%
+/* ═══════════════════════════════════ LA ACCIÓN PRINCIPAL — «Ver catálogo»
+   No es un botón: es una pieza conectada. Cuatro cosas a la vez, todas de la
+   misma familia visual y todas sobre `transform`/`opacity` o propiedades
+   compuestas:
+
+     1. Una carga de corriente recorre su perímetro sin parar — es el mismo
+        gesto que la carga del sello y el de la intro.
+     2. El canto se enciende por el lado por el que se acerca el puntero.
+     3. Al acercarse, el relleno entra barriendo desde la izquierda y el
+        rótulo se invierte.
+     4. El rótulo lleva un barrido de luz permanente y la flecha insiste cada
+        pocos segundos.
+
+   Vive en UNA sola acción por vista. Es la excepción documentada a la
+   prohibición de brillo del sistema.                                       */
+
+@property --si-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.u-cta {
+  position: relative;
+  display: inline-block;
+  padding: 2px;
+  border-radius: calc(var(--radius-part) + 1px);
+  /* Canto permanente. El segmento cónico deja transparente el 60 % del
+     perímetro; sin este relleno debajo, ese tramo se queda literalmente sin
+     borde y la pieza se lee como una caja suelta. */
+  background: color-mix(in oklab, var(--color-sky) 26%, var(--rule));
+  isolation: isolate;
+}
+
+/* La carga que da la vuelta: un segmento cónico enmascarado al anillo. */
+.u-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--si-angle),
+    transparent 0turn,
+    transparent 0.6turn,
+    color-mix(in oklab, var(--color-sky) 55%, transparent) 0.76turn,
+    var(--color-sky) 0.85turn,
+    color-mix(in oklab, var(--color-sky) 55%, transparent) 0.92turn,
+    transparent 1turn
   );
-  transition: opacity 300ms var(--ease-rail);
+  animation: cta-run 3.2s linear infinite;
+  /* Abreviaturas primero, `composite` al final: ver la nota de `.u-cell::after`. */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Y la luz que se escapa del canto. Sin esto la carga se lee como una raya
+   fina; con esto la pieza parece estar recibiendo corriente de verdad. Va
+   detrás, dentro del contexto aislado del propio botón. */
+.u-cta::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: calc(var(--radius-part) + 8px);
+  background: conic-gradient(
+    from var(--si-angle),
+    transparent 0turn,
+    transparent 0.58turn,
+    color-mix(in oklab, var(--color-sky) 40%, transparent) 0.76turn,
+    var(--color-sky) 0.85turn,
+    transparent 1turn
+  );
+  filter: blur(10px);
+  opacity: 0.55;
+  animation: cta-run 3.2s linear infinite;
+  transition: opacity 320ms var(--ease-rail);
+}
+
+.u-cta:hover::after,
+.u-cta:focus-within::after {
+  opacity: 0.85;
+}
+
+/* En táctil la carga se queda quieta. Un desenfoque de 10 px repintándose a
+   cada cuadro es de lo poco que todavía se nota en un teléfono de gama media, y
+   ahí no hay puntero al que responder: el halo aporta igual estando fijo. */
+@media (pointer: coarse) {
+  .u-cta::before,
+  .u-cta::after {
+    animation: none;
+  }
+
+  .u-cta::after {
+    opacity: 0.4;
+  }
+}
+
+@keyframes cta-run {
+  to {
+    --si-angle: 1turn;
+  }
+}
+
+.u-cta__inner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 54px;
+  padding: 0 1.875rem;
+  border-radius: var(--radius-part);
+  /* Superficie levantada y con una carga cian entrando por la izquierda: la
+     acción principal tiene que pesar más que la secundaria incluso en reposo,
+     y el barrido de relleno arranca justo desde ese lado. */
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-sky) 16%, transparent),
+      transparent 46%
+    ),
+    var(--bg-lift);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fg-hi);
+  cursor: pointer;
+  transition: color 320ms var(--ease-rail);
+}
+
+/* El relleno entra barriendo desde la izquierda. */
+.u-cta__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--fg-hi);
+  transform: translate3d(-101%, 0, 0);
+  transition: transform 460ms var(--ease-clamp);
+}
+
+.u-cta__inner:hover::before,
+.u-cta__inner:focus-visible::before {
+  transform: none;
+}
+
+.u-cta__inner:hover,
+.u-cta__inner:focus-visible {
+  color: var(--bg);
+}
+
+.u-cta__inner > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Marcas de esquina: la pieza queda encuadrada al acercarse. */
+.u-cta__corner {
+  position: absolute;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--color-sky);
+  opacity: 0;
+  transition:
+    opacity 300ms var(--ease-rail),
+    transform 300ms var(--ease-clamp);
+}
+
+.u-cta__corner:nth-of-type(1) {
+  top: 5px;
+  left: 5px;
+  border-right: 0;
+  border-bottom: 0;
+  transform: translate(4px, 4px);
+}
+
+.u-cta__corner:nth-of-type(2) {
+  right: 5px;
+  bottom: 5px;
+  border-left: 0;
+  border-top: 0;
+  transform: translate(-4px, -4px);
+}
+
+.u-cta:hover .u-cta__corner,
+.u-cta:focus-within .u-cta__corner {
+  opacity: 1;
+  transform: none;
+}
+
+/* ═════════════════════════════════════ EL TITULAR NO SE QUEDA QUIETO
+   Una luz recorre las letras cada ~7 s, con reposo largo. Es el mismo brillo
+   que cruza el render del producto, trasladado a la tipografía: la sala tiene
+   una luz que pasa, y pasa por todo.
+
+   DOS PRECAUCIONES, las dos por experiencia propia:
+
+     · Va envuelto en `@supports`. La técnica apaga el relleno del texto
+       (`-webkit-text-fill-color: transparent`) y lo sustituye por un degradado
+       recortado a los glifos; donde eso no exista, el titular quedaría
+       INVISIBLE. Es exactamente el fallo que tuvo `.u-invite` en la primera
+       vuelta y no se repite.
+     · Se aplica a la palabra, no al bloque. El elemento que lleva el recorte
+       contiene el nodo de texto directamente: nada de máscaras con
+       `overflow` ni de hijos transformados en medio, que es donde el recorte
+       a glifos se vuelve impredecible.                                     */
+
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .u-alive {
+    background-image: linear-gradient(
+      98deg,
+      currentColor 0%,
+      currentColor 38%,
+      color-mix(in oklab, var(--color-sky) 82%, currentColor) 50%,
+      currentColor 62%,
+      currentColor 100%
+    );
+    background-size: 320% 100%;
+    background-repeat: no-repeat;
+    /* El recorrido vive ENTRE 0 % y 100 %, nunca fuera. Con la imagen más
+       ancha que la caja, cualquier valor de ese rango la cubre entera; en
+       cuanto se sale, queda superficie sin degradado y —como el relleno del
+       texto está apagado— esas letras se vuelven INVISIBLES. Fue exactamente
+       lo que pasó: medio titular desaparecía. La banda de luz está al 50 % de
+       la imagen, así que 100 % → 0 % la pasea de izquierda a derecha y en los
+       extremos queda fuera de la caja: ese es el reposo. */
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: alive 7s var(--ease-rail) infinite;
+    animation-delay: var(--alive-delay, 0ms);
+  }
+}
+
+@keyframes alive {
+  0%,
+  56% {
+    background-position: 100% 0;
+  }
+  92%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* ─────────────────────────────────────────────── destino táctil mínimo
+   La casa se impuso 44 × 44, que es más estricto que los 24 × 24 de WCAG 2.5.8.
+   Esta clase lleva un enlace a esa altura SIN mover su texto: el ancla pasa a
+   ser una caja de 44 px con el rótulo centrado.
+
+   Se aplica a los enlaces que son **un destino en sí mismos** —navegación del
+   pie, migas, «volver», «ver todo»—. NO a los que van dentro de una frase:
+   ahí inflar la caja rompería el interlineado del párrafo, y es justamente la
+   excepción que la propia norma contempla para enlaces en línea. */
+
+.u-tap {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  /* También el ancho: «Guías» mide 37 px y una palabra corta no deja de ser un
+     destino. La caja se extiende hacia la derecha; como no lleva fondo, el
+     rótulo no se mueve ni un píxel. */
+  min-width: 44px;
 }
 
 /* ────────────────────────────────────────────────── enlace de salto */
@@ -1010,6 +1286,11 @@ a:focus-visible .wordmark__l {
   top: 8px;
   left: 8px;
   z-index: 120;
+  /* 44 px de alto: es un destino táctil como cualquier otro, aunque casi
+     siempre se alcance con el tabulador. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: 12px 18px;
   background: var(--fg-hi);
   color: var(--bg);
@@ -1081,7 +1362,9 @@ a:focus-visible .wordmark__l {
   display: block;
   transform: translateY(105%);
   animation: hero-rise 640ms var(--ease-clamp) forwards;
-  animation-delay: calc(1150ms + var(--line, 0) * 90ms);
+  /* Sube mientras la cortina se está abriendo (1,36 s), no después: el titular
+     aparece por la franja que acaba de despejarse. */
+  animation-delay: calc(1420ms + var(--line, 0) * 90ms);
 }
 
 @keyframes hero-rise {
@@ -1113,7 +1396,15 @@ html[data-intro='skip'] .hero-line {
 
    El recorrido es CSS puro. Si la hidratación fallara, el marcado del servidor
    seguiría en pantalla tapando la tienda; con la animación, las lamas se van
-   igual. El script solo desmonta el nodo al final y permite adelantarlo.     */
+   igual. El script solo desmonta el nodo al final y permite adelantarlo.
+
+   DURACIÓN. La primera versión se iba a los 0,94 s y se sentía un parpadeo: el
+   sello terminaba de escribirse y la cortina ya estaba abriéndose encima. Ahora
+   hay un compás de sostén —la corriente recorre el sello una vez— y la cortina
+   arranca a 1,36 s. Ese tiempo extra no es un retraso muerto: es el único
+   momento en el que la marca se lee entera. Aun así, en cuanto la primera lama
+   se mueve, la intro deja de capturar el puntero (`intro-release`), así que la
+   tienda es utilizable desde 1,36 s aunque el nodo siga desmontándose.      */
 
 .intro {
   position: fixed;
@@ -1123,10 +1414,20 @@ html[data-intro='skip'] .hero-line {
   place-items: center;
   overflow: hidden;
   pointer-events: auto;
+  /* Discreta: en el instante en que la cortina empieza a abrirse, el panel
+     suelta el puntero. Un clic antes de eso adelanta la intro; después, ya
+     llega a la tienda. */
+  animation: intro-release 1ms linear 1360ms forwards;
 }
 
 .intro[data-leaving] {
   pointer-events: none;
+}
+
+@keyframes intro-release {
+  to {
+    pointer-events: none;
+  }
 }
 
 .intro__slats {
@@ -1139,8 +1440,8 @@ html[data-intro='skip'] .hero-line {
   position: relative;
   flex: 1;
   background: var(--color-carbon);
-  animation: slat-up 460ms var(--ease-clamp) forwards;
-  animation-delay: calc(940ms + var(--i) * 34ms);
+  animation: slat-up 520ms var(--ease-clamp) forwards;
+  animation-delay: calc(1360ms + var(--i) * 38ms);
   will-change: transform;
 }
 
@@ -1157,8 +1458,8 @@ html[data-intro='skip'] .hero-line {
   bottom: 0;
   background: var(--color-sky);
   opacity: 0;
-  animation: slat-edge 460ms var(--ease-clamp) forwards;
-  animation-delay: calc(940ms + var(--i) * 34ms);
+  animation: slat-edge 520ms var(--ease-clamp) forwards;
+  animation-delay: calc(1360ms + var(--i) * 38ms);
 }
 
 .intro__slat:nth-child(even)::after {
@@ -1201,7 +1502,7 @@ html[data-intro='skip'] .hero-line {
   inset: 0;
   color: var(--color-sky);
   opacity: 0.55;
-  animation: intro-field-out 380ms var(--ease-rail) 860ms forwards;
+  animation: intro-field-out 420ms var(--ease-rail) 1280ms forwards;
 }
 
 @keyframes intro-field-out {
@@ -1235,7 +1536,7 @@ html[data-intro='skip'] .hero-line {
   gap: 14px;
   padding-inline: 24px;
   text-align: center;
-  animation: intro-center-out 340ms var(--ease-rail) 820ms forwards;
+  animation: intro-center-out 380ms var(--ease-rail) 1240ms forwards;
 }
 
 .intro[data-leaving] .intro__center {
@@ -1266,6 +1567,18 @@ html[data-intro='skip'] .hero-line {
   text-transform: uppercase;
   color: #f2f0ec;
   padding-left: 0.22em;
+  /* El compás de sostén: una vez escrito, el sello se carga y se apaga. */
+  animation: intro-charge 760ms var(--ease-rail) 1060ms forwards;
+}
+
+@keyframes intro-charge {
+  0%,
+  100% {
+    text-shadow: none;
+  }
+  42% {
+    text-shadow: 0 0 28px color-mix(in oklab, var(--color-sky) 60%, transparent);
+  }
 }
 
 .intro__mask {
@@ -1277,7 +1590,7 @@ html[data-intro='skip'] .hero-line {
 .intro__letter {
   display: inline-block;
   transform: translateY(108%);
-  animation: intro-letter 420ms var(--ease-clamp) forwards;
+  animation: intro-letter 460ms var(--ease-clamp) forwards;
   white-space: pre;
 }
 
@@ -1288,17 +1601,38 @@ html[data-intro='skip'] .hero-line {
 }
 
 .intro__line {
+  position: relative;
   display: block;
+  overflow: hidden;
   width: min(280px, 60vw);
   height: 1px;
   background: var(--color-sky);
   transform: scaleX(0);
-  animation: intro-line 520ms var(--ease-clamp) 400ms forwards;
+  animation: intro-line 560ms var(--ease-clamp) 460ms forwards;
+}
+
+/* Trazada la línea, la corriente la recorre. Es el mismo compás que carga el
+   sello: sostiene el segundo extra en lugar de dejarlo vacío. */
+.intro__line::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, #f2f0ec, transparent);
+  transform: translateX(-140%);
+  animation: intro-line-pulse 720ms var(--ease-rail) 1080ms forwards;
 }
 
 @keyframes intro-line {
   to {
     transform: scaleX(1);
+  }
+}
+
+@keyframes intro-line-pulse {
+  to {
+    transform: translateX(440%);
   }
 }
 
@@ -1309,7 +1643,7 @@ html[data-intro='skip'] .hero-line {
   text-transform: uppercase;
   color: color-mix(in oklab, #f2f0ec 55%, var(--color-carbon));
   opacity: 0;
-  animation: intro-fade 400ms var(--ease-rail) 520ms forwards;
+  animation: intro-fade 420ms var(--ease-rail) 640ms forwards;
 }
 
 @keyframes intro-fade {
@@ -1354,24 +1688,24 @@ html[data-intro='skip'] .intro {
 }
 
 /* ══════════════════════════════════════════ CURSOR DE INSTRUMENTO
-   Un punto que va pegado al puntero y un retículo que llega con retardo y
-   **se acopla al objetivo**: al pasar sobre algo pulsable, el retículo adopta
-   su rectángulo, como una mira que engancha. Eso es lo que hace que el cursor
-   se sienta parte del instrumento y no un adorno que persigue al mouse.
+   Un punto que va pegado al puntero y un retículo que llega con retardo. Sobre
+   algo pulsable **se cierra y se enciende en cian**; no crece hasta ocupar el
+   elemento. Se probó que adoptara el rectángulo del objetivo y sobre piezas
+   grandes el retículo se comía media pantalla: se descartó.
 
    La clase que apaga el puntero nativo la pone el propio componente cuando ya
    dibujó sus nodos. Si el componente no corre, el visitante conserva el suyo. */
 
-html[data-cursor='on'],
-html[data-cursor='on'] * {
+html[data-pointer='hidden'],
+html[data-pointer='hidden'] * {
   cursor: none;
 }
 
 /* Salvo donde ocultar el puntero sería hostil. */
-html[data-cursor='on'] input,
-html[data-cursor='on'] textarea,
-html[data-cursor='on'] select,
-html[data-cursor='on'] [contenteditable='true'] {
+html[data-pointer='hidden'] input,
+html[data-pointer='hidden'] textarea,
+html[data-pointer='hidden'] select,
+html[data-pointer='hidden'] [contenteditable='true'] {
   cursor: auto;
 }
 
@@ -1406,12 +1740,11 @@ html[data-cursor='on'] [contenteditable='true'] {
     background-color 220ms var(--ease-rail);
 }
 
-/* Sobre un objetivo enganchado, el punto se retira: manda el retículo. */
-.cur-ring[data-lock] ~ .cur-dot,
-.cur-dot[data-lock] {
-  width: 3px;
-  height: 3px;
-  margin: -1.5px 0 0 -1.5px;
+/* Sobre un control, el punto se afina: manda el retículo. */
+.cur-dot[data-engaged] {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
 }
 
 .cur-ring {
@@ -1458,18 +1791,20 @@ html[data-cursor='on'] [contenteditable='true'] {
   border-top: 0;
 }
 
-.cur-ring[data-lock]::before,
-.cur-ring[data-lock]::after,
+.cur-ring[data-state='link']::before,
+.cur-ring[data-state='link']::after,
 .cur-ring[data-state='product']::before,
 .cur-ring[data-state='product']::after {
   opacity: 1;
 }
 
-/* Enganchado a un control: el retículo toma su rectángulo. */
-.cur-ring[data-lock] {
-  border-color: color-mix(in oklab, var(--color-sky) 72%, transparent);
-  border-radius: var(--radius-part);
-  background: color-mix(in oklab, var(--color-sky) 7%, transparent);
+/* Sobre un control: el retículo se cierra y se enciende. Tamaño fijo. */
+.cur-ring[data-state='link'] {
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-color: var(--color-sky);
+  background: color-mix(in oklab, var(--color-sky) 12%, transparent);
 }
 
 .cur-ring[data-state='product'] {
@@ -1555,6 +1890,9 @@ html[data-cursor='on'] [contenteditable='true'] {
 
   .u-marquee__track,
   .u-bump,
+  .u-cta::before,
+  .u-cta::after,
+  .u-alive,
   .u-edge[data-idle] .u-edge__light,
   .u-invite,
   .u-nudge,
@@ -1562,10 +1900,15 @@ html[data-cursor='on'] [contenteditable='true'] {
     animation: none;
   }
 
-  .u-invite {
+  .u-invite,
+  .u-alive {
     -webkit-text-fill-color: currentColor;
     color: inherit;
     background: none;
+  }
+
+  .u-cta__inner::before {
+    transition: none;
   }
 
   .u-cell::before,

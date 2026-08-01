@@ -114,11 +114,15 @@ export default function CircuitField({
 
     // Cuatro cubos de intensidad: cada uno se pinta con una sola llamada.
     const buckets: Array<Array<number>> = [[], [], [], []]
+    // Los dos primeros niveles son el estado de reposo: es lo que se ve en los
+    // tramos de color liso, lejos del puntero. Estaban tan bajos que la placa
+    // se leía como un plano vacío; subidos, la retícula está presente sin
+    // llegar a competir con el texto que va encima.
     const COLORS = [
-      `rgba(110, 122, 133, ${(0.2 * intensity).toFixed(3)})`,
-      `rgba(154, 165, 175, ${(0.34 * intensity).toFixed(3)})`,
-      `rgba(85, 200, 245, ${(0.5 * intensity).toFixed(3)})`,
-      `rgba(85, 200, 245, ${(0.92 * intensity).toFixed(3)})`,
+      `rgba(110, 122, 133, ${(0.34 * intensity).toFixed(3)})`,
+      `rgba(154, 165, 175, ${(0.5 * intensity).toFixed(3)})`,
+      `rgba(85, 200, 245, ${(0.58 * intensity).toFixed(3)})`,
+      `rgba(85, 200, 245, ${(0.95 * intensity).toFixed(3)})`,
     ]
 
     const stop = onFrame((_, delta) => {

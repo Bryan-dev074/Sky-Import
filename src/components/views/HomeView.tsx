@@ -4,6 +4,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRef } from 'react'
 
+import { FieldPatch } from '@/components/background/FieldPatch'
 import { ComponentRender } from '@/components/render/ComponentRender'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { AssemblySection } from '@/components/home/AssemblySection'
@@ -55,14 +56,37 @@ export function HomeView() {
               <p className="u-eyebrow">{t('home.hero.eyebrow')}</p>
             </Reveal>
 
+            {/* El titular no se queda quieto: una luz lo recorre cada siete
+                segundos, línea tras línea, con un reposo largo entre pasadas
+                para que nunca compita con la lectura. */}
             <h1 id="titular" className="u-display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]">
-              <SplitWords as="span" start="now" delay={560} step={64} text={t('home.hero.title1')} className="block" />
-              <SplitWords as="span" start="now" delay={680} step={64} text={t('home.hero.title2')} className="block" />
+              <SplitWords
+                as="span"
+                start="now"
+                delay={560}
+                step={64}
+                alive
+                aliveDelay={0}
+                text={t('home.hero.title1')}
+                className="block"
+              />
+              <SplitWords
+                as="span"
+                start="now"
+                delay={680}
+                step={64}
+                alive
+                aliveDelay={480}
+                text={t('home.hero.title2')}
+                className="block"
+              />
               <SplitWords
                 as="span"
                 start="now"
                 delay={800}
                 step={64}
+                alive
+                aliveDelay={980}
                 text={t('home.hero.title3')}
                 className="block text-fg-mid"
               />
@@ -73,17 +97,26 @@ export function HomeView() {
                 {t('home.hero.lede')}
               </p>
 
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                {/* La acción principal de toda la tienda: canto energizado, rótulo
-                    que respira y flecha que insiste. */}
-                <EdgeGlow>
-                  <Link href={path('/catalogo')} className="u-btn u-btn-solid">
-                    <span className="u-invite">{t('cta.catalog')}</span>
-                    <span className="u-nudge" aria-hidden="true">
-                      →
-                    </span>
-                  </Link>
-                </EdgeGlow>
+              <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                {/* La acción principal de toda la tienda. No es un botón: es una
+                    pieza conectada. Corriente dando la vuelta al perímetro sin
+                    parar, halo que se enciende por el lado del que viene el
+                    puntero, relleno que entra barriendo, escuadras que encuadran
+                    y un rótulo que respira con la flecha insistiendo. */}
+                <Magnetic strength={0.16}>
+                  <EdgeGlow>
+                    <Link href={path('/catalogo')} className="u-cta">
+                      <span className="u-cta__inner">
+                        <span className="u-cta__corner" aria-hidden="true" />
+                        <span className="u-cta__corner" aria-hidden="true" />
+                        <span className="u-invite">{t('cta.catalog')}</span>
+                        <span className="u-nudge" aria-hidden="true">
+                          →
+                        </span>
+                      </span>
+                    </Link>
+                  </EdgeGlow>
+                </Magnetic>
 
                 <Magnetic strength={0.22}>
                   <Link href={path('/armar')} className="u-btn u-btn-line">
@@ -165,32 +198,49 @@ export function HomeView() {
                 <Cell
                   as="a"
                   href={`${path('/catalogo')}?categoria=${slug}`}
-                  className="group flex h-full min-h-[168px] flex-col justify-between p-5"
+                  className="group flex h-full min-h-[184px] flex-col justify-between p-5"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span className="w-20 shrink-0 opacity-70 transition-all duration-500 ease-rail group-hover:-translate-y-1 group-hover:opacity-100">
-                      <ComponentRender shape={meta.shape} accent="#6E7A85" seed={i * 7 + 3} variant={i % 3} className="w-full" />
+                      <ComponentRender
+                        shape={meta.shape}
+                        accent="#6E7A85"
+                        seed={i * 7 + 3}
+                        variant={i % 3}
+                        className="w-full"
+                      />
                     </span>
                   </div>
 
+                  {/* Jerarquía explícita: el nombre manda, la función explica y
+                      el recuento es un dato técnico. Todo por encima del umbral
+                      de contraste incluso con la celda encendida del todo. */}
                   <div>
-                    <p className="text-[1.0625rem] font-medium text-fg">{meta.name[locale]}</p>
-                    <p className="mt-1.5 text-[0.8125rem] leading-snug text-fg-low">
+                    <p className="u-display-sm text-[1.1875rem] leading-tight text-fg">
+                      {meta.name[locale]}
+                    </p>
+                    <p className="mt-2 text-[0.8125rem] leading-snug text-fg-mid">
                       {meta.role[locale]}
                     </p>
-                    <p className="mt-3 flex items-center gap-2 font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low">
-                      {COUNT_BY_CATEGORY.get(slug) ?? 0} {t('home.categories.count')}
+                    <p className="mt-4 flex items-center gap-2 border-t border-rule pt-3 font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-mid">
+                      <span className="tabular-nums text-fg">
+                        {COUNT_BY_CATEGORY.get(slug) ?? 0}
+                      </span>
+                      {t('home.categories.count')}
                       <span
-                        className="inline-block transition-transform duration-300 ease-rail group-hover:translate-x-1"
+                        className="ml-auto inline-block text-accent transition-transform duration-300 ease-rail group-hover:translate-x-1"
                         aria-hidden="true"
                       >
                         →
                       </span>
                     </p>
                   </div>
+
+                  {/* Lectura de proximidad al pie de la celda. */}
+                  <span className="u-cell__rail" aria-hidden="true" />
                 </Cell>
               </Reveal>
             )
@@ -214,7 +264,7 @@ export function HomeView() {
           <Reveal delayIndex={1}>
             <Link
               href={path('/catalogo')}
-              className="u-link font-mono text-[0.6875rem] tracking-[0.14em] uppercase text-fg-mid"
+              className="u-link u-tap font-mono text-[0.6875rem] tracking-[0.14em] uppercase text-fg-mid"
             >
               {t('cta.viewAll')}
             </Link>
@@ -239,9 +289,12 @@ export function HomeView() {
       {/* ─────────────────────────────────────────────────────── ENSAMBLAJE ── */}
       <AssemblySection />
 
-      {/* ══ SEGUNDA SUPERFICIE ══ el configurador y las guías van sobre aluminio */}
+      {/* ══ SEGUNDA SUPERFICIE ══ el configurador y las guías van sobre aluminio.
+          Es opaca, así que tapa el campo de vías global: lleva el suyo dentro,
+          o este tramo sería un plano de color liso. */}
       <div data-surface="aluminio" className="bg-surface text-fg">
         <section className="relative overflow-hidden" aria-labelledby="configurador">
+          <FieldPatch spacing={30} intensity={0.62} />
           <div className="pointer-events-none absolute inset-0 text-steel opacity-30">
             <Trace width={1400} height={520} lines={9} seed={73} className="h-full w-full" />
           </div>
@@ -306,41 +359,52 @@ export function HomeView() {
           </div>
         </section>
 
-        <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="guias">
-          <Reveal>
-            <p className="u-eyebrow">{t('home.guides.eyebrow')}</p>
-          </Reveal>
-          <SplitWords
-            as="h2"
-            text={t('home.guides.title')}
-            className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
-          />
-          <Reveal delayIndex={2}>
-            <p className="u-measure mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
-              {t('home.guides.lede')}
-            </p>
-          </Reveal>
+        <section
+          className="relative border-t border-rule py-24 lg:py-32"
+          aria-labelledby="guias"
+        >
+          <FieldPatch spacing={30} intensity={0.55} />
+          <div className="u-page relative">
+            <Reveal>
+              <p className="u-eyebrow">{t('home.guides.eyebrow')}</p>
+            </Reveal>
+            <SplitWords
+              as="h2"
+              text={t('home.guides.title')}
+              className="u-display mt-5 text-[clamp(1.9rem,4vw,3rem)]"
+            />
+            <Reveal delayIndex={2}>
+              <p className="u-measure mt-5 text-[0.9375rem] leading-relaxed text-fg-mid">
+                {t('home.guides.lede')}
+              </p>
+            </Reveal>
 
-          <ul className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
-            {GUIDES.map((guide, i) => (
-              <Reveal as="li" key={guide.slug} delayIndex={i} className="border-t border-rule pt-6">
-                <Link href={path(`/guias/${guide.slug}`)} className="group block">
-                  <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
-                    {guide.index}
-                  </span>
-                  <h3 className="u-display-sm mt-3 text-[1.375rem]">
-                    <span className="relative inline">
-                      {guide.title[locale]}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-[320ms] ease-rail group-hover:scale-x-100" />
+            <ul className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+              {GUIDES.map((guide, i) => (
+                <Reveal
+                  as="li"
+                  key={guide.slug}
+                  delayIndex={i}
+                  className="border-t border-rule pt-6"
+                >
+                  <Link href={path(`/guias/${guide.slug}`)} className="group block">
+                    <span className="font-mono text-[0.6875rem] tabular-nums text-accent">
+                      {guide.index}
                     </span>
-                  </h3>
-                  <p className="u-measure mt-3 text-[0.9375rem] leading-relaxed text-fg-mid">
-                    {guide.standfirst[locale]}
-                  </p>
-                </Link>
-              </Reveal>
-            ))}
-          </ul>
+                    <h3 className="u-display-sm mt-3 text-[1.375rem]">
+                      <span className="relative inline">
+                        {guide.title[locale]}
+                        <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-[320ms] ease-rail group-hover:scale-x-100" />
+                      </span>
+                    </h3>
+                    <p className="u-measure mt-3 text-[0.9375rem] leading-relaxed text-fg-mid">
+                      {guide.standfirst[locale]}
+                    </p>
+                  </Link>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
         </section>
       </div>
 
