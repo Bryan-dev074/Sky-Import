@@ -19,8 +19,8 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
     credit: 'NVIDIA',
   },
   'geforce-rtx-5070-ti-16gb': {
-    sourcePage: 'https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/',
-    credit: 'NVIDIA',
+    sourcePage: 'https://www.msi.com/Graphics-Card/GeForce-RTX-5070-Ti-16G-VENTUS-3X-OC/Overview',
+    credit: 'MSI',
   },
   'geforce-rtx-5070-12gb': {
     sourcePage: 'https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/',
@@ -28,12 +28,12 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
   },
   'radeon-rx-9070-xt-16gb': {
     sourcePage:
-      'https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070-xt.html',
-    credit: 'AMD',
+      'https://www.asus.com/br/motherboards-components/graphics-cards/tuf-gaming/tuf-rx9070xt-o16g-gaming/',
+    credit: 'ASUS',
   },
   'geforce-rtx-4060-8gb': {
-    sourcePage: 'https://www.nvidia.com/en-us/geforce/graphics-cards/40-series/rtx-4060-4060ti/',
-    credit: 'NVIDIA',
+    sourcePage: 'https://www.msi.com/Graphics-Card/GeForce-RTX-4060-VENTUS-3X-8G',
+    credit: 'MSI',
   },
   'arc-b580-12gb': {
     sourcePage:
@@ -92,7 +92,7 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
     credit: 'Corsair',
   },
   'gskill-trident-z5-neo-32gb-6000': {
-    sourcePage: 'https://www.gskill.com/product/165/393/1662622235/F5-6000J3038F16GX2-TZ5N',
+    sourcePage: 'https://www.gskill.com/product/165/393/1661410171/F5-6000J3038F16GX2-TZ5N',
     credit: 'G.Skill',
   },
   'kingston-fury-beast-ddr5-16gb-5600': {
@@ -171,7 +171,7 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
     credit: 'Thermal Grizzly',
   },
   'arctic-p12-pwm-pst-5-pack': {
-    sourcePage: 'https://www.arctic.de/us/P12-PWM-PST/ACFAN00120A',
+    sourcePage: 'https://www.arctic.de/P12-PWM-PST/ACFAN00137A',
     credit: 'ARCTIC',
   },
 }

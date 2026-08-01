@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, test } from 'vitest'
 import { PRODUCTS } from '@/lib/catalog/products'
 
@@ -31,6 +33,18 @@ describe('catálogo premium', () => {
       expect(media?.credit.length).toBeGreaterThan(1)
       expect(media?.alt.es).toContain(product.model)
       expect(media?.alt.pt).toContain(product.model)
+    }
+  })
+
+  test('incluye una imagen optimizada local para cada producto', () => {
+    for (const product of PRODUCTS) {
+      const imagePath = join(
+        process.cwd(),
+        'public',
+        product.media.primary.replace(/^\//, ''),
+      )
+
+      expect(existsSync(imagePath), product.slug).toBe(true)
     }
   })
 })

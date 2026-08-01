@@ -18,7 +18,10 @@
     "a11y": "playwright test accesibilidad",
     "e2e:install": "playwright install --with-deps chromium",
     "assets": "node scripts/build-assets.mjs",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "media:sync": "node scripts/sync-product-images.mjs",
+    "media:validate": "node scripts/validate-product-media.mjs",
+    "media:sheet": "node scripts/build-product-contact-sheet.mjs",
+    "verify": "npm run media:validate && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "next": "16.2.12",
