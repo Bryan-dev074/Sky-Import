@@ -708,3 +708,90 @@ Todo contra la compilación de producción servida en `127.0.0.1:3100`.
 - Cuadros por sección: ver §7.8.
 
 **No se ejecutó Lighthouse.** No hay ninguna puntuación detrás de este documento.
+
+---
+
+## 8 · Cuarta vuelta: menos fondo, más pieza
+
+Dos indicaciones, y las dos apuntan a lo mismo: **repartir mejor**.
+
+### 8.1 · El campo de vías, de todas partes a dos tramos
+
+El fondo de puntos estaba como lienzo fijo detrás de toda la tienda. Funcionaba
+—se veía, reaccionaba al puntero, iba a 60 Hz— y aun así estaba mal: cuando el
+mismo efecto aparece en cada pantalla deja de ser un momento y pasa a ser papel
+pintado. A la tercera vista ya nadie lo mira.
+
+Se quitó el lienzo global (`LiveBackground` desaparece; el `<html>` vuelve a ser
+el fondo) y el campo pasa a vivir en **dos tramos de la portada**, con
+`FieldPatch`:
+
+| Dónde | Por qué ahí |
+|---|---|
+| Piezas destacadas | Es la sección de producto: las fichas se apoyan sobre la placa, que es la idea de la casa, y el fondo estaba plano |
+| Configurador (aluminio) | Superficie clara, opaca y lisa; el trazado que ya lleva encima se lee como la misma placa |
+
+Y en ningún otro sitio. Catálogo, ficha, carrito, checkout, guías y el resto de
+la portada van sin él. `FieldPatch` además **se desmonta** al salir de pantalla:
+fuera de su sección no hay lienzo, ni bucle, ni memoria.
+
+Dos cosas que este cambio deja aprendidas y valen para cualquier lienzo:
+
+- `.u-field` ya era el campo de formulario; llamar igual al lienzo convertía cada
+  `input` en un elemento fijo a pantalla completa.
+- Un `<canvas>` **no se estira con `inset: 0`**: sus atributos `width` y `height`
+  entran como valores CSS presentacionales, la caja queda sobrerrestringida y el
+  navegador descarta `right` y `bottom`. Hay que declarar el tamaño.
+
+### 8.2 · La pieza conectada, en todos los botones de compra
+
+«Ver catálogo» gustó, así que la misma pieza pasa a «Agregar al carrito» —en la
+ficha y en cada tarjeta del catálogo— y a «Pasar el armado al carrito». El
+marcado se extrajo a `CtaBody` para no copiarlo en cada sitio.
+
+Lo que **no** se hizo es animarlas todas. La corriente del perímetro y el halo
+desenfocado cuestan un repintado por cuadro; con treinta y siete tarjetas en
+pantalla eso es exactamente el error que costó los cuadros de la retícula de
+categorías en la vuelta anterior. Así que la pieza tiene dos niveles:
+
+| | `data-lead` | sin `data-lead` |
+|---|---|---|
+| Dónde | La acción protagonista de la vista. Una por vista | Las repetidas: una por tarjeta |
+| Canto | Corriente dando la vuelta, siempre | Fija. Arranca al llegar el puntero |
+| Halo | Encendido, siempre | Apagado. Se enciende al llegar el puntero |
+| Rótulo y flecha | Barrido y flecha insistiendo | Quietos hasta el puntero |
+| Canto, escuadras, barrido de relleno | Sí | Sí |
+
+Se ven de la misma familia y **solo hay una corriendo a la vez**. Medido: con
+treinta y siete tarjetas en el catálogo, las cuatro secciones de la portada
+siguen a 16,7 ms y las lecturas de geometría por cuadro bajaron de 1,46 a 1,04
+en el hero y de 0,58 a 0,17 en categorías —quitar el lienzo global también
+ayudó—.
+
+Agotado **no** usa esta pieza: llevar a WhatsApp no es la acción que la vista
+quiere destacar, y darle el mismo peso confundiría lo que se está ofreciendo.
+
+Y una nota de CSS que costó un rato: `:hover` **sí** casa con los elementos
+deshabilitados. En un botón `disabled` hay que desandar el barrido de relleno a
+mano, o el relleno entra igual en un botón que no hace nada.
+
+### 8.3 · Verificación de esta vuelta
+
+- `npx tsc --noEmit` y `npm run lint` — limpios.
+- `npm test` — 47 unitarias.
+- `npm run build` — 98 páginas estáticas.
+- `npx playwright test` — 67 pasan, 1 omitida (no aplica en táctil).
+- Barrido de 9 rutas × 5 tamaños: sin desbordamiento horizontal, sin errores de
+  consola y sin objetivos táctiles por debajo de 44 × 44.
+- Cuadros, compilación de producción, puntero en movimiento, 150 cuadros por
+  sección:
+
+| Sección | p50 | p95 | `getBoundingClientRect` por cuadro |
+|---|---|---|---|
+| Hero | 16,7 ms | 16,8 ms | 1,04 |
+| Categorías | 16,7 ms | 33,3 ms | 0,17 |
+| Destacados (con campo) | 16,7 ms | 33,3 ms | 0,53 |
+| Aluminio (con campo) | 16,7 ms | 16,7 ms | 0,42 |
+
+Sigue siendo Chromium sin ventana con rasterizado por software, no un equipo
+real. **Lighthouse no se ejecutó.**

@@ -80,10 +80,10 @@ presupuesto de rendimiento de este proyecto.
 
 | Componente | Archivo en este repositorio | Qué se cambió |
 |---|---|---|
-| `DotField` | `src/components/background/CircuitField.tsx` | Reescrito entero: canvas 2D, los puntos son pads de vía de una placa, agrupados en cuatro cubos de intensidad para pintar cada uno con una sola llamada. |
+| `DotField` | `src/components/background/CircuitField.tsx` | Reescrito entero: canvas 2D, los puntos son pads de vía de una placa, agrupados en cuatro cubos de intensidad para pintar cada uno con una sola llamada. No es un fondo global: `FieldPatch` lo coloca en dos tramos concretos y lo desmonta al salir de pantalla. |
 | `Threads` | `src/components/background/Threads.tsx` | Portado a TypeScript, paleta de la casa, menos líneas, resolución interna acotada, guardián de cuadros y liberación del contexto WebGL. |
 | `Beams` | `src/components/background/Beams.tsx` | **Portado a three.js plano** (el original usa `@react-three/fiber` y `@react-three/drei`); ruido de UV con semilla en vez de `Math.random()`. |
-| `BorderGlow` | `src/components/motion/EdgeGlow.tsx` y `.u-edge` en `globals.css` | Un solo color, radio de 3 px, sin degradado de malla multicolor. |
+| `BorderGlow` | `src/components/motion/EdgeGlow.tsx` y `.u-edge` en `globals.css` | Un solo color, radio de 3 px, sin degradado de malla multicolor. Envuelve la pieza `.u-cta` (`src/components/ui/Cta.tsx`), que es propia. |
 | `MagicBento` | `src/components/motion/Cell.tsx` y `.u-cell` en `globals.css` | **Sin GSAP** (bucle de animación propio) y **sin partículas flotantes**. |
 
 La Commons Clause permite usar los componentes dentro de una aplicación y

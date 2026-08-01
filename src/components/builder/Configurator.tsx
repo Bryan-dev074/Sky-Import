@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ComponentRender } from '@/components/render/ComponentRender'
 import { Price } from '@/components/ui/Price'
+import { CtaBody } from '@/components/ui/Cta'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 import { useI18n } from '@/lib/i18n/context'
 import { useBuild, resolveBuild } from '@/lib/build'
@@ -211,6 +212,8 @@ export function Configurator() {
             </dl>
 
             <div className="mt-6 grid gap-2">
+              {/* Pasar el armado entero al carrito es LA acción de esta vista:
+                  lleva la pieza conectada, igual que agregar desde una ficha. */}
               <button
                 type="button"
                 disabled={chosen.length === 0}
@@ -218,9 +221,15 @@ export function Configurator() {
                   for (const product of chosen) addToCart(product.slug, 1)
                   toast(t('build.addedAll'))
                 }}
-                className="u-btn u-btn-solid w-full"
+                data-lead
+                className="u-cta u-cta--block u-cta--sm"
               >
-                {t('build.addAll')}
+                <CtaBody>
+                  <span className="u-invite">{t('build.addAll')}</span>
+                  <span className="u-nudge" aria-hidden="true">
+                    →
+                  </span>
+                </CtaBody>
               </button>
               <button
                 type="button"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { CtaBody } from '@/components/ui/Cta'
 import { useCart } from '@/lib/cart'
 import { useUi } from '@/lib/ui'
 import { useI18n } from '@/lib/i18n/context'
@@ -15,6 +16,21 @@ import type { Product } from '@/lib/catalog/types'
  *
  * Si la pieza no tiene unidades, el botón cede su lugar al canal que sí puede
  * resolverlo: la consulta por WhatsApp con el modelo ya escrito.
+ *
+ * Es la misma pieza conectada que la acción principal de la portada, en sus dos
+ * tallas:
+ *
+ *   · `variant="solid"` — el botón grande de la ficha. Es la acción
+ *     protagonista de esa vista, así que lleva `data-lead` y la corriente no
+ *     para.
+ *   · `variant="line"` — el de cada tarjeta del catálogo. Misma pieza, talla de
+ *     retícula y **quieta en reposo**: la corriente arranca cuando el puntero
+ *     llega. Con treinta y siete tarjetas en pantalla, animarlas todas a la vez
+ *     sería exactamente el error que costó los cuadros de la retícula de
+ *     categorías.
+ *
+ * Agotado NO usa esta pieza: llevar a WhatsApp no es la acción que la vista
+ * quiere destacar, y darle el mismo peso confundiría lo que se está ofreciendo.
  */
 export function AddToCart({
   product,
@@ -27,6 +43,7 @@ export function AddToCart({
   product: Product
   qty?: number
   disabled?: boolean
+  /** `solid` es la acción protagonista de la vista; `line`, la de una tarjeta. */
   variant?: 'solid' | 'line'
   className?: string
   /** Marca el botón principal de la ficha para poder apuntarle en las pruebas. */
@@ -58,11 +75,14 @@ export function AddToCart({
     )
   }
 
+  const lead = variant === 'solid'
+
   return (
     <button
       type="button"
       data-testid={testId}
-      className={`u-btn ${variant === 'solid' ? 'u-btn-solid' : 'u-btn-line'} w-full ${className ?? ''}`}
+      data-lead={lead ? '' : undefined}
+      className={`u-cta u-cta--block ${lead ? '' : 'u-cta--sm'} ${className ?? ''}`}
       onClick={() => {
         add(product.slug, qty)
         setConfirmed(true)
@@ -70,16 +90,23 @@ export function AddToCart({
         toast(`${product.name} ${t('product.addedToCart')}`)
       }}
     >
-      {confirmed ? (
-        <>
-          <svg viewBox="0 0 14 14" width="12" height="12" stroke="currentColor" strokeWidth="1.6" fill="none" aria-hidden="true">
-            <path d="M2 7.4 L5.4 11 L12 3.4" />
-          </svg>
-          {t('cta.added')}
-        </>
-      ) : (
-        t('cta.add')
-      )}
+      <CtaBody>
+        {confirmed ? (
+          <>
+            <svg viewBox="0 0 14 14" width="12" height="12" stroke="currentColor" strokeWidth="1.6" fill="none" aria-hidden="true">
+              <path d="M2 7.4 L5.4 11 L12 3.4" />
+            </svg>
+            {t('cta.added')}
+          </>
+        ) : (
+          <>
+            <span className={lead ? 'u-invite' : undefined}>{t('cta.add')}</span>
+            <span className="u-nudge" aria-hidden="true">
+              →
+            </span>
+          </>
+        )}
+      </CtaBody>
     </button>
   )
 }

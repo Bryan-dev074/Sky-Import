@@ -10,7 +10,6 @@ import { I18nProvider } from '@/lib/i18n/context'
 import { prePaintScript } from '@/lib/prePaint'
 import { Header } from '@/components/chrome/Header'
 import { RenderDefs } from '@/components/render/RenderDefs'
-import { LiveBackground } from '@/components/background/LiveBackground'
 import { Footer } from '@/components/chrome/Footer'
 import { CartDrawer } from '@/components/chrome/CartDrawer'
 import { Toaster } from '@/components/chrome/Toaster'
@@ -141,9 +140,12 @@ export default async function LocaleLayout({
       </head>
       <body className="text-fg antialiased">
         <I18nProvider initialLocale={locale}>
-          {/* El fondo vivo: una retícula de vías que reacciona al puntero.
-              Vive detrás de todo y no existe en punteros gruesos. */}
-          <LiveBackground />
+          {/* El campo de vías NO vive aquí.
+              Estuvo un tiempo como lienzo fijo detrás de toda la tienda y el
+              efecto era el contrario del buscado: cuando algo está en todas
+              partes deja de ser un momento y pasa a ser ruido de fondo. Ahora
+              va por secciones, con `FieldPatch`, en los tramos concretos donde
+              aporta —y solo mientras se ven—. Ver `FieldPatch.tsx`. */}
           <RenderDefs />
 
           <a href="#contenido" className="skip-link">

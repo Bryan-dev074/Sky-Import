@@ -271,6 +271,12 @@ Dos curvas con nombre, y **ninguna animación fuera de ellas**:
 6. Ninguna vista anima más de ~30 nodos simultáneos.
 7. Lo caro (WebGL) se monta al acercarse y se libera de verdad al irse
    (`forceContextLoss()` **antes** de `dispose()`).
+8. **Un efecto que está en todas partes deja de ser un efecto.** El campo de
+   vías estuvo un tiempo como lienzo fijo detrás de toda la tienda; funcionaba
+   y se quitó igual, porque a la tercera pantalla ya era papel pintado. Ahora
+   vive en **dos tramos** de la portada —las piezas destacadas y el
+   configurador— y en ningún otro sitio. La misma regla gobierna la corriente
+   del botón: una por vista se mueve sola, las demás esperan al puntero.
 
 ### Momentos firma (siete, y el resto sereno)
 
@@ -291,8 +297,12 @@ Dos curvas con nombre, y **ninguna animación fuera de ellas**:
    contenga el texto directamente.
 7. **La acción principal energizada** — carga recorriendo el perímetro, halo que
    responde al lado por el que llega el puntero, relleno que entra barriendo y
-   escuadras que encuadran. **Una sola por vista.** Es la excepción documentada
-   a la prohibición de brillo, no una licencia general.
+   escuadras que encuadran. Es la misma pieza en «Ver catálogo», en «Agregar al
+   carrito» y en «Pasar el armado al carrito», en dos niveles: **una sola por
+   vista se mueve sola** (`data-lead`); las repetidas —una por tarjeta de
+   catálogo— son la misma pieza **quieta**, que arranca cuando el puntero llega.
+   Es la excepción documentada a la prohibición de brillo, no una licencia
+   general.
 
 ---
 
@@ -310,7 +320,7 @@ Dos curvas con nombre, y **ninguna animación fuera de ellas**:
 | `Field` | `--carbon-sunk`, filete inferior 1 px | Foco: filete a `--sky`, 2 px |
 | `Trace` | SVG 1 px, codos 45° | Ver §8.2 |
 | `PriceStack` | Tres valores, uno visible | Ver §12 |
-| `Cta` | Anillo de 2 px con carga recorriéndolo, superficie `--carbon-lift` | Una por vista. Lo único que brilla dentro es el canto: el interior nunca, o se pierde el rótulo |
+| `Cta` | Anillo de 2 px con carga recorriéndolo, superficie `--carbon-lift` | Lo único que brilla es el canto: el interior nunca, o se pierde el rótulo. **Una `data-lead` por vista**; las repetidas van quietas y despiertan con el puntero |
 | `Cell` | Celda del índice; el **canto** se enciende por proximidad | El interior se aclara de forma uniforme, sin mancha centrada. Una mancha sobre el texto es un fallo, no un efecto |
 
 ---

@@ -12,6 +12,7 @@ import { Trace } from '@/components/motif/Trace'
 import { Counter, Magnetic, Parallax, Reveal, SplitWords } from '@/components/motion/Motion'
 import { EdgeGlow } from '@/components/motion/EdgeGlow'
 import { Cell, CellGrid } from '@/components/motion/Cell'
+import { CtaBody } from '@/components/ui/Cta'
 import { CATEGORY_META, CATEGORY_ORDER } from '@/lib/catalog/categories'
 import { PRODUCTS } from '@/lib/catalog/products'
 import { GUIDES } from '@/content/guides'
@@ -105,15 +106,13 @@ export function HomeView() {
                     y un rótulo que respira con la flecha insistiendo. */}
                 <Magnetic strength={0.16}>
                   <EdgeGlow>
-                    <Link href={path('/catalogo')} className="u-cta">
-                      <span className="u-cta__inner">
-                        <span className="u-cta__corner" aria-hidden="true" />
-                        <span className="u-cta__corner" aria-hidden="true" />
+                    <Link href={path('/catalogo')} className="u-cta" data-lead>
+                      <CtaBody>
                         <span className="u-invite">{t('cta.catalog')}</span>
                         <span className="u-nudge" aria-hidden="true">
                           →
                         </span>
-                      </span>
+                      </CtaBody>
                     </Link>
                   </EdgeGlow>
                 </Magnetic>
@@ -248,8 +247,16 @@ export function HomeView() {
         </CellGrid>
       </section>
 
-      {/* ────────────────────────────────────────────────────── DESTACADOS ── */}
-      <section className="u-page border-t border-rule py-24 lg:py-32" aria-labelledby="destacados">
+      {/* ────────────────────────────────────────────────────── DESTACADOS ──
+          Uno de los DOS tramos con campo de vías en toda la tienda. Aquí sí:
+          las piezas se apoyan sobre la placa, que es la idea de la casa, y el
+          fondo estaba plano. */}
+      <section
+        className="relative border-t border-rule py-24 lg:py-32"
+        aria-labelledby="destacados"
+      >
+        <FieldPatch spacing={30} intensity={0.72} />
+        <div className="u-page relative">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <Reveal>
@@ -277,12 +284,13 @@ export function HomeView() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-x-6 gap-y-12 border-b border-rule pb-12 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURED.map((product, i) => (
-            <Reveal key={product.slug} delayIndex={i}>
-              <ProductCard product={product} index={i} />
-            </Reveal>
-          ))}
+          <div className="mt-12 grid gap-x-6 gap-y-12 border-b border-rule pb-12 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURED.map((product, i) => (
+              <Reveal key={product.slug} delayIndex={i}>
+                <ProductCard product={product} index={i} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -290,8 +298,8 @@ export function HomeView() {
       <AssemblySection />
 
       {/* ══ SEGUNDA SUPERFICIE ══ el configurador y las guías van sobre aluminio.
-          Es opaca, así que tapa el campo de vías global: lleva el suyo dentro,
-          o este tramo sería un plano de color liso. */}
+          El configurador es el OTRO tramo con campo: el fondo claro liso lo
+          pedía, y el trazado que ya tiene encima se lee como la misma placa. */}
       <div data-surface="aluminio" className="bg-surface text-fg">
         <section className="relative overflow-hidden" aria-labelledby="configurador">
           <FieldPatch spacing={30} intensity={0.62} />
@@ -359,12 +367,12 @@ export function HomeView() {
           </div>
         </section>
 
-        <section
-          className="relative border-t border-rule py-24 lg:py-32"
-          aria-labelledby="guias"
-        >
-          <FieldPatch spacing={30} intensity={0.55} />
-          <div className="u-page relative">
+        {/* Las guías NO llevan campo: son texto para leer y ya están sobre la
+            misma superficie de aluminio que el configurador, que sí lo lleva.
+            Dos tramos seguidos con el mismo fondo animado es justo lo que
+            convertía el efecto en ruido. */}
+        <section className="border-t border-rule py-24 lg:py-32" aria-labelledby="guias">
+          <div className="u-page">
             <Reveal>
               <p className="u-eyebrow">{t('home.guides.eyebrow')}</p>
             </Reveal>

@@ -545,25 +545,22 @@ html[data-currency='BRL'] [data-cur='BRL'] {
   display: inline;
 }
 
-/* ─────────────────────────────────────────── el fondo vivo, detrás de todo
-   OJO con el nombre: `.u-field` ya existe y es el campo de formulario de la
-   casa. Llamar igual al lienzo de fondo convertía cada input y cada select en
-   un elemento fijo a pantalla completa. */
+/* ────────────────────────────────────── el campo de vías, por secciones
+   Hubo una versión con el lienzo FIJO detrás de toda la tienda. Funcionaba y
+   se quitó igual: cuando el mismo efecto está en todas las pantallas deja de
+   ser un momento y pasa a ser ruido de fondo. Ahora vive en las secciones
+   concretas donde aporta, con `FieldPatch`, y solo mientras se ven.
 
-.u-backdrop {
-  position: fixed;
-  inset: 0;
-  /* `inset: 0` NO estira un `<canvas>`. Los atributos `width`/`height` del
-     elemento entran como valores CSS presentacionales (300 × 150 por defecto),
-     así que la caja queda sobrerrestringida y el navegador descarta el `right`
-     y el `bottom`: el fondo vivo se pintaba en un rectángulo de 300 × 150 en la
-     esquina superior izquierda. Por eso «no se veía» en el resto de la página.
-     Hay que declarar el tamaño explícitamente. */
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
+   Dos cosas que valen para cualquier lienzo de esta casa:
+
+     · OJO con el nombre. `.u-field` ya existe y es el campo de formulario;
+       llamar igual al lienzo convertía cada `input` en un elemento fijo a
+       pantalla completa.
+     · Un `<canvas>` NO se estira con `inset: 0`. Sus atributos `width` y
+       `height` entran como valores CSS presentacionales —300 × 150 por
+       defecto—, la caja queda sobrerrestringida y el navegador descarta el
+       `right` y el `bottom`. Hay que declarar el tamaño; por eso
+       `FieldPatch` le pasa `h-full w-full`. */
 
 /* ═══════════════════════════════════════════════ LA MARCA CON VIDA
    El sello no es una imagen quieta: sus pistas se trazan, una carga las
@@ -877,9 +874,20 @@ a:focus-visible .wordmark__l {
   }
 }
 
-/* Flecha que insiste, con reposo largo. */
+/* Flecha que insiste, con reposo largo. Dentro de una pieza `.u-cta` solo
+   insiste la protagonista o la que tiene el puntero encima: la misma regla que
+   la corriente del perímetro, y por el mismo motivo. */
 .u-nudge {
   display: inline-block;
+  animation: nudge 2.6s var(--ease-rail) infinite;
+}
+
+.u-cta:not([data-lead]) .u-nudge {
+  animation: none;
+}
+
+.u-cta:not([data-lead]):hover .u-nudge,
+.u-cta:not([data-lead]):focus-within .u-nudge {
   animation: nudge 2.6s var(--ease-rail) infinite;
 }
 
@@ -1051,7 +1059,6 @@ a:focus-visible .wordmark__l {
     color-mix(in oklab, var(--color-sky) 55%, transparent) 0.92turn,
     transparent 1turn
   );
-  animation: cta-run 3.2s linear infinite;
   /* Abreviaturas primero, `composite` al final: ver la nota de `.u-cell::after`. */
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -1081,14 +1088,40 @@ a:focus-visible .wordmark__l {
     transparent 1turn
   );
   filter: blur(10px);
+  opacity: 0;
+  transition: opacity 320ms var(--ease-rail);
+}
+
+/* ── DOS NIVELES ────────────────────────────────────────────────────────────
+   La carga que da la vuelta y el halo cuestan un repintado por cuadro. Con una
+   sola pieza en pantalla no se nota; con treinta y siete fichas de catálogo,
+   sí. Así que:
+
+     · `data-lead` — la acción protagonista de la vista. Una por vista. La
+       corriente no para y el halo está siempre encendido.
+     · sin `data-lead` — la misma pieza, pero **quieta en reposo**: conserva el
+       canto, las escuadras, el barrido de relleno y el rótulo. La corriente
+       arranca y el halo se enciende solo cuando el puntero llega, y entonces
+       solo hay una corriendo.
+
+   El resultado es que todos los botones de acción se ven de la misma familia
+   sin que la página pague treinta y siete animaciones a la vez.            */
+
+.u-cta[data-lead]::before,
+.u-cta:hover::before,
+.u-cta:focus-within::before {
+  animation: cta-run 3.2s linear infinite;
+}
+
+.u-cta[data-lead]::after {
   opacity: 0.55;
   animation: cta-run 3.2s linear infinite;
-  transition: opacity 320ms var(--ease-rail);
 }
 
 .u-cta:hover::after,
 .u-cta:focus-within::after {
   opacity: 0.85;
+  animation: cta-run 3.2s linear infinite;
 }
 
 /* En táctil la carga se queda quieta. Un desenfoque de 10 px repintándose a
@@ -1096,11 +1129,13 @@ a:focus-visible .wordmark__l {
    ahí no hay puntero al que responder: el halo aporta igual estando fijo. */
 @media (pointer: coarse) {
   .u-cta::before,
-  .u-cta::after {
+  .u-cta::after,
+  .u-cta[data-lead]::before,
+  .u-cta[data-lead]::after {
     animation: none;
   }
 
-  .u-cta::after {
+  .u-cta[data-lead]::after {
     opacity: 0.4;
   }
 }
@@ -1109,6 +1144,49 @@ a:focus-visible .wordmark__l {
   to {
     --si-angle: 1turn;
   }
+}
+
+/* Botón a todo el ancho: la ficha y el carrito lo necesitan. */
+.u-cta--block {
+  display: block;
+}
+
+.u-cta--block .u-cta__inner {
+  display: flex;
+  width: 100%;
+}
+
+/* Talla de retícula: la misma altura que `.u-btn`, para que una ficha de
+   catálogo no crezca por llevar la pieza buena. */
+.u-cta--sm .u-cta__inner {
+  min-height: 48px;
+  padding: 0 1.25rem;
+}
+
+/* Sin corriente. Una pieza deshabilitada no debe verse energizada, y `:hover`
+   SÍ casa con los elementos deshabilitados: hay que desandar el barrido a mano
+   o el relleno entraría igual en un botón que no hace nada. */
+.u-cta:disabled {
+  cursor: not-allowed;
+}
+
+.u-cta:disabled::before,
+.u-cta:disabled::after {
+  animation: none;
+  opacity: 0;
+}
+
+.u-cta:disabled .u-cta__inner {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.u-cta:disabled .u-cta__inner:hover::before {
+  transform: translate3d(-101%, 0, 0);
+}
+
+.u-cta:disabled .u-cta__inner:hover {
+  color: var(--fg-hi);
 }
 
 .u-cta__inner {
