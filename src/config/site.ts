@@ -13,8 +13,8 @@ export const SITE = {
   city: 'Ciudad del Este',
   region: 'Alto Paraná',
   country: 'Paraguay',
-  /** Sin dominio propio todavía; se usa para URLs absolutas de metadata. */
-  origin: 'https://sky-import.vercel.app',
+  /** Dominio de producción actual de Vercel para URLs absolutas de metadata. */
+  origin: 'https://sky-import-delta.vercel.app',
 } as const
 
 /**
