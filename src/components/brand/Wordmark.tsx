@@ -1,5 +1,6 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { SITE } from '@/config/site'
 
 /**
@@ -115,7 +116,7 @@ export function Wordmark({ className }: { className?: string }) {
         <span
           key={i}
           className="wordmark__l"
-          style={{ transitionDelay: `${i * 22}ms` }}
+          style={{ transitionDelay: `${i * 22}ms`, '--wordmark-i': i } as CSSProperties}
         >
           {letter === ' ' ? ' ' : letter}
         </span>

@@ -68,7 +68,7 @@ export function HomeView() {
             {/* El titular no se queda quieto: una luz lo recorre cada siete
                 segundos, línea tras línea, con un reposo largo entre pasadas
                 para que nunca compita con la lectura. */}
-            <h1 id="titular" className="u-display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]">
+            <h1 id="titular" className="u-kinetic-title u-display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]">
               <SplitWords
                 as="span"
                 start="now"
@@ -77,7 +77,7 @@ export function HomeView() {
                 alive
                 aliveDelay={0}
                 text={t('home.hero.title1')}
-                className="block"
+                className="u-kinetic-line u-kinetic-line--one block"
               />
               <SplitWords
                 as="span"
@@ -87,7 +87,7 @@ export function HomeView() {
                 alive
                 aliveDelay={480}
                 text={t('home.hero.title2')}
-                className="block"
+                className="u-kinetic-line u-kinetic-line--two block"
               />
               <SplitWords
                 as="span"
@@ -97,7 +97,7 @@ export function HomeView() {
                 alive
                 aliveDelay={980}
                 text={t('home.hero.title3')}
-                className="block text-fg-mid"
+                className="u-kinetic-line u-kinetic-line--three block text-fg-mid"
               />
             </h1>
 

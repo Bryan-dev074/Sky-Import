@@ -181,10 +181,10 @@ export function Header() {
             una barra de 64 px— pero lleva el objetivo táctil al mínimo. */}
         <Link
           href={path('/')}
-          className="flex min-h-[44px] items-center gap-2.5 text-fg"
+          className="brand-link flex min-h-[44px] items-center gap-2.5 text-fg"
           aria-label={`Sky Import — ${t('brand.role')}`}
         >
-          <BrandMark size={24} className="text-accent" animate="hover" />
+          <BrandMark size={24} className="text-accent" animate="pulse" />
           <Wordmark className="text-[0.8125rem] lg:text-sm" />
         </Link>
 

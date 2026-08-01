@@ -59,8 +59,10 @@ export function PageHeader({
           as="h1"
           start="now"
           delay={90}
+          alive
+          aliveStep={120}
           text={t(title)}
-          className="u-display mt-5 text-[clamp(2.2rem,5.5vw,4rem)]"
+          className="u-section-heading u-display mt-5 text-[clamp(2.2rem,5.5vw,4rem)]"
         />
 
         {lede ? (

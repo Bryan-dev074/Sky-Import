@@ -5,6 +5,7 @@ import { Trace } from '@/components/motif/Trace'
 import { BrandMark } from '@/components/brand/Wordmark'
 import { useI18n } from '@/lib/i18n/context'
 import { SITE } from '@/config/site'
+import { INTRO_TIMING } from '@/lib/introTiming'
 
 /**
  * ENERGIZACIÓN — la intro de marca.
@@ -23,9 +24,9 @@ import { SITE } from '@/config/site'
  *     compás de sostén: la corriente recorre el sello y la línea una vez. Sin
  *     él la intro se sentía un parpadeo —era la queja— porque la cortina se
  *     abría encima de la última letra.
- *   · La primera lama se va a los 1,36 s y la última termina a los ~2,3 s: la
- *     tienda empieza a verse mucho antes de que acabe la salida, y desde el
- *     primer movimiento de lama el panel ya no captura el puntero.
+ *   · La primera lama se va a los 2,7 s y la última termina cerca de los 3,9 s:
+ *     antes hay un encendido visible de circuitos y un sostén real de marca.
+ *     Desde el primer movimiento de lama el panel ya no captura el puntero.
  *   · No inventa un porcentaje de carga.
  *   · Con `prefers-reduced-motion` no llega a pintarse.
  *   · Se puede omitir con un clic, con Escape o con el botón.
@@ -33,11 +34,18 @@ import { SITE } from '@/config/site'
  *     permite adelantarlo. Si la hidratación fallara, las lamas se van igual.
  */
 
-const SLATS = 12
-/** Cuándo arranca la primera lama. Debe coincidir con el CSS. */
-const CURTAIN_MS = 1360
-/** Última lama fuera de pantalla. Debe coincidir con el CSS. */
-const OUT_MS = CURTAIN_MS + (SLATS - 1) * 38 + 520 + 60
+const SLATS = INTRO_TIMING.slats
+const NODES = [
+  [9, 18, 0],
+  [18, 72, 280],
+  [29, 34, 760],
+  [38, 84, 420],
+  [52, 13, 980],
+  [61, 67, 180],
+  [72, 29, 610],
+  [83, 79, 850],
+  [91, 43, 330],
+] as const
 
 const skipStore = {
   subscribe: () => () => {},
@@ -69,7 +77,7 @@ export function Intro() {
     const settle = window.setTimeout(() => {
       doneRef.current = true
       setPhase('gone')
-    }, OUT_MS)
+    }, INTRO_TIMING.totalMs)
 
     const hint = window.setTimeout(() => setSkipVisible(true), 460)
 
@@ -96,6 +104,13 @@ export function Intro() {
       data-leaving={phase === 'leaving' ? '' : undefined}
       onClick={finish}
       role="presentation"
+      style={
+        {
+          '--intro-curtain': `${INTRO_TIMING.curtainMs}ms`,
+          '--intro-stagger': `${INTRO_TIMING.staggerMs}ms`,
+          '--intro-slat-duration': `${INTRO_TIMING.slatDurationMs}ms`,
+        } as React.CSSProperties
+      }
     >
       {/* Las lamas son la cortina. Se retiran alternando arriba y abajo. */}
       <div className="intro__slats" aria-hidden="true">
@@ -106,16 +121,34 @@ export function Intro() {
 
       <div className="intro__field" aria-hidden="true">
         <Trace width={1400} height={420} lines={7} seed={19} drawable className="intro__trace" />
+        <Trace width={1400} height={420} lines={5} seed={73} drawable className="intro__trace intro__trace--echo" />
+        <span className="intro__scan" />
+        <span className="intro__nodes">
+          {NODES.map(([x, y, delay], index) => (
+            <span
+              key={index}
+              className="intro__node"
+              style={
+                {
+                  '--x': `${x}%`,
+                  '--y': `${y}%`,
+                  '--node-delay': `${delay}ms`,
+                } as React.CSSProperties
+              }
+            />
+          ))}
+        </span>
       </div>
 
       <div className="intro__center">
         <span className="intro__mark" aria-hidden="true">
-          <BrandMark size={34} animate="pulse" />
+          <span className="intro__mark-orbit" />
+          <BrandMark size={44} animate="pulse" />
         </span>
         <span className="intro__seal" aria-label={SITE.name}>
           {letters.map((letter, i) => (
             <span key={i} className="intro__mask" aria-hidden="true">
-              <span className="intro__letter" style={{ animationDelay: `${300 + i * 42}ms` }}>
+              <span className="intro__letter" style={{ animationDelay: `${520 + i * 62}ms` }}>
                 {letter === ' ' ? ' ' : letter}
               </span>
             </span>

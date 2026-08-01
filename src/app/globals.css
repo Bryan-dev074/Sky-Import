@@ -654,6 +654,41 @@ a:hover .mark[data-motion='hover'] .mark__via,
   white-space: pre;
 }
 
+.brand-link {
+  position: relative;
+}
+
+.brand-link::after {
+  content: '';
+  position: absolute;
+  left: 34px;
+  right: 0;
+  bottom: 6px;
+  height: 1px;
+  opacity: 0.58;
+  transform: scaleX(0.16);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--accent), transparent 82%);
+  animation: brand-current 4.8s var(--ease-rail) infinite;
+}
+
+.brand-link .wordmark__l {
+  animation: wordmark-live 5.4s var(--ease-rail) infinite;
+  animation-delay: calc(var(--wordmark-i, 0) * 68ms);
+}
+
+@keyframes brand-current {
+  0%, 58%, 100% { opacity: 0.16; transform: scaleX(0.12); }
+  72% { opacity: 0.9; transform: scaleX(1); }
+  86% { opacity: 0.32; transform: scaleX(0.42); transform-origin: right; }
+}
+
+@keyframes wordmark-live {
+  0%, 72%, 100% { transform: translate3d(0, 0, 0); }
+  78% { transform: translate3d(0, -1.5px, 0); }
+  84% { transform: translate3d(0, 0, 0); }
+}
+
 a:hover .wordmark__l,
 a:focus-visible .wordmark__l {
   transform: translateY(-2px);
@@ -1436,6 +1471,67 @@ a:focus-visible .wordmark__l {
   }
 }
 
+/* El titular principal mantiene una deriva microscópica entre líneas. La
+   lectura no se mueve de lugar; son apenas dos píxeles y un nodo técnico que
+   recorre su canto. */
+.u-kinetic-title {
+  position: relative;
+  isolation: isolate;
+}
+
+.u-kinetic-title::after {
+  content: '';
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 2px;
+  height: 18%;
+  background: var(--accent);
+  box-shadow: 0 0 20px color-mix(in oklab, var(--accent) 64%, transparent);
+  animation: kinetic-probe 5.8s var(--ease-clamp) infinite;
+}
+
+.u-kinetic-line {
+  transform-origin: left center;
+  animation: kinetic-line 8s var(--ease-rail) infinite;
+}
+
+.u-kinetic-line--two { animation-delay: -2.3s; }
+.u-kinetic-line--three { animation-delay: -4.7s; }
+
+@keyframes kinetic-line {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  48% { transform: translate3d(2px, 0, 0); }
+  64% { transform: translate3d(-1px, 0, 0); }
+}
+
+@keyframes kinetic-probe {
+  0%, 24% { opacity: 0; transform: translate3d(0, 0, 0) scaleY(0.2); }
+  38% { opacity: 1; transform: translate3d(0, 120%, 0) scaleY(1); }
+  54%, 100% { opacity: 0; transform: translate3d(-34px, 260%, 0) scaleY(0.3); }
+}
+
+.u-section-heading {
+  position: relative;
+  width: fit-content;
+}
+
+.u-section-heading::after {
+  content: '';
+  position: absolute;
+  right: -1.5rem;
+  top: 52%;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--accent);
+  animation: section-node 3.6s var(--ease-rail) infinite;
+}
+
+@keyframes section-node {
+  0%, 100% { opacity: 0.28; transform: rotate(0deg) scale(0.78); }
+  42% { opacity: 1; transform: rotate(90deg) scale(1); }
+}
+
 /* ─────────────────────────────────────────────── destino táctil mínimo
    La casa se impuso 44 × 44, que es más estricto que los 24 × 24 de WCAG 2.5.8.
    Esta clase lleva un enlace a esa altura SIN mover su texto: el ancla pasa a
@@ -1575,13 +1671,10 @@ html[data-intro='skip'] .hero-line {
    seguiría en pantalla tapando la tienda; con la animación, las lamas se van
    igual. El script solo desmonta el nodo al final y permite adelantarlo.
 
-   DURACIÓN. La primera versión se iba a los 0,94 s y se sentía un parpadeo: el
-   sello terminaba de escribirse y la cortina ya estaba abriéndose encima. Ahora
-   hay un compás de sostén —la corriente recorre el sello una vez— y la cortina
-   arranca a 1,36 s. Ese tiempo extra no es un retraso muerto: es el único
-   momento en el que la marca se lee entera. Aun así, en cuanto la primera lama
-   se mueve, la intro deja de capturar el puntero (`intro-release`), así que la
-   tienda es utilizable desde 1,36 s aunque el nodo siga desmontándose.      */
+   DURACIÓN. El recorrido dura ~3,9 s: primero arranca el circuito, después se
+   escribe y carga el sello, y recién a los 2,7 s empieza a desarmarse la
+   cortina. No hay espera muerta. En cuanto se mueve la primera lama la intro
+   deja de capturar el puntero (`intro-release`).                           */
 
 .intro {
   position: fixed;
@@ -1594,7 +1687,7 @@ html[data-intro='skip'] .hero-line {
   /* Discreta: en el instante en que la cortina empieza a abrirse, el panel
      suelta el puntero. Un clic antes de eso adelanta la intro; después, ya
      llega a la tienda. */
-  animation: intro-release 1ms linear 1360ms forwards;
+  animation: intro-release 1ms linear var(--intro-curtain, 2700ms) forwards;
 }
 
 .intro[data-leaving] {
@@ -1617,8 +1710,8 @@ html[data-intro='skip'] .hero-line {
   position: relative;
   flex: 1;
   background: var(--color-carbon);
-  animation: slat-up 520ms var(--ease-clamp) forwards;
-  animation-delay: calc(1360ms + var(--i) * 38ms);
+  animation: slat-up var(--intro-slat-duration, 620ms) var(--ease-clamp) forwards;
+  animation-delay: calc(var(--intro-curtain, 2700ms) + var(--i) * var(--intro-stagger, 42ms));
   will-change: transform;
 }
 
@@ -1635,8 +1728,8 @@ html[data-intro='skip'] .hero-line {
   bottom: 0;
   background: var(--color-sky);
   opacity: 0;
-  animation: slat-edge 520ms var(--ease-clamp) forwards;
-  animation-delay: calc(1360ms + var(--i) * 38ms);
+  animation: slat-edge var(--intro-slat-duration, 620ms) var(--ease-clamp) forwards;
+  animation-delay: calc(var(--intro-curtain, 2700ms) + var(--i) * var(--intro-stagger, 42ms));
 }
 
 .intro__slat:nth-child(even)::after {
@@ -1678,8 +1771,8 @@ html[data-intro='skip'] .hero-line {
   position: absolute;
   inset: 0;
   color: var(--color-sky);
-  opacity: 0.55;
-  animation: intro-field-out 420ms var(--ease-rail) 1280ms forwards;
+  opacity: 0.62;
+  animation: intro-field-out 520ms var(--ease-rail) 2580ms forwards;
 }
 
 @keyframes intro-field-out {
@@ -1694,8 +1787,61 @@ html[data-intro='skip'] .hero-line {
 }
 
 .intro__trace [data-trace] {
-  animation: trace-draw 720ms var(--ease-rail) forwards;
+  animation: trace-draw 1280ms var(--ease-rail) forwards;
   animation-delay: var(--trace-delay, 0ms);
+}
+
+.intro__trace--echo {
+  position: absolute;
+  inset: 0;
+  opacity: 0.34;
+  transform: scaleY(-1) translateY(-6%);
+}
+
+.intro__trace--echo [data-trace] {
+  animation-duration: 1780ms;
+}
+
+.intro__scan {
+  position: absolute;
+  inset-inline: 0;
+  top: -8%;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent 4%, var(--color-sky) 48%, transparent 92%);
+  box-shadow: 0 0 26px color-mix(in oklab, var(--color-sky) 55%, transparent);
+  animation: intro-scan 2.35s var(--ease-clamp) 260ms forwards;
+}
+
+.intro__nodes {
+  position: absolute;
+  inset: 0;
+}
+
+.intro__node {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--color-sky);
+  opacity: 0;
+  transform: rotate(45deg) scale(0.4);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-sky) 52%, transparent);
+  animation: intro-node 1.35s var(--ease-rail) calc(480ms + var(--node-delay)) 2;
+}
+
+@keyframes intro-scan {
+  0% { opacity: 0; transform: translate3d(0, 0, 0); }
+  12% { opacity: 0.86; }
+  76% { opacity: 0.48; }
+  100% { opacity: 0; transform: translate3d(0, 116vh, 0); }
+}
+
+@keyframes intro-node {
+  0%, 100% { opacity: 0; transform: rotate(45deg) scale(0.4); }
+  35% { opacity: 1; transform: rotate(135deg) scale(1); box-shadow: 0 0 20px 5px color-mix(in oklab, var(--color-sky) 30%, transparent); }
+  68% { opacity: 0.62; transform: rotate(225deg) scale(0.72); }
 }
 
 @keyframes trace-draw {
@@ -1713,7 +1859,7 @@ html[data-intro='skip'] .hero-line {
   gap: 14px;
   padding-inline: 24px;
   text-align: center;
-  animation: intro-center-out 380ms var(--ease-rail) 1240ms forwards;
+  animation: intro-center-out 520ms var(--ease-rail) 2520ms forwards;
 }
 
 .intro[data-leaving] .intro__center {
@@ -1729,9 +1875,36 @@ html[data-intro='skip'] .hero-line {
 }
 
 .intro__mark {
+  position: relative;
+  display: grid;
+  place-items: center;
   color: var(--color-sky);
   opacity: 0;
-  animation: intro-fade 320ms var(--ease-rail) 110ms forwards;
+  animation: intro-fade 420ms var(--ease-rail) 180ms forwards;
+}
+
+.intro__mark-orbit {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  border: 1px solid color-mix(in oklab, var(--color-sky) 26%, transparent);
+  border-radius: 50%;
+  animation: intro-orbit 3s linear infinite;
+}
+
+.intro__mark-orbit::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--color-sky);
+  box-shadow: 0 0 14px var(--color-sky);
+}
+
+@keyframes intro-orbit {
+  to { transform: rotate(360deg); }
 }
 
 .intro__seal {
@@ -1745,7 +1918,7 @@ html[data-intro='skip'] .hero-line {
   color: #f2f0ec;
   padding-left: 0.22em;
   /* El compás de sostén: una vez escrito, el sello se carga y se apaga. */
-  animation: intro-charge 760ms var(--ease-rail) 1060ms forwards;
+  animation: intro-charge 1250ms var(--ease-rail) 1400ms forwards;
 }
 
 @keyframes intro-charge {
@@ -1767,7 +1940,7 @@ html[data-intro='skip'] .hero-line {
 .intro__letter {
   display: inline-block;
   transform: translateY(108%);
-  animation: intro-letter 460ms var(--ease-clamp) forwards;
+  animation: intro-letter 520ms var(--ease-clamp) forwards;
   white-space: pre;
 }
 
@@ -1785,7 +1958,7 @@ html[data-intro='skip'] .hero-line {
   height: 1px;
   background: var(--color-sky);
   transform: scaleX(0);
-  animation: intro-line 560ms var(--ease-clamp) 460ms forwards;
+  animation: intro-line 640ms var(--ease-clamp) 860ms forwards;
 }
 
 /* Trazada la línea, la corriente la recorre. Es el mismo compás que carga el
@@ -1798,7 +1971,7 @@ html[data-intro='skip'] .hero-line {
   width: 30%;
   background: linear-gradient(90deg, transparent, #f2f0ec, transparent);
   transform: translateX(-140%);
-  animation: intro-line-pulse 720ms var(--ease-rail) 1080ms forwards;
+  animation: intro-line-pulse 1200ms var(--ease-rail) 1420ms forwards;
 }
 
 @keyframes intro-line {
@@ -1820,7 +1993,7 @@ html[data-intro='skip'] .hero-line {
   text-transform: uppercase;
   color: color-mix(in oklab, #f2f0ec 55%, var(--color-carbon));
   opacity: 0;
-  animation: intro-fade 420ms var(--ease-rail) 640ms forwards;
+  animation: intro-fade 520ms var(--ease-rail) 1240ms forwards;
 }
 
 @keyframes intro-fade {
