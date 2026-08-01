@@ -37,3 +37,4 @@ npm-debug.log*
 
 # configuración local de herramientas de edición
 .claude/
+.worktrees/
