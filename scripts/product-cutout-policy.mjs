@@ -5,7 +5,7 @@ export const GSKILL_TRIDENT_Z5_NEO_PRODUCT_CUTOUT_POLICY = Object.freeze({
   occupancy: 0.84,
   allowEnlargement: true,
 })
-export const GPU_GENERATED_PRODUCT_CUTOUT_POLICY = Object.freeze({
+export const GPU_REVIEWED_ENLARGEMENT_POLICY = Object.freeze({
   canvas: 1600,
   occupancy: 0.84,
   allowEnlargement: true,
@@ -17,8 +17,8 @@ export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'geforce-rtx-5070-ti-16gb': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'geforce-rtx-5070-12gb': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'radeon-rx-9070-xt-16gb': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'geforce-rtx-4060-8gb': GPU_GENERATED_PRODUCT_CUTOUT_POLICY,
-  'arc-b580-12gb': GPU_GENERATED_PRODUCT_CUTOUT_POLICY,
+  'geforce-rtx-4060-8gb': GPU_REVIEWED_ENLARGEMENT_POLICY,
+  'arc-b580-12gb': GPU_REVIEWED_ENLARGEMENT_POLICY,
   'ryzen-7-9800x3d': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'ryzen-7-7800x3d': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'ryzen-5-9600x': DEFAULT_PRODUCT_CUTOUT_POLICY,
