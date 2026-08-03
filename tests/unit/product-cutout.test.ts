@@ -245,6 +245,7 @@ test('los recortes GPU revisados permiten una ampliación mínima y localizada',
 test('cada fuente de plataforma ampliada tiene un límite por slug medido y tolerado', () => {
   const expectedLimits = {
     'ryzen-7-9800x3d': 1.5,
+    'ryzen-7-7800x3d': 1.571,
     'core-ultra-7-265k': 1.34,
     'core-i5-14600k': 1.36,
     'msi-mag-b850-tomahawk-wifi': 1.94,
@@ -261,7 +262,7 @@ test('cada fuente de plataforma ampliada tiene un límite por slug medido y tole
     })
   }
 
-  for (const slug of ['ryzen-7-7800x3d', 'ryzen-5-9600x']) {
+  for (const slug of ['ryzen-5-9600x']) {
     expect(getProductCutoutPolicy(slug)).toEqual({
       canvas: 1600,
       occupancy: 0.84,

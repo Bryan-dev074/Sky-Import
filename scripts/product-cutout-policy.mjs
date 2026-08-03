@@ -25,7 +25,7 @@ export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'geforce-rtx-4060-8gb': reviewedEnlargementPolicy(1.7),
   'arc-b580-12gb': reviewedEnlargementPolicy(1.12),
   'ryzen-7-9800x3d': reviewedEnlargementPolicy(1.5),
-  'ryzen-7-7800x3d': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'ryzen-7-7800x3d': reviewedEnlargementPolicy(1.571),
   'ryzen-5-9600x': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'core-ultra-7-265k': reviewedEnlargementPolicy(1.34),
   'core-i5-14600k': reviewedEnlargementPolicy(1.36),
