@@ -56,3 +56,25 @@ test('identifica por slug cuando primary.webp no es una imagen legible', async (
     ]),
   ).rejects.toThrow('[imagen-corrupta] primary.webp no se puede leer como imagen:')
 })
+
+test('libera cada archivo corrupto al terminar el diagnóstico', async () => {
+  for (let index = 0; index < 40; index += 1) {
+    const slug = `imagen-corrupta-${index}`
+    const directory = join(fixtureRoot, 'public', 'products', slug)
+    const output = join(directory, 'primary.webp')
+    await mkdir(directory, { recursive: true })
+    await writeFile(output, 'esto no es una imagen WebP')
+
+    await expect(
+      validateProductMedia(fixtureRoot, [
+        {
+          slug,
+          imageUrl: 'https://example.com/image.webp',
+          sourcePage: 'https://example.com/product',
+          credit: 'Example manufacturer',
+        },
+      ]),
+    ).rejects.toThrow(`[${slug}] primary.webp no se puede leer como imagen:`)
+    await expect(rm(output)).resolves.toBeUndefined()
+  }
+})

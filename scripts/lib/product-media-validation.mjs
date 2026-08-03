@@ -1,4 +1,4 @@
-import { stat } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { inspectProductCutout } from './product-cutout.mjs'
 
@@ -35,7 +35,7 @@ export async function validateProductMedia(root, manifest) {
 
     let inspection
     try {
-      inspection = await inspectProductCutout(output)
+      inspection = await inspectProductCutout(await readFile(output))
     } catch (error) {
       throw inspectionError(entry.slug, error)
     }
