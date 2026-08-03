@@ -1,5 +1,10 @@
 export const DEFAULT_PRODUCT_CUTOUT_POLICY = Object.freeze({ canvas: 1600, occupancy: 0.84 })
 export const RTX_5090_PRODUCT_CUTOUT_POLICY = Object.freeze({ canvas: 2048, occupancy: 0.86 })
+export const GSKILL_TRIDENT_Z5_NEO_PRODUCT_CUTOUT_POLICY = Object.freeze({
+  canvas: 1600,
+  occupancy: 0.84,
+  allowEnlargement: true,
+})
 
 export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'geforce-rtx-5090-founders-edition-32gb': RTX_5090_PRODUCT_CUTOUT_POLICY,
@@ -20,7 +25,7 @@ export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'asrock-z890-pro-rs': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'gigabyte-b760m-ds3h': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'corsair-vengeance-ddr5-32gb-6000': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'gskill-trident-z5-neo-32gb-6000': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'gskill-trident-z5-neo-32gb-6000': GSKILL_TRIDENT_Z5_NEO_PRODUCT_CUTOUT_POLICY,
   'kingston-fury-beast-ddr5-16gb-5600': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'corsair-vengeance-lpx-ddr4-16gb-3200': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'samsung-990-pro-2tb': DEFAULT_PRODUCT_CUTOUT_POLICY,

@@ -10,6 +10,7 @@ import {
   normalizeProductCutout,
   readCornerAlpha,
 } from '../../scripts/lib/product-cutout.mjs'
+import { getProductCutoutPolicy } from '../../scripts/product-cutout-policy.mjs'
 
 const execFileAsync = promisify(execFile)
 
@@ -155,4 +156,16 @@ test('el CLI deja intacto un sentinela junto a la salida solicitada', async () =
   } finally {
     await rm(directory, { recursive: true, force: true })
   }
+})
+
+test('la política de G.Skill permite ampliación controlada sin cambiar los valores predeterminados', () => {
+  expect(getProductCutoutPolicy('gskill-trident-z5-neo-32gb-6000')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+    allowEnlargement: true,
+  })
+  expect(getProductCutoutPolicy('corsair-vengeance-ddr5-32gb-6000')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+  })
 })
