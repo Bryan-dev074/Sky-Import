@@ -62,11 +62,13 @@ For a predominantly green product, substitute flat `#ff00ff`. After every genera
 ```powershell
 python C:\Users\Bryan\.codex\skills\.system\imagegen\scripts\remove_chroma_key.py `
   --input <generated-file> `
-  --output <staging-file.png> `
-  --key auto `
-  --border-sample `
+  --out <staging-file.png> `
+  --auto-key border `
   --soft-matte `
-  --despill
+  --transparent-threshold 12 `
+  --opaque-threshold 220 `
+  --despill `
+  --force
 ```
 
 Inspect the matte on both dark (`#071016`) and light (`#f4f7f8`) backgrounds before accepting it. Use native-transparent CLI fallback only if chroma extraction demonstrably fails on reflective product edges and only after asking the user for confirmation, as required by the ImageGen workflow.
