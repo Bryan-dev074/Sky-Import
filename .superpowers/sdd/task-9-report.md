@@ -6,12 +6,14 @@ Base inicial: `a8182b614d70a24270e2005d0de55c497bbef542`
 
 ## Resultado
 
-La verificación completa queda verde: 38/38 medios válidos, lint y typecheck sin errores, 102/102 pruebas unitarias, build de producción con 100 rutas estáticas y Playwright con 73 pruebas aprobadas más un skip intencional de cursor fino en táctil. La intro móvil no presentó el flake documentado.
+La verificación completa final queda verde: 38/38 medios válidos, lint y typecheck sin errores, 107/107 pruebas unitarias, build de producción con 100 rutas estáticas y Playwright con 73 pruebas aprobadas más un skip intencional de cursor fino en táctil. La revisión independiente detectó y cerró el contrato incompleto de ampliación, cinco recortes subdimensionados, el orden incorrecto de los límites de bytes y un test E2E de intro que dependía del tiempo variable de navegación.
 
-Se hicieron dos correcciones necesarias y separadas antes de cerrar la matriz:
+Se hicieron cuatro correcciones necesarias y separadas antes de cerrar la matriz:
 
 1. `013e16f69b49cb7ae1e6bc4fd4b3c6f2ddd58928` — `fix: type product media script imports`.
 2. `d03b577e1efa114688887477b7c2d2cc54f7228f` — `fix: release invalid media files after validation`.
+3. `c846bc3` — `fix: close final media review gaps`.
+4. `6203cde` — `test: stabilize intro release timing check`.
 
 No se hizo push.
 
@@ -35,7 +37,7 @@ Hipótesis única: las cuatro declaraciones hermanas exactas debían resolver el
 - `scripts/product-cutout-policy.d.mts`;
 - `scripts/lib/product-media-validation.d.mts`.
 
-Los contratos reflejan los exports reales, incluidos `SharpInput`, `Metadata`, bounds anulables, opciones de normalización, entradas de manifiesto/crédito, políticas readonly y `Promise<void>`.
+Los contratos reflejan los exports reales, incluidos `SharpInput`, `Metadata`, bounds anulables, opciones de normalización, entradas de manifiesto/crédito, políticas readonly y `Promise<void>`. La revisión posterior convirtió las opciones de ampliación en una unión discriminada exacta: `allowEnlargement: true` exige un `maxEnlargementRatio` numérico, mientras que `false` u omitido rechaza ese campo.
 
 El primer GREEN expuso un consumidor inseguro real: `measureOpaqueBounds` puede devolver `null`, pero el test desreferenciaba sin comprobarlo. Se añadió una aserción y guard explícitos en el test; no se falseó el contrato como non-null.
 
@@ -70,13 +72,45 @@ GREEN:
 - `git diff --cached --check`: exit 0;
 - commit: `d03b577e1efa114688887477b7c2d2cc54f7228f`.
 
+## Revisión independiente — RED/GREEN final
+
+### Contrato de tipos y runtime
+
+Se añadió `tests/types/product-cutout-contract.ts` como prueba de tipos real, incluida por `tsc`, sin `any`, wildcard, `@ts-ignore` ni `@ts-expect-error`. El RED produjo tres TS2344: faltaba exigir el ratio al habilitar ampliación y faltaba rechazarlo cuando la ampliación estaba deshabilitada u omitida.
+
+GREEN:
+
+- `NormalizeProductCutoutOptions` y `CutoutPolicy` son uniones discriminadas exactas;
+- runtime rechaza `maxEnlargementRatio` si `allowEnlargement !== true`;
+- los dos estados inválidos conservan tests de runtime mediante `Reflect.apply`, sin debilitar el contrato estático;
+- `npm run typecheck`: exit 0;
+- tests focalizados finales de tipos, recorte, validación y catálogo: 26/26.
+
+### Límites de bytes antes del decoder
+
+Los checks de 8 KiB y 16 MiB se movieron inmediatamente después de `stat()`/`isFile()` y antes de `readFile()`/Sharp. Dos fixtures inválidos demuestran el orden sin mocks: 7.999 bytes recibe el diagnóstico `imagen demasiado liviana` y un archivo sparse de 16.777.217 bytes recibe `imagen demasiado pesada`; si se entrara al decoder ambos devolverían el diagnóstico de imagen corrupta. La regresión de liberación de handles sigue ejecutando 40/40 eliminaciones inmediatas.
+
+### Cinco recortes normalizados
+
+Los inputs fueron exactamente los cinco `primary.webp` versionados, sin descarga, recreación, stretching ni cambio de modelo. Se midió el eje opaco antes de tocar políticas y el límite se redondeó sólo hacia arriba a tres decimales. El CLI oficial leyó cada input completo, escribió un temporal validado y reemplazó únicamente el mismo slug.
+
+| Slug | SHA-256 input exacto | Ocupación antes | Límite | Bounds finales | SHA-256 final |
+|---|---|---:|---:|---:|---|
+| `radeon-rx-9070-xt-16gb` | `55EC5C85D04F5F809FF620A85E3B6015C57845CE5CF2861F3BEF5231EBD19B93` | 910/1600 = 56,875% | 1,477× | 1344×604 | `2D4A8F29F5C8DC57C8706E901ACA5C0B724C6F30F9315FAEDFE22F8A082F0EDB` |
+| `asus-tuf-gaming-b650-plus-wifi` | `3AD952CDDFFE4B3B11F81C9601A9314B544C77EB426C1B9B09015A0ED2F97DD4` | 806/1600 = 50,375% | 1,668× | 980×1344 | `AD0909909807728B8484B3D3AD573CCE2D3BFE5F1546BD86450914041051AB1B` |
+| `asrock-z890-pro-rs` | `37127630FDE70F843699ECB676877B4C33C6A5984BA6E03546B8FB4CBD10ACFA` | 706/1600 = 44,125% | 1,904× | 1087×1344 | `831CAE38FDD93F065875C8441FA6E239E3D0CBC553C046565756C2048464C781` |
+| `msi-mag-a650bn` | `D3D6489D7B36317D8480C67980CD97EDB4FFA2CE78BB455394D56BFEF505C12D` | 883/1600 = 55,1875% | 1,523× | 1344×945 | `6C05FF4684CE5503ABEE84CE55598EEC9983828CB3730453A5D0D08D34AA6E6E` |
+| `cooler-master-masterbox-q300l` | `C6AD72DEB8EA11A584D3D51210B79A17D2F6909EB9D3173821418FFD42A02F7A` | 882/1600 = 55,125% | 1,524× | 1205×1344 | `D925DEEF28A09825B864E543773705D82D4DF6E7B5F369AA9A704F8B36F77923` |
+
+Los cinco terminan con ocupación exacta 1344/1600 = 84%, `safeMarginRatio=0,08`, WebP 1600×1600 lossless con alfa, cuatro esquinas en cero y segunda normalización con SHA-256 idéntico. `git diff --name-only` confirmó que no cambió ningún otro asset.
+
 ## Verificación de medios
 
 ### Comandos
 
 - `npm run media:validate`: exit 0; salida actual exacta: `OK: 38 productos tienen imagen WebP local, fuente y crédito.`
-- `npm run media:sheet -- artifacts/product-cutouts-final.webp`: exit 0.
-- `view_image` a detalle original sobre `artifacts/product-cutouts-final.webp`.
+- `npm run media:sheet -- artifacts/task-9-review/product-contact-sheet-final.webp`: exit 0.
+- `view_image` a detalle original sobre `artifacts/task-9-review/product-contact-sheet-final.webp`.
 - auditoría Sharp independiente sobre todo el manifiesto: 38 entradas únicas, 38 WebP, 38 con alfa real (`alphaMin=0`, `alphaMax>0`), 37 lienzos 1600×1600 y la RTX 5090 2048×2048; cero fallos.
 
 La frase del script difiere de la expectativa histórica del plan (`imagen WebP local` frente a `recorte WebP transparente`), pero el conteo 38/38 y la auditoría de alfa confirman explícitamente transparencia en los 38.
@@ -88,16 +122,17 @@ La hoja final muestra las 38 piezas sobre matte oscuro y claro. Se comprobaron s
 - Los cuatro kits de memoria muestran dos módulos y el catálogo declara `modules: 2`: Corsair Vengeance DDR5 2×16, G.Skill Trident Z5 Neo 2×16, Kingston FURY Beast 2×8 y Corsair Vengeance LPX 2×8.
 - `P12 PWM PST — pack de 5` muestra exactamente cinco ventiladores.
 - La RTX 5090 usa el slug exacto, 2048×2048, `alphaMin=0`, `alphaMax=255`, el asset `RTX5090-3QTR-Back-Left.png` y la página oficial de NVIDIA Marketplace para Founders Edition.
+- Los cinco recortes de la revisión final se inspeccionaron individualmente en ficha de producto, tanto a 1440×1000 como a 412×915: identidad, proporción, detalle y alfa conservados; sin halo, clipping ni overflow.
 
 ## Matriz estática, unitaria y producción
 
-Cadena fresca posterior a ambos commits:
+Cadena fresca posterior a los commits finales:
 
 ```text
 npm run media:validate  -> 38/38, exit 0
 npm run lint            -> exit 0
 npm run typecheck       -> exit 0
-npm test                -> 14 archivos, 102/102, exit 0
+npm test                -> 14 archivos, 107/107, exit 0
 npm run build           -> 100 páginas estáticas, exit 0
 ```
 
@@ -105,11 +140,11 @@ El build compiló, ejecutó TypeScript y generó las rutas ES/PT de home, catál
 
 ## Playwright completo
 
-`npm run e2e`: 74 casos enumerados, 73 passed, 1 skipped intencional, exit 0, 5,2 min.
+`npm run e2e`: 74 casos enumerados, 73 passed, 1 skipped intencional, exit 0, 4,5 min.
 
 - Proyectos: Desktop Chrome y Pixel 7.
 - Skip: el retículo de cursor fino se omite por diseño en táctil.
-- Intro móvil: todas las pruebas pasaron; no ocurrió el flake documentado y no se modificaron timeouts ni retries.
+- Intro móvil: el primer rerun final expuso 1 falla real del test entre 74 casos. El test esperaba 2.500 ms aunque producción declara `curtainMs=2700`; aislado reprodujo 1/3. Se midió la animación en Pixel 7: `intro-release` termina exactamente en 2701 ms. El test ahora importa `INTRO_TIMING`, usa timeout `curtainMs + 500` e intervalos de 50 ms; pasó 10/10 aislado y después verde en ambos proyectos dentro del E2E completo. No se añadieron retries ni se cambió producción.
 - Movimiento normal, táctil y reduced-motion: verde.
 - Axe, compra completa, ausencia de requests de cobro, idiomas, monedas, teclado, carrito, armador, filtros y 404: verde en ambos proyectos.
 
@@ -128,6 +163,15 @@ Se ejecutó el build con `npm run start -- --port 3200`. El binario global `agen
 - Hover primera card: el `img` llegó a `scale=1.055`, `y=9.146`; `filter=none`, `background=none`, cero aura. La captura hover muestra la traslación/escala y cotas sin borde de canvas, matte, halo ni bounds transparentes visibles.
 - Reduced motion: `prefers-reduced-motion=true`, `data-intro=skip`, intro 0, H1 visible y hero `x=0`, `y=0`, `scale=1` incluso con el puntero encima.
 - No hubo Next overlay ni console errors. El armador WebGL emitió sólo warnings del compilador D3D por precisión y la deprecación de `PCFSoftShadowMap`; `agent-browser errors` quedó vacío.
+
+### Recaptura final posterior a la revisión
+
+El ejecutable global continuó ausente, pero `npx --yes agent-browser` cargó `core --full`, `dogfood --full` y la taxonomía versionada antes de abrir la sesión `task9-review` contra `127.0.0.1:3100`.
+
+- Home desktop: snapshot interactivo completo, captura anotada, `errors` vacío y consola sin errores.
+- Cinco fichas corregidas: captura viewport 1440×1000 y 412×915 para cada slug; diez capturas inspeccionadas a detalle original.
+- No se observó deformación, cambio de modelo, halo claro/oscuro, clipping, overflow horizontal ni pérdida de CTA/contenido.
+- La sesión `task9-review` se cerró explícitamente antes de detener el servidor.
 
 ### Touch real
 
@@ -152,7 +196,11 @@ El drawer móvil del carrito se capturó después de comprobar por condición qu
 
 Todos estos archivos están bajo `artifacts/`, ignorados por `.git/info/exclude` y no forman parte de los commits:
 
-- `artifacts/product-cutouts-final.webp` — hoja 38 productos, dos mattes.
+- `artifacts/product-cutouts-final.webp` — hoja inicial de 38 productos, dos mattes.
+- `artifacts/task-9-review/product-contact-sheet-final.webp` — hoja posterior a la revisión, 38 productos y dos mattes.
+- `artifacts/task-9-review/manual/screenshots/home-desktop.png` — home anotada de la recaptura final.
+- `artifacts/task-9-review/manual/screenshots/<slug>-desktop.png` — cinco fichas corregidas a 1440×1000.
+- `artifacts/task-9-review/manual/screenshots/<slug>-mobile.png` — cinco fichas corregidas a 412×915.
 - `artifacts/task-9/desktop-home-hero.png`.
 - `artifacts/task-9/desktop-catalog-grid.png`.
 - `artifacts/task-9/desktop-catalog-hover.png`.
@@ -177,5 +225,6 @@ Todas las capturas requeridas se inspeccionaron a detalle original. No se observ
 - Los warnings WebGL de precisión/deprecación no son errores de consola ni overlays.
 - Esta verificación confirma trazabilidad técnica, source pages y créditos registrados; no constituye autorización legal independiente de derechos de imagen, marca o redistribución.
 - La reproducción EBUSY dejó 13 carpetas diagnósticas: once `sky-import-lock-repro-*` y dos `sky-import-media-validation-*` bajo `C:\Users\Bryan\AppData\Local\Temp`. Se verificó que son directorios normales creados por esta tarea, pero la política del entorno rechazó la orden de borrado antes de ejecutar `Remove-Item`. Permanecen fuera del worktree y no están versionados.
-- Las sesiones de browser se cerraron. El servidor se detuvo. Verificación final: `NO_LISTENERS_3100_3200` y `NO_WORKTREE_SERVER_PROCESSES`.
+- Se validaron antes de cerrar cuatro árboles históricos de Task 8: wrappers PowerShell `15180`, `41332`, `24932`, `31920`; Node `5388`, `33200`, `40524`, `8472`; y 16 Chrome hijos. Todos compartían hora histórica, ancestry exacta y comando Playwright dirigido a `127.0.0.1:3101`. Se detuvieron únicamente esos 24 procesos, de hijos a padres; no se tocó el proceso padre de Codex.
+- Las sesiones de browser se cerraron y el servidor manual se detuvo. Verificación final: `NO_LISTENERS` en 3100/3101/3200, `NO_OLD_PIDS`, `NO_WORKTREE_OR_URL_PROCESSES` y `NO_AGENT_BROWSER_PROCESSES`.
 - No se hizo push ni merge.
