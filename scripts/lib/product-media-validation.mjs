@@ -32,6 +32,8 @@ export async function validateProductMedia(root, manifest) {
       throw fileAccessError(entry.slug, error)
     }
     if (!file.isFile()) throw new Error(`[${entry.slug}] primary.webp no es un archivo.`)
+    if (file.size < 8_000) throw new Error(`[${entry.slug}] imagen demasiado liviana: ${file.size} bytes.`)
+    if (file.size > 16 * 1024 * 1024) throw new Error(`[${entry.slug}] imagen demasiado pesada: ${file.size} bytes.`)
 
     let inspection
     try {
@@ -43,8 +45,6 @@ export async function validateProductMedia(root, manifest) {
     const { metadata, cornerAlpha, bounds } = inspection
     const expectedCanvas = entry.slug === 'geforce-rtx-5090-founders-edition-32gb' ? 2048 : 1600
 
-    if (file.size < 8_000) throw new Error(`[${entry.slug}] imagen demasiado liviana: ${file.size} bytes.`)
-    if (file.size > 16 * 1024 * 1024) throw new Error(`[${entry.slug}] imagen demasiado pesada: ${file.size} bytes.`)
     if (metadata.format !== 'webp') throw new Error(`[${entry.slug}] formato incorrecto: ${metadata.format ?? 'desconocido'}.`)
     if (metadata.hasAlpha !== true) throw new Error(`[${entry.slug}] falta canal alfa: hasAlpha=${metadata.hasAlpha}.`)
     if ((metadata.width ?? 0) !== expectedCanvas || (metadata.height ?? 0) !== expectedCanvas) {

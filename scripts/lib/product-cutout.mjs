@@ -14,6 +14,9 @@ function validateCanvasOptions(options) {
   if (typeof occupancy !== 'number' || occupancy <= 0 || occupancy > 1) {
     throw new Error(`La ocupación debe estar entre 0 y 1; se recibió ${occupancy}.`)
   }
+  if (!allowEnlargement && maxEnlargementRatio !== undefined) {
+    throw new Error('maxEnlargementRatio requiere allowEnlargement: true.')
+  }
   if (
     allowEnlargement &&
     (typeof maxEnlargementRatio !== 'number' ||

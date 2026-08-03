@@ -68,14 +68,25 @@ test('exige un límite explícito cuando se habilita la ampliación', async () =
   const input = await createOpaqueSquareFixture()
 
   await expect(
-    normalizeProductCutout(input, {
-      canvas: 100,
-      occupancy: 0.8,
-      allowEnlargement: true,
-    }),
+    Reflect.apply(normalizeProductCutout, undefined, [
+      input,
+      {
+        canvas: 100,
+        occupancy: 0.8,
+        allowEnlargement: true,
+      },
+    ]),
   ).rejects.toThrow(
     'allowEnlargement requiere un maxEnlargementRatio finito mayor o igual a 1.',
   )
+})
+
+test('rechaza un límite de ampliación cuando la ampliación no está habilitada', async () => {
+  const input = await createOpaqueSquareFixture()
+
+  await expect(
+    Reflect.apply(normalizeProductCutout, undefined, [input, { maxEnlargementRatio: 1.6 }]),
+  ).rejects.toThrow('maxEnlargementRatio requiere allowEnlargement: true.')
 })
 
 test('acepta exactamente el límite de ampliación medido', async () => {
@@ -312,4 +323,23 @@ test('solo los dos recortes pequeños revisados de Task 7 permiten ampliación l
     canvas: 1600,
     occupancy: 0.84,
   })
+})
+
+test('los cinco recortes pequeños de la revisión final tienen ampliación mínima por slug', () => {
+  const expectedLimits = {
+    'radeon-rx-9070-xt-16gb': 1.477,
+    'asus-tuf-gaming-b650-plus-wifi': 1.668,
+    'asrock-z890-pro-rs': 1.904,
+    'msi-mag-a650bn': 1.523,
+    'cooler-master-masterbox-q300l': 1.524,
+  }
+
+  for (const [slug, maxEnlargementRatio] of Object.entries(expectedLimits)) {
+    expect(getProductCutoutPolicy(slug)).toEqual({
+      canvas: 1600,
+      occupancy: 0.84,
+      allowEnlargement: true,
+      maxEnlargementRatio,
+    })
+  }
 })

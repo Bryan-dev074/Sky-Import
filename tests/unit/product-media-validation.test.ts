@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, open, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
@@ -43,7 +43,7 @@ test('identifica por slug cuando falta primary.webp', async () => {
 test('identifica por slug cuando primary.webp no es una imagen legible', async () => {
   const output = join(fixtureRoot, 'public', 'products', 'imagen-corrupta', 'primary.webp')
   await mkdir(join(fixtureRoot, 'public', 'products', 'imagen-corrupta'), { recursive: true })
-  await writeFile(output, 'esto no es una imagen WebP')
+  await writeFile(output, Buffer.alloc(8_000, 0x78))
 
   await expect(
     validateProductMedia(fixtureRoot, [
@@ -57,13 +57,56 @@ test('identifica por slug cuando primary.webp no es una imagen legible', async (
   ).rejects.toThrow('[imagen-corrupta] primary.webp no se puede leer como imagen:')
 })
 
+test('rechaza un archivo demasiado liviano antes de entrar al decodificador', async () => {
+  const slug = 'imagen-demasiado-liviana'
+  const directory = join(fixtureRoot, 'public', 'products', slug)
+  const output = join(directory, 'primary.webp')
+  await mkdir(directory, { recursive: true })
+  await writeFile(output, Buffer.alloc(7_999, 0x78))
+
+  await expect(
+    validateProductMedia(fixtureRoot, [
+      {
+        slug,
+        imageUrl: 'https://example.com/image.webp',
+        sourcePage: 'https://example.com/product',
+        credit: 'Example manufacturer',
+      },
+    ]),
+  ).rejects.toThrow(`[${slug}] imagen demasiado liviana: 7999 bytes.`)
+})
+
+test('rechaza un archivo demasiado pesado antes de entrar al decodificador', async () => {
+  const slug = 'imagen-demasiado-pesada'
+  const directory = join(fixtureRoot, 'public', 'products', slug)
+  const output = join(directory, 'primary.webp')
+  await mkdir(directory, { recursive: true })
+  const file = await open(output, 'w')
+  try {
+    await file.truncate(16 * 1024 * 1024 + 1)
+  } finally {
+    await file.close()
+  }
+
+  await expect(
+    validateProductMedia(fixtureRoot, [
+      {
+        slug,
+        imageUrl: 'https://example.com/image.webp',
+        sourcePage: 'https://example.com/product',
+        credit: 'Example manufacturer',
+      },
+    ]),
+  ).rejects.toThrow(`[${slug}] imagen demasiado pesada: 16777217 bytes.`)
+})
+
 test('libera cada archivo corrupto al terminar el diagnóstico', async () => {
   for (let index = 0; index < 40; index += 1) {
     const slug = `imagen-corrupta-${index}`
     const directory = join(fixtureRoot, 'public', 'products', slug)
     const output = join(directory, 'primary.webp')
     await mkdir(directory, { recursive: true })
-    await writeFile(output, 'esto no es una imagen WebP')
+    await writeFile(output, Buffer.alloc(8_000, 0x78))
 
     await expect(
       validateProductMedia(fixtureRoot, [

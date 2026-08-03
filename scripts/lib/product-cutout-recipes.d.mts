@@ -1,9 +1,13 @@
-export interface CutoutPolicy {
+export interface CutoutPolicyBase {
   canvas: number
   occupancy: number
-  allowEnlargement?: boolean
-  maxEnlargementRatio?: number
 }
+
+export type CutoutPolicy = CutoutPolicyBase &
+  (
+    | { allowEnlargement: true; maxEnlargementRatio: number }
+    | { allowEnlargement?: false; maxEnlargementRatio?: never }
+  )
 
 export interface WhiteFloodMatte {
   luma: number

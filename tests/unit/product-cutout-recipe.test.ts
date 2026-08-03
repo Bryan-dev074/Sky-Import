@@ -492,7 +492,12 @@ test('la receta es determinista y sus primarios aprobados coinciden con el hash 
   const recipe = {
     operation: 'white-flood-matte' as const,
     matte: { luma: 248, chroma: 18, featherPixels: 3, despill: true },
-    policy: { canvas: 160, occupancy: 0.8, allowEnlargement: true, maxEnlargementRatio: 3 },
+    policy: {
+      canvas: 160,
+      occupancy: 0.8,
+      allowEnlargement: true as const,
+      maxEnlargementRatio: 3,
+    },
   }
 
   const first = await rebuildProductCutout(fixture, recipe)

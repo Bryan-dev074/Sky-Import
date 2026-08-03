@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import sharp from 'sharp'
 import { describe, expect, test } from 'vitest'
 import { PRODUCTS } from '@/lib/catalog/products'
+import { measureOpaqueBounds } from '../../scripts/lib/product-cutout.mjs'
 
 async function readCornerAlpha(input: string) {
   const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
@@ -74,6 +75,24 @@ describe('catálogo premium', () => {
       expect(metadata.format, product.slug).toBe('webp')
       expect(metadata.hasAlpha, product.slug).toBe(true)
       expect(await readCornerAlpha(imagePath), product.slug).toEqual([0, 0, 0, 0])
+    }
+  })
+
+  test('los cinco recortes corregidos ocupan exactamente 84% en su eje mayor', async () => {
+    const correctedSlugs = [
+      'radeon-rx-9070-xt-16gb',
+      'asus-tuf-gaming-b650-plus-wifi',
+      'asrock-z890-pro-rs',
+      'msi-mag-a650bn',
+      'cooler-master-masterbox-q300l',
+    ]
+
+    for (const slug of correctedSlugs) {
+      const imagePath = join(process.cwd(), 'public', 'products', slug, 'primary.webp')
+      const bounds = await measureOpaqueBounds(imagePath)
+      expect(bounds, slug).not.toBeNull()
+      if (!bounds) throw new Error(`El recorte ${slug} debe contener píxeles opacos.`)
+      expect(Math.max(bounds.opaqueWidth, bounds.opaqueHeight), slug).toBe(1_344)
     }
   })
 })

@@ -28,13 +28,23 @@ export interface ProductCutoutInspectionOptions {
   alphaThreshold?: number
 }
 
-export interface NormalizeProductCutoutOptions extends ProductCutoutInspectionOptions {
+export interface NormalizeProductCutoutBaseOptions extends ProductCutoutInspectionOptions {
   canvas?: number
   occupancy?: number
-  allowEnlargement?: boolean
-  maxEnlargementRatio?: number
   webpExactTransparentRgb?: boolean
 }
+
+export type NormalizeProductCutoutOptions = NormalizeProductCutoutBaseOptions &
+  (
+    | {
+        allowEnlargement: true
+        maxEnlargementRatio: number
+      }
+    | {
+        allowEnlargement?: false
+        maxEnlargementRatio?: never
+      }
+  )
 
 export interface ProductCutoutInspection {
   metadata: Metadata
