@@ -36,10 +36,15 @@
 9. `corsair-rm750e`
 10. `corsair-rm1000x`
 11. `msi-mag-a650bn`
-12. `lian-li-lancool-216`
-13. `nzxt-h5-flow`
-14. `cooler-master-masterbox-q300l`
-15. `thermal-grizzly-kryonaut-1g`
+12. `cooler-master-masterbox-q300l`
+13. `thermal-grizzly-kryonaut-1g`
+
+Visual inspection moved `lian-li-lancool-216` and `nzxt-h5-flow` to faithful
+editing: the first source contains a projected shadow and the second contains
+unrelated installed PC components. The G.Skill source requires the documented,
+tested per-product enlargement override because its official gallery has no
+higher-resolution cutout and default normalization makes it half the size of
+the comparable RAM kits.
 
 ### Faithful edit, then normalize
 
@@ -47,7 +52,7 @@
 2. CPUs: `ryzen-7-9800x3d`, `ryzen-7-7800x3d`, `ryzen-5-9600x`, `core-ultra-7-265k`, `core-i5-14600k`.
 3. Motherboards: `msi-mag-b850-tomahawk-wifi`, `msi-pro-b650m-a-wifi`, `gigabyte-b760m-ds3h`.
 4. Memory/storage/power: `kingston-fury-beast-ddr5-16gb-5600`, `samsung-990-pro-2tb`, `crucial-p3-plus-1tb`, `samsung-870-evo-1tb`, `seasonic-focus-gx-850`.
-5. Cooling/cases/accessories: `noctua-nh-d15`, `thermalright-peerless-assassin-120-se`, `arctic-liquid-freezer-iii-360`, `cooler-master-nr200p`, `arctic-p12-pwm-pst-5-pack`.
+5. Cooling/cases/accessories: `noctua-nh-d15`, `thermalright-peerless-assassin-120-se`, `arctic-liquid-freezer-iii-360`, `lian-li-lancool-216`, `nzxt-h5-flow`, `cooler-master-nr200p`, `arctic-p12-pwm-pst-5-pack`.
 
 ## Image-edit prompt template
 
@@ -390,12 +395,14 @@ git commit -m "assets: isolate memory storage and power products"
 
 **Files:**
 
-- Modify: the five cooling/case/accessory assets listed in “Faithful edit, then normalize”.
+- Modify: the seven cooling/case/accessory assets listed in “Faithful edit, then normalize”.
 
 **Step 1: Preserve exact purchased contents**
 
 - Noctua NH-D15 and Peerless Assassin: complete cooler assembly only; no box, mounting kit, or floor shadow.
 - ARCTIC Liquid Freezer III 360: radiator, installed fans, tubes, and pump/block as one complete AIO; no award badges or accessory cards.
+- Lian Li Lancool 216: one complete empty case only; remove the projected source shadow without changing its mesh, fans, or geometry.
+- NZXT H5 Flow: one complete empty case only; remove the unrelated installed GPU, AIO, motherboard, cabling, and other internal PC components.
 - Cooler Master NR200P: one complete case only, using a brighter official angle if the current source cannot yield a crisp silhouette.
 - ARCTIC P12 five-pack: exactly five matching fans in a clean arrangement; no badge, packaging, or invented lighting.
 
@@ -415,7 +422,7 @@ Expected: no slug in this group appears in validation errors.
 **Step 4: Commit the final edited group**
 
 ```powershell
-git add public/products/noctua-* public/products/thermalright-* public/products/arctic-* public/products/cooler-master-nr200p
+git add public/products/noctua-* public/products/thermalright-* public/products/arctic-* public/products/lian-li-lancool-216 public/products/nzxt-h5-flow public/products/cooler-master-nr200p
 git commit -m "assets: isolate cooling case and fan products"
 ```
 
