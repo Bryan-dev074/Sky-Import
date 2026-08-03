@@ -1,6 +1,8 @@
 # Fuentes de imágenes de producto
 
-Cada imagen fue optimizada localmente a WebP. Las páginas y créditos de origen se conservan a continuación.
+Flujo seguro y repetible: (1) `npm run media:sync` descarga únicamente el material bruto a `artifacts/product-sources/<slug>/source.<ext>`; (2) se edita o extrae un recorte transparente en `artifacts/product-cutouts/<slug>.png`; (3) se normaliza explícitamente con `npm run media:normalize -- --input artifacts/product-cutouts/<slug>.png --slug <slug> --output public/products/<slug>/primary.webp`; (4) `npm run media:validate` revisa los assets curados; y (5) `npm run media:sheet` crea una hoja de contacto con fondos oscuro y claro para revisar el matte. `media:sync` no sobrescribe `primary.webp`; ejecute `npm run media:sync -- --write-credits` solo para regenerar este listado.
+
+Las páginas, créditos y archivos de origen se conservan a continuación.
 
 - `geforce-rtx-5090-founders-edition-32gb` — [NVIDIA](https://nvidianews.nvidia.com/file/geforce-rtx-5090255277?action=) — [archivo original](https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5090.jpg?download=true)
 - `geforce-rtx-5080-16gb` — [NVIDIA](https://nvidianews.nvidia.com/multimedia/gaming-creating/gaming-geforce-graphics-cards) — [archivo original](https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5080.jpg?download=true)

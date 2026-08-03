@@ -54,7 +54,12 @@ function download(url, referer, redirects = 0) {
           }
           chunks.push(chunk)
         })
-        response.on('end', () => resolve(Buffer.concat(chunks)))
+        response.on('end', () =>
+          resolve({
+            body: Buffer.concat(chunks),
+            url: parsed.href,
+          }),
+        )
         response.on('error', reject)
       },
     )
@@ -64,27 +69,22 @@ function download(url, referer, redirects = 0) {
   })
 }
 
+async function detectExtension(source) {
+  const metadata = await sharp(source.body, { failOn: 'warning' }).metadata()
+  if (!metadata.format) throw new Error(`Formato de imagen no reconocido: ${source.url}`)
+  return metadata.format
+}
+
 async function syncProduct(entry) {
   try {
     const source = await download(entry.imageUrl, entry.sourcePage)
-    const output = join(ROOT, 'public', 'products', entry.slug, 'primary.webp')
+    const extension = await detectExtension(source)
+    const output = join(ROOT, 'artifacts', 'product-sources', entry.slug, `source.${extension}`)
     await mkdir(dirname(output), { recursive: true })
-
-    await sharp(source, { failOn: 'warning' })
-      .rotate()
-      .resize({
-        width: 1600,
-        height: 1200,
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 88, alphaQuality: 90, effort: 5 })
-      .toFile(output)
-
-    const metadata = await sharp(output).metadata()
-    return `${entry.slug}: ${metadata.width}×${metadata.height}`
+    await writeFile(output, source.body)
+    return `${entry.slug}: source.${extension}`
   } catch (error) {
-    throw new Error(`No se pudo procesar ${entry.slug} (${entry.imageUrl}): ${error.message}`, {
+    throw new Error(`No se pudo descargar ${entry.slug} (${entry.imageUrl}): ${error.message}`, {
       cause: error,
     })
   }
@@ -106,23 +106,27 @@ async function mapLimit(values, limit, worker) {
   return results
 }
 
+export async function writeCredits(manifest) {
+  await writeFile(
+    join(ROOT, 'public', 'products', 'SOURCES.md'),
+    [
+      '# Fuentes de imágenes de producto',
+      '',
+      'Cada imagen conserva su URL y crédito de origen. El flujo de producción está documentado en este archivo.',
+      '',
+      ...manifest.map(
+        (entry) =>
+          `- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage}) — [archivo original](${entry.imageUrl})`,
+      ),
+      '',
+    ].join('\n'),
+    'utf8',
+  )
+}
+
 const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'))
 const results = await mapLimit(manifest, 4, syncProduct)
-await writeFile(
-  join(ROOT, 'public', 'products', 'SOURCES.md'),
-  [
-    '# Fuentes de imágenes de producto',
-    '',
-    'Cada imagen fue optimizada localmente a WebP. Las páginas y créditos de origen se conservan a continuación.',
-    '',
-    ...manifest.map(
-      (entry) =>
-        `- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage}) — [archivo original](${entry.imageUrl})`,
-    ),
-    '',
-  ].join('\n'),
-  'utf8',
-)
+if (process.argv.slice(2).includes('--write-credits')) await writeCredits(manifest)
 
-console.log(`Sincronizadas ${results.length} imágenes.`)
+console.log(`Descargadas ${results.length} fuentes sin tocar assets curados.`)
 console.log(results.join('\n'))

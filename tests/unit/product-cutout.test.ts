@@ -1,10 +1,17 @@
 import sharp from 'sharp'
+import { execFile } from 'node:child_process'
+import { mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { dirname, join } from 'node:path'
+import { promisify } from 'node:util'
 import { expect, test } from 'vitest'
 import {
   measureOpaqueBounds,
   normalizeProductCutout,
   readCornerAlpha,
 } from '../../scripts/lib/product-cutout.mjs'
+
+const execFileAsync = promisify(execFile)
 
 test('normaliza un recorte sin perder alfa ni margen seguro', async () => {
   const opaqueFixture = await sharp({
@@ -29,4 +36,53 @@ test('normaliza un recorte sin perder alfa ni margen seguro', async () => {
   })
   const bounds = await measureOpaqueBounds(output)
   expect(bounds.safeMarginRatio).toBeGreaterThanOrEqual(0.06)
+})
+
+test('el CLI normaliza solo en la ruta de salida explícita', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'sky-import-cutout-'))
+  const input = join(directory, 'raw.png')
+  const output = join(directory, 'curated', 'primary.webp')
+
+  try {
+    const raw = await sharp({
+      create: { width: 400, height: 240, channels: 4, background: '#00000000' },
+    })
+      .composite([
+        {
+          input: await sharp({
+            create: { width: 240, height: 120, channels: 4, background: '#2f86ff' },
+          })
+            .png()
+            .toBuffer(),
+          left: 80,
+          top: 60,
+        },
+      ])
+      .png()
+      .toBuffer()
+    await writeFile(input, raw)
+
+    await execFileAsync(process.execPath, [
+      'scripts/normalize-product-cutout.mjs',
+      '--input',
+      input,
+      '--slug',
+      'geforce-rtx-5070-12gb',
+      '--output',
+      output,
+    ])
+
+    const normalized = await readFile(output)
+    expect((await stat(output)).isFile()).toBe(true)
+    const metadata = await sharp(normalized).metadata()
+    expect(metadata).toMatchObject({ width: 1600, height: 1600, format: 'webp', hasAlpha: true })
+    await expect(readCornerAlpha(normalized)).resolves.toEqual([0, 0, 0, 0])
+    await expect(measureOpaqueBounds(normalized)).resolves.toMatchObject({
+      safeMarginRatio: expect.any(Number),
+    })
+    expect(await readdir(directory)).toEqual(['curated', 'raw.png'])
+    expect(await readdir(dirname(output))).toEqual(['primary.webp'])
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
 })
