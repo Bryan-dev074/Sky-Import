@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import http from 'node:http'
 import https from 'node:https'
 import sharp from 'sharp'
+import { writeProductCredits } from './lib/product-credits.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MANIFEST_PATH = join(ROOT, 'public', 'products', 'manifest.json')
@@ -107,21 +108,7 @@ async function mapLimit(values, limit, worker) {
 }
 
 export async function writeCredits(manifest) {
-  await writeFile(
-    join(ROOT, 'public', 'products', 'SOURCES.md'),
-    [
-      '# Fuentes de imágenes de producto',
-      '',
-      'Cada imagen conserva su URL y crédito de origen. El flujo de producción está documentado en este archivo.',
-      '',
-      ...manifest.map(
-        (entry) =>
-          `- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage}) — [archivo original](${entry.imageUrl})`,
-      ),
-      '',
-    ].join('\n'),
-    'utf8',
-  )
+  await writeProductCredits(join(ROOT, 'public', 'products', 'SOURCES.md'), manifest)
 }
 
 const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'))
