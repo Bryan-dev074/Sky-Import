@@ -156,7 +156,7 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
     credit: 'Lian Li',
   },
   'nzxt-h5-flow': {
-    sourcePage: 'https://nzxt.com/product/h5-flow',
+    sourcePage: 'https://nzxt.com/products/h5-flow-2022',
     credit: 'NZXT',
   },
   'cooler-master-masterbox-q300l': {

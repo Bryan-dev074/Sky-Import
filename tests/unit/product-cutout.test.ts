@@ -292,3 +292,22 @@ test('cada componente ampliado tiene un límite mínimo por slug y Kingston cons
     occupancy: 0.84,
   })
 })
+
+test('solo los dos recortes pequeños revisados de Task 7 permiten ampliación localizada', () => {
+  expect(getProductCutoutPolicy('thermalright-peerless-assassin-120-se')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+    allowEnlargement: true,
+    maxEnlargementRatio: 1.79,
+  })
+  expect(getProductCutoutPolicy('lian-li-lancool-216')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+    allowEnlargement: true,
+    maxEnlargementRatio: 1.93,
+  })
+  expect(getProductCutoutPolicy('arctic-p12-pwm-pst-5-pack')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+  })
+})

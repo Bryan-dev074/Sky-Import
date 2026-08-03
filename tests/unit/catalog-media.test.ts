@@ -52,6 +52,15 @@ describe('catálogo premium', () => {
     )
   })
 
+  test('mantiene la variante H5 Flow 2022 y el pack P12 exactos en sus fuentes oficiales', () => {
+    expect(PRODUCTS.find((product) => product.slug === 'nzxt-h5-flow')?.media.sourcePage).toBe(
+      'https://nzxt.com/products/h5-flow-2022',
+    )
+    expect(
+      PRODUCTS.find((product) => product.slug === 'arctic-p12-pwm-pst-5-pack')?.media.sourcePage,
+    ).toBe('https://www.arctic.de/P12-PWM-PST/ACFAN00137A')
+  })
+
   test('incluye una imagen local WebP con alfa y esquinas transparentes para cada producto', async () => {
     for (const product of PRODUCTS) {
       const imagePath = join(

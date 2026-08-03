@@ -190,31 +190,41 @@
     "slug": "noctua-nh-d15",
     "imageUrl": "https://cdn.noctua.at/media/nh_d15_1.jpg",
     "sourcePage": "https://noctua.at/en/nh-d15",
-    "credit": "Noctua"
+    "credit": "Noctua",
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "0293ACA1B0CBA40E204D8CB34EEF1D80F17423B4C098E34CBD80004C0A795068"
   },
   {
     "slug": "thermalright-peerless-assassin-120-se",
-    "imageUrl": "https://www.thermalright.com/wp-content/uploads/2021/10/PA120-SE-%E4%B8%BB%E5%9B%BE-1.jpg",
+    "imageUrl": "https://www.thermalright.com/wp-content/uploads/2021/10/PA120-SE-%E4%B8%BB%E5%9B%BE-3.jpg",
     "sourcePage": "https://www.thermalright.com/product/peerless-assassin-120-se/",
-    "credit": "Thermalright"
+    "credit": "Thermalright",
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "B1084B27D34F736D8CB4443E77852355D8D58C43AA46F7F161FFA2B6DB53B411"
   },
   {
     "slug": "arctic-liquid-freezer-iii-360",
-    "imageUrl": "https://www.arctic.de/media/9d/26/30/1725369416/Liquid_Freezer_III_360_Black_G01_eha_3_awards.png",
+    "imageUrl": "https://www.arctic.de/media/e0/ab/b6/1707469622/Liquid_Freezer_III_360_Black_G02_2.jpg",
     "sourcePage": "https://www.arctic.de/us/Liquid-Freezer-III-360/ACFRE00136A",
-    "credit": "ARCTIC"
+    "credit": "ARCTIC",
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "BD98DF5C938824AD3492C168C30C8417ACD7EF32B65A9D04D1B19D382DF70ACE"
   },
   {
     "slug": "lian-li-lancool-216",
     "imageUrl": "https://lian-li.com/wp-content/uploads/2022/11/216_1031-035.png",
     "sourcePage": "https://lian-li.com/product/lancool-216/",
-    "credit": "Lian Li"
+    "credit": "Lian Li",
+    "sourceMediaType": "image/png",
+    "sourceSha256": "1124E866B9C697AC22DD6342DCD68860760AA9EE7498E8F68D4A5BC796455D59"
   },
   {
     "slug": "nzxt-h5-flow",
-    "imageUrl": "https://nzxt.com/cdn/shop/files/cHNKLnCSQFWZ4NQovq2Byrvrxt3XmnDDFHT2MgjC.png?v=1762528058&width=2048",
-    "sourcePage": "https://nzxt.com/product/h5-flow",
-    "credit": "NZXT"
+    "imageUrl": "https://nzxt.com/cdn/shop/files/h5-flow-left-side-empty-black_b05c6087-ed77-4dd8-b227-d6ecef3dff6a.png?v=1744863006",
+    "sourcePage": "https://nzxt.com/products/h5-flow-2022",
+    "credit": "NZXT",
+    "sourceMediaType": "image/png",
+    "sourceSha256": "29B9151B2717A5C5B1D25797948400F315BB14BFFE2A0E2221C4BC249E8C4B5C"
   },
   {
     "slug": "cooler-master-masterbox-q300l",
@@ -226,7 +236,9 @@
     "slug": "cooler-master-nr200p",
     "imageUrl": "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwb92ce232/Assets/masterbox-nr200p/large/nr200p-gallery-10.png",
     "sourcePage": "https://www.coolermaster.com/en-global/products/masterbox-nr200p/",
-    "credit": "Cooler Master"
+    "credit": "Cooler Master",
+    "sourceMediaType": "image/png",
+    "sourceSha256": "1B64481C0A7CF7F3E8645FD73C0C64A3CC65E74299EFD33A652DFFFD63F8335A"
   },
   {
     "slug": "thermal-grizzly-kryonaut-1g",
@@ -236,8 +248,10 @@
   },
   {
     "slug": "arctic-p12-pwm-pst-5-pack",
-    "imageUrl": "https://www.arctic.de/media/7a/e8/4b/1600084911/P12_PWM_PST_Value_Pack_G00_Award_%281%29.png",
+    "imageUrl": "https://www.arctic.de/media/51/49/e8/1583760048/P12_PWM_PST_Black_01.jpg",
     "sourcePage": "https://www.arctic.de/P12-PWM-PST/ACFAN00137A",
-    "credit": "ARCTIC"
+    "credit": "ARCTIC",
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "4349D68E69267CA9E446D826E8923BE8B7AE5EA42E493A7D77AFA4C6E5D08EE8"
   }
 ]

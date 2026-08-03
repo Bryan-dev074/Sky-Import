@@ -10,12 +10,32 @@ export const TASK_6_PRODUCT_SLUGS = Object.freeze([
   'seasonic-focus-gx-850',
 ])
 
+export const TASK_7_PRODUCT_SLUGS = Object.freeze([
+  'noctua-nh-d15',
+  'thermalright-peerless-assassin-120-se',
+  'arctic-liquid-freezer-iii-360',
+  'lian-li-lancool-216',
+  'nzxt-h5-flow',
+  'cooler-master-nr200p',
+  'arctic-p12-pwm-pst-5-pack',
+])
+
 const WHITE_FLOOD_MATTE = Object.freeze({
   luma: 248,
   chroma: 18,
   featherPixels: 3,
   despill: true,
 })
+
+function enclosedWhiteMatte(preserveWhiteRegions = []) {
+  return Object.freeze({
+    ...WHITE_FLOOD_MATTE,
+    enclosedWhiteMinArea: 48,
+    preserveWhiteRegions: Object.freeze(
+      preserveWhiteRegions.map((region) => Object.freeze(region)),
+    ),
+  })
+}
 
 export const PRODUCT_CUTOUT_RECIPES = Object.freeze({
   'kingston-fury-beast-ddr5-16gb-5600': Object.freeze({
@@ -51,6 +71,82 @@ export const PRODUCT_CUTOUT_RECIPES = Object.freeze({
     expectedOutputSha256: '74F17496CE6E99D227EC6EA8773EC1CE368C7D39E204B0ABC2BE3CE916B4D553',
     matte: WHITE_FLOOD_MATTE,
   }),
+  'noctua-nh-d15': Object.freeze({
+    operation: 'white-flood-matte',
+    sourceExtension: 'jpg',
+    sourceSha256: '0293ACA1B0CBA40E204D8CB34EEF1D80F17423B4C098E34CBD80004C0A795068',
+    expectedOutputSha256: '697AB656BA897989A6421EB2F74AD2FAAA2E3CD6450CE9A0270A18E0692D8D12',
+    matte: enclosedWhiteMatte(),
+    webpExactTransparentRgb: true,
+  }),
+  'thermalright-peerless-assassin-120-se': Object.freeze({
+    operation: 'white-flood-matte',
+    sourceExtension: 'jpg',
+    sourceSha256: 'B1084B27D34F736D8CB4443E77852355D8D58C43AA46F7F161FFA2B6DB53B411',
+    expectedOutputSha256: '43970608E9AB7B1B17CAA87C1AADECA236493D29B4245046D42C9087225DAA2F',
+    matte: enclosedWhiteMatte([
+      { centerX: 400, centerY: 590, radius: 70 },
+    ]),
+    webpExactTransparentRgb: true,
+  }),
+  'arctic-liquid-freezer-iii-360': Object.freeze({
+    operation: 'white-flood-matte',
+    sourceExtension: 'jpg',
+    sourceSha256: 'BD98DF5C938824AD3492C168C30C8417ACD7EF32B65A9D04D1B19D382DF70ACE',
+    expectedOutputSha256: '57309FDA23EA3DC30AD6ADC979F82A673514CE7374FDB08EAAACF1D5F4B5DA09',
+    matte: enclosedWhiteMatte([
+      { centerX: 800, centerY: 440, radius: 120 },
+      { centerX: 800, centerY: 890, radius: 120 },
+      { centerX: 800, centerY: 1340, radius: 120 },
+    ]),
+    webpExactTransparentRgb: true,
+  }),
+  'lian-li-lancool-216': Object.freeze({
+    operation: 'native-alpha-prune-diffuse',
+    sourceExtension: 'png',
+    sourceSha256: '1124E866B9C697AC22DD6342DCD68860760AA9EE7498E8F68D4A5BC796455D59',
+    expectedOutputSha256: '9982250E12462F7E1CC73D78FC36E696822BEECF73BB75385A2E0812A8148B79',
+    alphaPrune: Object.freeze({ coreAlpha: 160, retainDistance: 2 }),
+    webpExactTransparentRgb: true,
+  }),
+  'nzxt-h5-flow': Object.freeze({
+    operation: 'native-alpha-tone-lift',
+    sourceExtension: 'png',
+    sourceSha256: '29B9151B2717A5C5B1D25797948400F315BB14BFFE2A0E2221C4BC249E8C4B5C',
+    expectedOutputSha256: '611DB7F2A63DA2DE4A38D69195898B2AFAC6B2B720E4901BE19D1D8D4F47FC78',
+    tone: Object.freeze({ gamma: 1.45 }),
+    webpExactTransparentRgb: true,
+  }),
+  'cooler-master-nr200p': Object.freeze({
+    operation: 'native-alpha-tone-lift',
+    sourceExtension: 'png',
+    sourceSha256: '1B64481C0A7CF7F3E8645FD73C0C64A3CC65E74299EFD33A652DFFFD63F8335A',
+    expectedOutputSha256: '6F2A28A818C0E3C53DB96DF9F3504976AA7563822FF553E130A1CE29DD9CA85C',
+    tone: Object.freeze({ gamma: 1.7 }),
+    webpExactTransparentRgb: true,
+  }),
+  'arctic-p12-pwm-pst-5-pack': Object.freeze({
+    operation: 'white-flood-five-copy-grid',
+    sourceExtension: 'jpg',
+    sourceSha256: '4349D68E69267CA9E446D826E8923BE8B7AE5EA42E493A7D77AFA4C6E5D08EE8',
+    expectedOutputSha256: '625F7A6FC1C06E7ED32D4DDBEF8C08EC141BD681DA8DC2E96DE49053B2BBDCAC',
+    matte: enclosedWhiteMatte([
+      { centerX: 600, centerY: 600, radius: 125 },
+    ]),
+    layout: Object.freeze({
+      width: 1440,
+      height: 960,
+      itemSize: 440,
+      positions: Object.freeze([
+        Object.freeze({ left: 20, top: 20 }),
+        Object.freeze({ left: 500, top: 20 }),
+        Object.freeze({ left: 980, top: 20 }),
+        Object.freeze({ left: 260, top: 500 }),
+        Object.freeze({ left: 740, top: 500 }),
+      ]),
+    }),
+    webpExactTransparentRgb: true,
+  }),
 })
 
 function validateMatteOptions(options) {
@@ -66,23 +162,136 @@ function validateMatteOptions(options) {
   if (!Number.isInteger(featherPixels) || featherPixels < 1 || featherPixels > 8) {
     throw new Error(`featherPixels debe ser un entero entre 1 y 8; se recibió ${featherPixels}.`)
   }
-  return { luma, chroma, featherPixels, despill: options.despill === true }
+  const enclosedWhiteMinArea = options?.enclosedWhiteMinArea
+  if (
+    enclosedWhiteMinArea !== undefined &&
+    (!Number.isInteger(enclosedWhiteMinArea) || enclosedWhiteMinArea < 1)
+  ) {
+    throw new Error(
+      `enclosedWhiteMinArea debe ser un entero positivo; se recibió ${enclosedWhiteMinArea}.`,
+    )
+  }
+  const preserveWhiteRegions = options?.preserveWhiteRegions ?? []
+  if (!Array.isArray(preserveWhiteRegions)) {
+    throw new Error('preserveWhiteRegions debe ser una lista de regiones.')
+  }
+  for (const region of preserveWhiteRegions) {
+    const validRectangle =
+      Number.isInteger(region?.left) &&
+      Number.isInteger(region?.top) &&
+      Number.isInteger(region?.width) &&
+      Number.isInteger(region?.height) &&
+      region.left >= 0 &&
+      region.top >= 0 &&
+      region.width >= 1 &&
+      region.height >= 1
+    const validCircle =
+      Number.isInteger(region?.centerX) &&
+      Number.isInteger(region?.centerY) &&
+      Number.isInteger(region?.radius) &&
+      region.centerX >= 0 &&
+      region.centerY >= 0 &&
+      region.radius >= 1
+    if (!validRectangle && !validCircle) {
+      throw new Error('Cada región blanca protegida debe declarar enteros positivos válidos.')
+    }
+  }
+  return {
+    luma,
+    chroma,
+    featherPixels,
+    despill: options.despill === true,
+    enclosedWhiteMinArea,
+    preserveWhiteRegions,
+  }
+}
+
+function isWhiteCandidate(data, offset, options) {
+  const red = data[offset]
+  const green = data[offset + 1]
+  const blue = data[offset + 2]
+  const maximum = Math.max(red, green, blue)
+  const minimum = Math.min(red, green, blue)
+  const chroma = maximum - minimum
+  const luma = red * 0.2126 + green * 0.7152 + blue * 0.0722
+  return chroma <= options.chroma && luma >= options.luma
 }
 
 function enqueueWhiteBackground(index, state) {
   if (state.background[index]) return
   const offset = index * state.channels
-  const red = state.data[offset]
-  const green = state.data[offset + 1]
-  const blue = state.data[offset + 2]
-  const maximum = Math.max(red, green, blue)
-  const minimum = Math.min(red, green, blue)
-  const chroma = maximum - minimum
-  const luma = red * 0.2126 + green * 0.7152 + blue * 0.0722
-  if (chroma > state.options.chroma || luma < state.options.luma) return
+  if (!isWhiteCandidate(state.data, offset, state.options)) return
   state.background[index] = 1
   state.queue[state.tail] = index
   state.tail += 1
+}
+
+function regionContains(region, x, y) {
+  if (Number.isInteger(region.centerX)) {
+    const horizontal = x - region.centerX
+    const vertical = y - region.centerY
+    return horizontal * horizontal + vertical * vertical <= region.radius * region.radius
+  }
+  return (
+    x >= region.left &&
+    x < region.left + region.width &&
+    y >= region.top &&
+    y < region.top + region.height
+  )
+}
+
+function markEnclosedWhiteBackground(data, info, options, background) {
+  if (!options.enclosedWhiteMinArea) return background
+  const pixelCount = info.width * info.height
+  const visited = new Uint8Array(pixelCount)
+  const queue = new Int32Array(pixelCount)
+
+  for (let start = 0; start < pixelCount; start += 1) {
+    if (
+      background[start] ||
+      visited[start] ||
+      !isWhiteCandidate(data, start * info.channels, options)
+    ) {
+      continue
+    }
+    const component = []
+    let protectedComponent = false
+    let head = 0
+    let tail = 1
+    queue[0] = start
+    visited[start] = 1
+    while (head < tail) {
+      const index = queue[head]
+      head += 1
+      component.push(index)
+      const x = index % info.width
+      const y = Math.floor(index / info.width)
+      if (options.preserveWhiteRegions.some((region) => regionContains(region, x, y))) {
+        protectedComponent = true
+      }
+      for (const neighbor of [
+        x > 0 ? index - 1 : -1,
+        x + 1 < info.width ? index + 1 : -1,
+        y > 0 ? index - info.width : -1,
+        y + 1 < info.height ? index + info.width : -1,
+      ]) {
+        if (
+          neighbor < 0 ||
+          background[neighbor] ||
+          visited[neighbor] ||
+          !isWhiteCandidate(data, neighbor * info.channels, options)
+        ) {
+          continue
+        }
+        visited[neighbor] = 1
+        queue[tail] = neighbor
+        tail += 1
+      }
+    }
+    if (component.length < options.enclosedWhiteMinArea || protectedComponent) continue
+    for (const index of component) background[index] = 1
+  }
+  return background
 }
 
 function floodWhiteBackground(data, info, options) {
@@ -208,7 +417,12 @@ export async function removeWhiteBackground(input, matteOptions) {
     .removeAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true })
-  const background = floodWhiteBackground(data, info, options)
+  const background = markEnclosedWhiteBackground(
+    data,
+    info,
+    options,
+    floodWhiteBackground(data, info, options),
+  )
   const retained = retainLargestForeground(background, info.width, info.height)
   const depth = measureEdgeDepth(retained, info.width, info.height, options.featherPixels)
   const output = Buffer.alloc(info.width * info.height * 4)
@@ -240,16 +454,199 @@ export async function removeWhiteBackground(input, matteOptions) {
     .toBuffer()
 }
 
+export async function liftDarkProductRgb(input, toneOptions) {
+  const gamma = toneOptions?.gamma
+  if (!Number.isFinite(gamma) || gamma <= 1 || gamma > 3) {
+    throw new Error(`gamma debe ser mayor a 1 y menor o igual a 3; se recibió ${gamma}.`)
+  }
+  const { data, info } = await sharp(input)
+    .rotate()
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const exponent = 1 / gamma
+  for (let offset = 0; offset < data.length; offset += info.channels) {
+    if (data[offset + 3] === 0) {
+      data[offset] = 0
+      data[offset + 1] = 0
+      data[offset + 2] = 0
+      continue
+    }
+    data[offset] = Math.round(255 * Math.pow(data[offset] / 255, exponent))
+    data[offset + 1] = Math.round(255 * Math.pow(data[offset + 1] / 255, exponent))
+    data[offset + 2] = Math.round(255 * Math.pow(data[offset + 2] / 255, exponent))
+  }
+  return sharp(data, {
+    raw: { width: info.width, height: info.height, channels: info.channels },
+  })
+    .png()
+    .toBuffer()
+}
+
+function validateAlphaPruneOptions(options) {
+  const coreAlpha = options?.coreAlpha
+  const retainDistance = options?.retainDistance
+  if (!Number.isInteger(coreAlpha) || coreAlpha < 1 || coreAlpha > 255) {
+    throw new Error(`coreAlpha debe ser un entero entre 1 y 255; se recibió ${coreAlpha}.`)
+  }
+  if (!Number.isInteger(retainDistance) || retainDistance < 0 || retainDistance > 16) {
+    throw new Error(
+      `retainDistance debe ser un entero entre 0 y 16; se recibió ${retainDistance}.`,
+    )
+  }
+  return { coreAlpha, retainDistance }
+}
+
+export async function pruneDiffuseNativeAlpha(input, pruneOptions) {
+  const options = validateAlphaPruneOptions(pruneOptions)
+  const { data, info } = await sharp(input)
+    .rotate()
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const pixelCount = info.width * info.height
+  const retained = new Uint8Array(pixelCount)
+  const distance = new Uint8Array(pixelCount)
+  distance.fill(255)
+  const queue = new Int32Array(pixelCount)
+  let head = 0
+  let tail = 0
+
+  for (let index = 0; index < pixelCount; index += 1) {
+    const alpha = data[index * info.channels + 3]
+    if (alpha < options.coreAlpha) continue
+    retained[index] = 1
+    distance[index] = 0
+    queue[tail] = index
+    tail += 1
+  }
+  if (tail === 0) throw new Error('No se encontró sujeto alfa con el umbral coreAlpha declarado.')
+
+  while (head < tail) {
+    const index = queue[head]
+    head += 1
+    const currentDistance = distance[index]
+    if (currentDistance >= options.retainDistance) continue
+    const x = index % info.width
+    const y = Math.floor(index / info.width)
+    for (const neighbor of [
+      x > 0 ? index - 1 : -1,
+      x + 1 < info.width ? index + 1 : -1,
+      y > 0 ? index - info.width : -1,
+      y + 1 < info.height ? index + info.width : -1,
+    ]) {
+      if (neighbor < 0 || retained[neighbor]) continue
+      const alpha = data[neighbor * info.channels + 3]
+      if (alpha === 0) continue
+      retained[neighbor] = 1
+      distance[neighbor] = currentDistance + 1
+      queue[tail] = neighbor
+      tail += 1
+    }
+  }
+
+  const output = Buffer.from(data)
+  for (let index = 0; index < pixelCount; index += 1) {
+    if (retained[index]) continue
+    const offset = index * info.channels
+    output[offset] = 0
+    output[offset + 1] = 0
+    output[offset + 2] = 0
+    output[offset + 3] = 0
+  }
+  return sharp(output, {
+    raw: { width: info.width, height: info.height, channels: info.channels },
+  })
+    .png()
+    .toBuffer()
+}
+
+function validateFiveCopyLayout(layout) {
+  const width = layout?.width
+  const height = layout?.height
+  const itemSize = layout?.itemSize
+  const positions = layout?.positions
+  if (![width, height, itemSize].every((value) => Number.isInteger(value) && value > 0)) {
+    throw new Error('El layout de cinco copias requiere width, height e itemSize enteros positivos.')
+  }
+  if (!Array.isArray(positions) || positions.length !== 5) {
+    throw new Error('El layout debe declarar exactamente cinco posiciones.')
+  }
+  for (const position of positions) {
+    if (
+      !Number.isInteger(position?.left) ||
+      !Number.isInteger(position?.top) ||
+      position.left < 0 ||
+      position.top < 0 ||
+      position.left + itemSize > width ||
+      position.top + itemSize > height
+    ) {
+      throw new Error('Cada copia debe quedar completamente dentro del layout declarado.')
+    }
+  }
+  return { width, height, itemSize, positions }
+}
+
+export async function arrangeFiveIdenticalCopies(input, layoutOptions) {
+  const layout = validateFiveCopyLayout(layoutOptions)
+  const item = await sharp(input)
+    .rotate()
+    .ensureAlpha()
+    .trim({ background: '#00000000' })
+    .resize({
+      width: layout.itemSize,
+      height: layout.itemSize,
+      fit: 'contain',
+      background: '#00000000',
+    })
+    .png()
+    .toBuffer()
+  return sharp({
+    create: {
+      width: layout.width,
+      height: layout.height,
+      channels: 4,
+      background: '#00000000',
+    },
+  })
+    .composite(layout.positions.map((position) => ({ input: item, ...position })))
+    .png()
+    .toBuffer()
+}
+
 export async function rebuildProductCutout(source, recipe) {
-  if (!recipe || !['native-alpha', 'white-flood-matte'].includes(recipe.operation)) {
-    throw new Error('La receta debe declarar operation nativa o white-flood-matte.')
+  if (
+    !recipe ||
+    ![
+      'native-alpha',
+      'white-flood-matte',
+      'native-alpha-prune-diffuse',
+      'native-alpha-tone-lift',
+      'white-flood-five-copy-grid',
+    ].includes(recipe.operation)
+  ) {
+    throw new Error('La receta debe declarar una operation soportada.')
   }
   if (!recipe.policy) throw new Error('La receta ejecutable requiere policy explícita.')
-  const cutout =
-    recipe.operation === 'native-alpha'
-      ? source
-      : await removeWhiteBackground(source, recipe.matte)
-  return normalizeProductCutout(cutout, recipe.policy)
+  let cutout
+  if (recipe.operation === 'native-alpha') cutout = source
+  if (recipe.operation === 'white-flood-matte') {
+    cutout = await removeWhiteBackground(source, recipe.matte)
+  }
+  if (recipe.operation === 'native-alpha-prune-diffuse') {
+    cutout = await pruneDiffuseNativeAlpha(source, recipe.alphaPrune)
+  }
+  if (recipe.operation === 'native-alpha-tone-lift') {
+    cutout = await liftDarkProductRgb(source, recipe.tone)
+  }
+  if (recipe.operation === 'white-flood-five-copy-grid') {
+    const single = await removeWhiteBackground(source, recipe.matte)
+    cutout = await arrangeFiveIdenticalCopies(single, recipe.layout)
+  }
+  return normalizeProductCutout(cutout, {
+    ...recipe.policy,
+    webpExactTransparentRgb: recipe.webpExactTransparentRgb === true,
+  })
 }
 
 export function sha256(bytes) {

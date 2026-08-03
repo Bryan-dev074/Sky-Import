@@ -169,6 +169,11 @@ export async function normalizeProductCutout(input, options = {}) {
       right: Math.ceil(horizontalSpace / 2),
       background: '#00000000',
     })
-    .webp({ lossless: true, alphaQuality: 100, effort: 6 })
+    .webp({
+      lossless: true,
+      alphaQuality: 100,
+      effort: 6,
+      exact: options.webpExactTransparentRgb === true,
+    })
     .toBuffer()
 }
