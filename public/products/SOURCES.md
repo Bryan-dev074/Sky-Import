@@ -4,12 +4,12 @@ Flujo seguro y repetible: (1) `npm run media:sync` descarga únicamente el mater
 
 Las páginas, créditos y archivos de origen se conservan a continuación.
 
-- `geforce-rtx-5090-founders-edition-32gb` — [NVIDIA](https://nvidianews.nvidia.com/file/geforce-rtx-5090255277?action=) — [archivo original](https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5090.jpg?download=true)
-- `geforce-rtx-5080-16gb` — [NVIDIA](https://nvidianews.nvidia.com/multimedia/gaming-creating/gaming-geforce-graphics-cards) — [archivo original](https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5080.jpg?download=true)
+- `geforce-rtx-5090-founders-edition-32gb` — [NVIDIA](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5090-founders-edition/) — [archivo original](https://assets.nvidia.partners/images/png/RTX5090-3QTR-Back-Left.png)
+- `geforce-rtx-5080-16gb` — [NVIDIA](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5080-founders-edition/) — [archivo original](https://assets.nvidia.partners/images/png/RTX5080-3QTR-Back-Left.png)
 - `geforce-rtx-5070-ti-16gb` — [MSI](https://www.msi.com/Graphics-Card/GeForce-RTX-5070-Ti-16G-VENTUS-3X-OC/Overview) — [archivo original](https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/new-gen/GB203-300-VENTUS-3X-OC/kv/msi-70ventus-ti-3x-oc.png)
-- `geforce-rtx-5070-12gb` — [NVIDIA](https://nvidianews.nvidia.com/multimedia/gaming-creating/gaming-geforce-graphics-cards) — [archivo original](https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5070.jpg?download=true)
+- `geforce-rtx-5070-12gb` — [NVIDIA](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5070-founders-edition/) — [archivo original](https://assets.nvidia.partners/images/png/RTX5070-3QTR-Back-Left.png)
 - `radeon-rx-9070-xt-16gb` — [ASUS](https://www.asus.com/br/motherboards-components/graphics-cards/tuf-gaming/tuf-rx9070xt-o16g-gaming/) — [archivo original](https://dlcdnwebimgs.asus.com/files/media/56d6fef8-8294-4b6b-b1e5-50ae6c6e7584/v1/img/kv/pd.png)
-- `geforce-rtx-4060-8gb` — [MSI](https://www.msi.com/Graphics-Card/GeForce-RTX-4060-VENTUS-3X-8G) — [archivo original](https://storage-asset.msi.com/global/picture/product/product_1689919001556433774639f64094bc8ada28865fee.webp)
+- `geforce-rtx-4060-8gb` — [MSI](https://www.msi.com/Graphics-Card/GeForce-RTX-4060-VENTUS-3X-8G/Gallery) — [archivo original](https://storage-asset.msi.com/global/picture/product/product_168991826759ba9e90a3245adf6d1d6de1fc389b92.webp)
 - `arc-b580-12gb` — [Intel](https://newsroom.intel.com/client-computing/intel-launches-arc-b-series-graphics-cards) — [archivo original](https://newsroom.intel.com/wp-content/uploads/2024/12/newsroom-intel-arc-b580-2.jpg)
 - `ryzen-7-9800x3d` — [AMD](https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-7-9800x3d.html) — [archivo original](https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2900400-ryzen-7-9800x3d.jpg)
 - `ryzen-7-7800x3d` — [AMD](https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7800x3d.html) — [archivo original](https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d-og.jpg)

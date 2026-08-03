@@ -169,3 +169,17 @@ test('la política de G.Skill permite ampliación controlada sin cambiar los val
     occupancy: 0.84,
   })
 })
+
+test('los recortes GPU revisados permiten una ampliación mínima y localizada', () => {
+  for (const slug of ['geforce-rtx-4060-8gb', 'arc-b580-12gb']) {
+    expect(getProductCutoutPolicy(slug)).toEqual({
+      canvas: 1600,
+      occupancy: 0.84,
+      allowEnlargement: true,
+    })
+  }
+  expect(getProductCutoutPolicy('geforce-rtx-5070-12gb')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+  })
+})

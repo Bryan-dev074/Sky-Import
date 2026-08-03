@@ -1,14 +1,14 @@
 [
   {
     "slug": "geforce-rtx-5090-founders-edition-32gb",
-    "imageUrl": "https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5090.jpg?download=true",
-    "sourcePage": "https://nvidianews.nvidia.com/file/geforce-rtx-5090255277?action=",
+    "imageUrl": "https://assets.nvidia.partners/images/png/RTX5090-3QTR-Back-Left.png",
+    "sourcePage": "https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5090-founders-edition/",
     "credit": "NVIDIA"
   },
   {
     "slug": "geforce-rtx-5080-16gb",
-    "imageUrl": "https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5080.jpg?download=true",
-    "sourcePage": "https://nvidianews.nvidia.com/multimedia/gaming-creating/gaming-geforce-graphics-cards",
+    "imageUrl": "https://assets.nvidia.partners/images/png/RTX5080-3QTR-Back-Left.png",
+    "sourcePage": "https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5080-founders-edition/",
     "credit": "NVIDIA"
   },
   {
@@ -19,8 +19,8 @@
   },
   {
     "slug": "geforce-rtx-5070-12gb",
-    "imageUrl": "https://iprsoftwaremedia.com/219/files/20250/202501271934/geforce-rtx-5070.jpg?download=true",
-    "sourcePage": "https://nvidianews.nvidia.com/multimedia/gaming-creating/gaming-geforce-graphics-cards",
+    "imageUrl": "https://assets.nvidia.partners/images/png/RTX5070-3QTR-Back-Left.png",
+    "sourcePage": "https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5070-founders-edition/",
     "credit": "NVIDIA"
   },
   {
@@ -31,8 +31,8 @@
   },
   {
     "slug": "geforce-rtx-4060-8gb",
-    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_1689919001556433774639f64094bc8ada28865fee.webp",
-    "sourcePage": "https://www.msi.com/Graphics-Card/GeForce-RTX-4060-VENTUS-3X-8G",
+    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_168991826759ba9e90a3245adf6d1d6de1fc389b92.webp",
+    "sourcePage": "https://www.msi.com/Graphics-Card/GeForce-RTX-4060-VENTUS-3X-8G/Gallery",
     "credit": "MSI"
   },
   {
