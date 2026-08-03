@@ -1,7 +1,17 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+import sharp from 'sharp'
 import { describe, expect, test } from 'vitest'
 import { PRODUCTS } from '@/lib/catalog/products'
+
+async function readCornerAlpha(input: string) {
+  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const alpha = info.channels - 1
+  const lastRow = (info.height - 1) * info.width * info.channels
+  const lastPixel = (info.width - 1) * info.channels
+
+  return [data[alpha], data[lastPixel + alpha], data[lastRow + alpha], data[lastRow + lastPixel + alpha]]
+}
 
 describe('catálogo premium', () => {
   test('incorpora la RTX 5090 como producto insignia', () => {
@@ -36,7 +46,7 @@ describe('catálogo premium', () => {
     }
   })
 
-  test('incluye una imagen optimizada local para cada producto', () => {
+  test('incluye una imagen local WebP con alfa y esquinas transparentes para cada producto', async () => {
     for (const product of PRODUCTS) {
       const imagePath = join(
         process.cwd(),
@@ -45,6 +55,10 @@ describe('catálogo premium', () => {
       )
 
       expect(existsSync(imagePath), product.slug).toBe(true)
+      const metadata = await sharp(imagePath).metadata()
+      expect(metadata.format, product.slug).toBe('webp')
+      expect(metadata.hasAlpha, product.slug).toBe(true)
+      expect(await readCornerAlpha(imagePath), product.slug).toEqual([0, 0, 0, 0])
     }
   })
 })

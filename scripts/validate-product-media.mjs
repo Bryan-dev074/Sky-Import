@@ -1,7 +1,7 @@
 import { readFile, stat } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import sharp from 'sharp'
+import { inspectProductCutout } from './lib/product-cutout.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(
@@ -30,12 +30,27 @@ for (const entry of manifest) {
 
   const output = join(ROOT, 'public', 'products', entry.slug, 'primary.webp')
   const file = await stat(output)
-  const metadata = await sharp(output).metadata()
+  const { metadata, cornerAlpha, bounds } = await inspectProductCutout(output)
+  const expectedCanvas = entry.slug === 'geforce-rtx-5090-founders-edition-32gb' ? 2048 : 1600
 
-  if (file.size < 8_000) throw new Error(`Imagen demasiado liviana para ${entry.slug}.`)
-  if (metadata.format !== 'webp') throw new Error(`Formato incorrecto para ${entry.slug}.`)
-  if ((metadata.width ?? 0) < 400 || (metadata.height ?? 0) < 300) {
-    throw new Error(`Resolución insuficiente para ${entry.slug}: ${metadata.width}×${metadata.height}.`)
+  if (file.size < 8_000) throw new Error(`[${entry.slug}] imagen demasiado liviana: ${file.size} bytes.`)
+  if (file.size > 16 * 1024 * 1024) throw new Error(`[${entry.slug}] imagen demasiado pesada: ${file.size} bytes.`)
+  if (metadata.format !== 'webp') throw new Error(`[${entry.slug}] formato incorrecto: ${metadata.format ?? 'desconocido'}.`)
+  if (metadata.hasAlpha !== true) throw new Error(`[${entry.slug}] falta canal alfa: hasAlpha=${metadata.hasAlpha}.`)
+  if ((metadata.width ?? 0) !== expectedCanvas || (metadata.height ?? 0) !== expectedCanvas) {
+    throw new Error(
+      `[${entry.slug}] dimensiones incorrectas: ${metadata.width}×${metadata.height}; se esperaban ${expectedCanvas}×${expectedCanvas}.`,
+    )
+  }
+  if (!bounds) throw new Error(`[${entry.slug}] no contiene píxeles opacos con alfa mayor a 8.`)
+  if (!cornerAlpha.every((alpha) => alpha === 0)) {
+    throw new Error(`[${entry.slug}] esquinas sin transparencia total: alfa=${cornerAlpha.join(', ')}.`)
+  }
+  if (bounds.safeMarginRatio < 0.06) {
+    const ratios = Object.entries(bounds.marginRatios)
+      .map(([side, ratio]) => `${side}=${(ratio * 100).toFixed(2)}%`)
+      .join(', ')
+    throw new Error(`[${entry.slug}] margen transparente insuficiente: ${ratios}.`)
   }
 }
 
