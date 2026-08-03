@@ -116,9 +116,10 @@
   },
   {
     "slug": "kingston-fury-beast-ddr5-16gb-5600",
-    "imageUrl": "https://media.kingston.com/kingston/features/ktc-features-memory-beast-ddr5.jpg",
+    "imageUrl": "https://media.kingston.com/kingston/product/FURY_Beast_Black_EXPO_DDR5_2-zm-lg.jpg",
     "sourcePage": "https://www.kingston.com/en/memory/search?partid=KF556C36BBEK2-16",
-    "credit": "Kingston"
+    "credit": "Kingston",
+    "sourceSha256": "3B798651BD116C65591BB60DBB7D78F592CA7C00FDEABF94BC23BA8C5401B774"
   },
   {
     "slug": "corsair-vengeance-lpx-ddr4-16gb-3200",
@@ -128,9 +129,10 @@
   },
   {
     "slug": "samsung-990-pro-2tb",
-    "imageUrl": "https://news.samsung.com/medialibrary/download/52948/large",
-    "sourcePage": "https://news.samsung.com/medialibrary/global/photo/52948?album=16",
-    "credit": "Samsung"
+    "imageUrl": "https://images.samsung.com/is/image/samsung/p6pim/es/mz-v9p2t0bw/gallery/es-990pro-nvme-m2-ssd-mz-v9p2t0bw-534283429?$1164_776_PNG$",
+    "sourcePage": "https://www.samsung.com/es/memory-storage/nvme-ssd/990-pro-2tb-nvme-pcie-gen-4-mz-v9p2t0bw/",
+    "credit": "Samsung",
+    "sourceSha256": "264B4CBAF015AB7F6F7881E48EA35888050C34CC070DE23A70BFD5896685497F"
   },
   {
     "slug": "wd-black-sn850x-1tb",
@@ -142,13 +144,15 @@
     "slug": "crucial-p3-plus-1tb",
     "imageUrl": "https://c1.neweggimages.com/productimage/1280x1280/20-156-299-01.jpg",
     "sourcePage": "https://www.crucial.com/ssd/p3-plus/ct1000p3pssd8",
-    "credit": "Crucial product image via Newegg"
+    "credit": "Crucial product image via Newegg",
+    "sourceSha256": "2D55B51447879B6E9691DFAF3106047B73589FB43EB18F4505ECB5B741F711FD"
   },
   {
     "slug": "samsung-870-evo-1tb",
-    "imageUrl": "https://img.global.news.samsung.com/de/wp-content/uploads/2021/01/MZ-77E4T0BW_009_PKG-Fullshot_Black.jpg",
-    "sourcePage": "https://news.samsung.com/de/samsung-veroeffentlicht-ssd-870-evo",
-    "credit": "Samsung"
+    "imageUrl": "https://images.samsung.com/is/image/samsung/p6pim/es/mz-77e1t0b-eu/gallery/es-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-372776334?$1164_776_PNG$",
+    "sourcePage": "https://www.samsung.com/es/memory-storage/sata-ssd/870-evo-1tb-sata-3-2-5-ssd-mz-77e1t0b-eu/",
+    "credit": "Samsung",
+    "sourceSha256": "A04175482969BC50E034048912433245A44FD6656E6889D88E9F61C1F349486C"
   },
   {
     "slug": "corsair-rm750e",
@@ -158,9 +162,10 @@
   },
   {
     "slug": "seasonic-focus-gx-850",
-    "imageUrl": "https://c1.neweggimages.com/productimage/1280x1280/17-151-188-V15.jpg",
+    "imageUrl": "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-fan-grill-1462x1080.webp",
     "sourcePage": "https://seasonic.com/focus-gx/",
-    "credit": "Seasonic product image via Newegg"
+    "credit": "Seasonic",
+    "sourceSha256": "EA434ED1451289CEBF5DF8FD4D9645EF21464DF3237A997F6CFFF6D14301E325"
   },
   {
     "slug": "corsair-rm1000x",

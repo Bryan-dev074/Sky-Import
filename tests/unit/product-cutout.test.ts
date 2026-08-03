@@ -269,3 +269,26 @@ test('cada fuente de plataforma ampliada tiene un límite por slug medido y tole
     })
   }
 })
+
+test('cada componente ampliado tiene un límite mínimo por slug y Kingston conserva el valor predeterminado', () => {
+  const expectedLimits = {
+    'samsung-990-pro-2tb': 1.45,
+    'crucial-p3-plus-1tb': 2.29,
+    'samsung-870-evo-1tb': 1.33,
+    'seasonic-focus-gx-850': 1.37,
+  }
+
+  for (const [slug, maxEnlargementRatio] of Object.entries(expectedLimits)) {
+    expect(getProductCutoutPolicy(slug)).toEqual({
+      canvas: 1600,
+      occupancy: 0.84,
+      allowEnlargement: true,
+      maxEnlargementRatio,
+    })
+  }
+
+  expect(getProductCutoutPolicy('kingston-fury-beast-ddr5-16gb-5600')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+  })
+})
