@@ -70,6 +70,100 @@ test.describe('movimiento reducido', () => {
     await page.getByRole('heading', { name: 'Qué decide cada pieza' }).scrollIntoViewIfNeeded()
     await expect(page.getByRole('heading', { name: 'Qué decide cada pieza' })).toBeVisible()
   })
+
+  test('el producto de portada no se desplaza ni escala', async ({ page }) => {
+    await page.goto('/es')
+    await expect(page.locator('.intro')).toHaveCount(0)
+
+    const hero = page.locator('.u-hero-product')
+    const image = hero.locator('img.u-product-media__asset')
+    await expect(image).toBeVisible()
+
+    const box = await hero.boundingBox()
+    expect(box).not.toBeNull()
+    await page.mouse.move(box!.x + box!.width * 0.75, box!.y + box!.height * 0.3)
+
+    await expect
+      .poll(() =>
+        image.evaluate((node) => {
+          const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform)
+          return {
+            x: matrix.m41,
+            y: matrix.m42,
+            scale: Math.hypot(matrix.a, matrix.b),
+          }
+        }),
+      )
+      .toEqual({ x: 0, y: 0, scale: 1 })
+  })
+})
+
+test('el producto de portada es transparente y conserva movimiento fino', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/es')
+  await expect(page.locator('.intro')).toHaveCount(0, { timeout: INTRO_EXIT_TIMEOUT })
+
+  const hero = page.locator('.u-hero-product')
+  const image = hero.locator('img.u-product-media__asset')
+  await expect(image).toBeVisible()
+  await expect(page.locator('.u-product-media__aura')).toHaveCount(0)
+  await expect
+    .poll(() => image.evaluate((node) => (node as HTMLImageElement).naturalWidth))
+    .toBeGreaterThanOrEqual(1600)
+  await expect.poll(() => image.evaluate((node) => getComputedStyle(node).filter)).toBe('none')
+
+  const transition = await image.evaluate((node) => {
+    const styles = getComputedStyle(node)
+    const durations = styles.transitionDuration.split(',').map((value) => {
+      const duration = Number.parseFloat(value)
+      return value.trim().endsWith('ms') ? duration : duration * 1000
+    })
+    return {
+      properties: styles.transitionProperty.split(',').map((value) => value.trim()),
+      longestDurationMs: Math.max(...durations),
+    }
+  })
+  expect(transition.properties).toEqual(['transform'])
+  expect(transition.longestDurationMs).toBeLessThan(300)
+
+  const box = await hero.boundingBox()
+  expect(box).not.toBeNull()
+
+  if (isMobile) {
+    const initialTransform = await image.evaluate((node) => getComputedStyle(node).transform)
+    await page.touchscreen.tap(box!.x + box!.width / 2, box!.y + box!.height / 2)
+    await page.waitForTimeout(300)
+    await expect.poll(() => image.evaluate((node) => getComputedStyle(node).transform)).toBe(
+      initialTransform,
+    )
+    return
+  }
+
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2)
+  await expect
+    .poll(() =>
+      image.evaluate((node) => {
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform)
+        return Math.hypot(matrix.a, matrix.b)
+      }),
+    )
+    .toBeGreaterThan(1.04)
+
+  await page.mouse.move(box!.x + box!.width * 0.25, box!.y + box!.height * 0.3)
+  await expect
+    .poll(() =>
+      image.evaluate((node) => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41),
+    )
+    .toBeLessThan(-2)
+
+  await page.mouse.move(box!.x + box!.width * 0.75, box!.y + box!.height * 0.7)
+  await expect
+    .poll(() =>
+      image.evaluate((node) => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41),
+    )
+    .toBeGreaterThan(2)
 })
 
 test.describe('cursor propio', () => {
@@ -112,6 +206,29 @@ test.describe('teclado', () => {
     const enfocado = page.locator('.skip-link')
     await expect(enfocado).toBeFocused()
     await expect(enfocado).toBeVisible()
+  })
+
+  test('el foco del producto sigue usable sin movimiento decorativo', async ({ page }) => {
+    await page.goto('/es/catalogo')
+    await expect(page.locator('.intro')).toHaveCount(0, { timeout: INTRO_EXIT_TIMEOUT })
+
+    const productLink = page.locator('article').first().getByRole('link').first()
+    const image = productLink.locator('img.u-product-media__asset')
+    await productLink.focus()
+
+    await expect(productLink).toBeFocused()
+    await expect
+      .poll(() =>
+        image.evaluate((node) => {
+          const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform)
+          return {
+            x: matrix.m41,
+            y: matrix.m42,
+            scale: Math.hypot(matrix.a, matrix.b),
+          }
+        }),
+      )
+      .toEqual({ x: 0, y: 0, scale: 1 })
   })
 
   test('el carrito atrapa el foco, cierra con Escape y lo devuelve a quien lo abrió', async ({

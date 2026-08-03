@@ -144,6 +144,7 @@ export function HomeView() {
                       product={HERO_GPU}
                       locale={locale}
                       priority
+                      fullResolution
                       sizes="(min-width: 1280px) 58vw, (min-width: 1024px) 52vw, 94vw"
                       className="h-full w-full"
                     />

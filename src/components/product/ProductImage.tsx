@@ -6,32 +6,34 @@ interface ProductImageProps {
   product: Product
   locale: Locale
   priority?: boolean
+  fullResolution?: boolean
   sizes?: string
   className?: string
   imageClassName?: string
 }
 
 /**
- * Fotografía real y local del producto. El contenedor conserva un halo de
- * estudio muy tenue; el desplazamiento y la escala se leen de las variables
- * que escribe la vitrina inclinable, sin provocar renders de React.
+ * Fotografía real y local del producto, sin fondo ni decoraciones propias.
+ * El desplazamiento y la escala leen variables escritas directamente en la
+ * imagen por la vitrina inclinable, sin provocar renders de React.
  */
 export function ProductImage({
   product,
   locale,
   priority = false,
+  fullResolution = false,
   sizes = '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw',
   className,
   imageClassName,
 }: ProductImageProps) {
   return (
     <span className={`u-product-media ${className ?? ''}`}>
-      <span className="u-product-media__aura" aria-hidden="true" />
       <Image
         src={product.media.primary}
         alt={product.media.alt[locale]}
         fill
         priority={priority}
+        unoptimized={fullResolution}
         sizes={sizes}
         draggable={false}
         className={`u-product-media__asset ${imageClassName ?? ''}`}

@@ -248,6 +248,7 @@ export function useTilt<T extends HTMLElement>(
     let currentScale = 1
     let rect: DOMRect | null = null
     let suscrito: (() => void) | null = null
+    const productAsset = node.querySelector<HTMLElement>('.u-product-media__asset')
 
     const paso = (_: number, delta: number) => {
       currentX = damp(currentX, targetX, 12, delta)
@@ -280,14 +281,15 @@ export function useTilt<T extends HTMLElement>(
     }
 
     const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return
       if (!rect) return
       const pointer = normalizeProductPointer(event.clientX, event.clientY, rect)
       const px = pointer.x / 2
       const py = pointer.y / 2
       targetY = pointer.x * max
       targetX = -pointer.y * max
-      node.style.setProperty('--product-x', pointer.x.toFixed(4))
-      node.style.setProperty('--product-y', pointer.y.toFixed(4))
+      productAsset?.style.setProperty('--product-x', pointer.x.toFixed(4))
+      productAsset?.style.setProperty('--product-y', pointer.y.toFixed(4))
       if (glare) {
         node.style.setProperty('--glare-x', `${((px + 0.5) * 100).toFixed(1)}%`)
         node.style.setProperty('--glare-y', `${((py + 0.5) * 100).toFixed(1)}%`)
@@ -298,8 +300,8 @@ export function useTilt<T extends HTMLElement>(
       targetX = 0
       targetY = 0
       targetScale = 1
-      node.style.setProperty('--product-x', '0')
-      node.style.setProperty('--product-y', '0')
+      productAsset?.style.setProperty('--product-x', '0')
+      productAsset?.style.setProperty('--product-y', '0')
       arrancar()
     }
 
@@ -313,8 +315,8 @@ export function useTilt<T extends HTMLElement>(
       node.removeEventListener('pointermove', onMove)
       node.removeEventListener('pointerleave', onLeave)
       node.style.transform = ''
-      node.style.removeProperty('--product-x')
-      node.style.removeProperty('--product-y')
+      productAsset?.style.removeProperty('--product-x')
+      productAsset?.style.removeProperty('--product-y')
     }
   }, [ref, reduced, fine, max, scale, glare])
 }

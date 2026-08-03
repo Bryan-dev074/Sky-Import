@@ -742,57 +742,31 @@ a:focus-visible .wordmark__l {
   opacity: 1;
 }
 
-/* — fotografía de producto: imagen real sobre una vitrina técnica — */
+/* — fotografía de producto: recorte real, sin fondo ni sombra propios — */
 .u-product-media {
   position: relative;
   display: block;
   isolation: isolate;
 }
 
-.u-product-media__aura {
-  position: absolute;
-  inset: 18% 12%;
-  z-index: -1;
-  border-radius: 50%;
-  opacity: 0.34;
-  filter: blur(28px);
-  background:
-    radial-gradient(circle at 42% 44%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 58%),
-    radial-gradient(circle at 66% 56%, color-mix(in oklab, var(--fg-hi) 12%, transparent), transparent 62%);
-  transition: opacity 520ms var(--ease-rail), transform 620ms var(--ease-rail);
-}
-
 .u-product-media__asset {
   object-fit: contain;
   user-select: none;
-  filter: drop-shadow(0 24px 28px rgb(0 0 0 / 0.36));
-  transform: translate3d(
-      calc(var(--product-x, 0) * 12px),
-      calc(var(--product-y, 0) * 8px),
-      0
-    )
-    scale(1);
-  transition:
-    transform 540ms var(--ease-rail),
-    filter 540ms var(--ease-rail);
+  filter: none;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition: transform 220ms var(--ease-rail);
   will-change: transform;
 }
 
-.u-product-interactive:hover .u-product-media__asset,
-.u-product-interactive:focus-within .u-product-media__asset {
-  transform: translate3d(
-      calc(var(--product-x, 0) * 16px),
-      calc(var(--product-y, 0) * 10px),
-      18px
-    )
-    scale(1.055);
-  filter: drop-shadow(0 30px 34px rgb(0 0 0 / 0.5));
-}
-
-.u-product-interactive:hover .u-product-media__aura,
-.u-product-interactive:focus-within .u-product-media__aura {
-  opacity: 0.64;
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .u-product-interactive:hover .u-product-media__asset {
+    transform: translate3d(
+        calc(var(--product-x, 0) * 16px),
+        calc(var(--product-y, 0) * 10px),
+        18px
+      )
+      scale(1.055);
+  }
 }
 
 .u-hero-product::before,
@@ -2332,6 +2306,12 @@ html[data-pointer='hidden'] [contenteditable='true'] {
 
   .u-draw {
     transform: scaleX(1);
+  }
+
+  .u-product-media__asset,
+  .u-product-interactive:hover .u-product-media__asset {
+    transform: none;
+    will-change: auto;
   }
 
   .u-word__in {
