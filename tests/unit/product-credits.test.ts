@@ -4,6 +4,28 @@ import { join } from 'node:path'
 import { expect, test } from 'vitest'
 import { PRODUCT_MEDIA_WORKFLOW, writeProductCredits } from '../../scripts/lib/product-credits.mjs'
 
+test('incluye el SHA-256 de una fuente dinámica cuando el manifiesto lo declara', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'sky-import-credits-'))
+  const output = join(directory, 'SOURCES.md')
+  const sourceSha256 = 'a'.repeat(64)
+
+  try {
+    await writeProductCredits(output, [
+      {
+        slug: 'producto-dinamico',
+        credit: 'Fotografía del comercio',
+        sourcePage: 'https://example.com/producto',
+        imageUrl: 'https://example.com/imagen-dinamica',
+        sourceSha256,
+      },
+    ])
+
+    await expect(readFile(output, 'utf8')).resolves.toContain(`SHA-256: \`${sourceSha256}\``)
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
+
 test('la regeneración de créditos conserva el flujo y todas las entradas del manifiesto', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'sky-import-credits-'))
   const output = join(directory, 'SOURCES.md')

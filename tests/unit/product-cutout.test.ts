@@ -14,6 +14,14 @@ import { getProductCutoutPolicy } from '../../scripts/product-cutout-policy.mjs'
 
 const execFileAsync = promisify(execFile)
 
+async function createOpaqueSquareFixture(size = 50) {
+  return sharp({
+    create: { width: size, height: size, channels: 4, background: '#2f86ff' },
+  })
+    .png()
+    .toBuffer()
+}
+
 test('normaliza un recorte sin perder alfa ni margen seguro', async () => {
   const opaqueFixture = await sharp({
     create: { width: 640, height: 320, channels: 4, background: '#2f86ff' },
@@ -37,6 +45,50 @@ test('normaliza un recorte sin perder alfa ni margen seguro', async () => {
   })
   const bounds = await measureOpaqueBounds(output)
   expect(bounds.safeMarginRatio).toBeGreaterThanOrEqual(0.06)
+})
+
+test('rechaza una ampliación que supera el límite medido con un error accionable', async () => {
+  const input = await createOpaqueSquareFixture()
+
+  await expect(
+    normalizeProductCutout(input, {
+      canvas: 100,
+      occupancy: 0.8,
+      allowEnlargement: true,
+      maxEnlargementRatio: 1.5,
+    }),
+  ).rejects.toThrow(
+    'La ampliación solicitada (1.600×) supera el máximo permitido (1.500×); fuente opaca 50×50 px, objetivo 80 px.',
+  )
+})
+
+test('exige un límite explícito cuando se habilita la ampliación', async () => {
+  const input = await createOpaqueSquareFixture()
+
+  await expect(
+    normalizeProductCutout(input, {
+      canvas: 100,
+      occupancy: 0.8,
+      allowEnlargement: true,
+    }),
+  ).rejects.toThrow(
+    'allowEnlargement requiere un maxEnlargementRatio finito mayor o igual a 1.',
+  )
+})
+
+test('acepta exactamente el límite de ampliación medido', async () => {
+  const input = await createOpaqueSquareFixture()
+  const output = await normalizeProductCutout(input, {
+    canvas: 100,
+    occupancy: 0.8,
+    allowEnlargement: true,
+    maxEnlargementRatio: 1.6,
+  })
+
+  await expect(measureOpaqueBounds(output)).resolves.toMatchObject({
+    opaqueWidth: 80,
+    opaqueHeight: 80,
+  })
 })
 
 test('el CLI normaliza solo en la ruta de salida explícita', async () => {
@@ -163,6 +215,7 @@ test('la política de G.Skill permite ampliación controlada sin cambiar los val
     canvas: 1600,
     occupancy: 0.84,
     allowEnlargement: true,
+    maxEnlargementRatio: 1.87,
   })
   expect(getProductCutoutPolicy('corsair-vengeance-ddr5-32gb-6000')).toEqual({
     canvas: 1600,
@@ -171,38 +224,47 @@ test('la política de G.Skill permite ampliación controlada sin cambiar los val
 })
 
 test('los recortes GPU revisados permiten una ampliación mínima y localizada', () => {
-  for (const slug of ['geforce-rtx-4060-8gb', 'arc-b580-12gb']) {
-    expect(getProductCutoutPolicy(slug)).toEqual({
-      canvas: 1600,
-      occupancy: 0.84,
-      allowEnlargement: true,
-    })
-  }
+  expect(getProductCutoutPolicy('geforce-rtx-4060-8gb')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+    allowEnlargement: true,
+    maxEnlargementRatio: 1.7,
+  })
+  expect(getProductCutoutPolicy('arc-b580-12gb')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+    allowEnlargement: true,
+    maxEnlargementRatio: 1.12,
+  })
   expect(getProductCutoutPolicy('geforce-rtx-5070-12gb')).toEqual({
     canvas: 1600,
     occupancy: 0.84,
   })
 })
 
-test('solo las fuentes de plataforma revisadas que lo requieren permiten ampliación', () => {
-  for (const slug of [
-    'ryzen-7-9800x3d',
-    'ryzen-5-9600x',
-    'core-ultra-7-265k',
-    'core-i5-14600k',
-    'msi-mag-b850-tomahawk-wifi',
-    'msi-pro-b650m-a-wifi',
-    'gigabyte-b760m-ds3h',
-  ]) {
+test('cada fuente de plataforma ampliada tiene un límite por slug medido y tolerado', () => {
+  const expectedLimits = {
+    'ryzen-7-9800x3d': 1.5,
+    'core-ultra-7-265k': 1.34,
+    'core-i5-14600k': 1.36,
+    'msi-mag-b850-tomahawk-wifi': 1.94,
+    'msi-pro-b650m-a-wifi': 1.9,
+    'gigabyte-b760m-ds3h': 1.51,
+  }
+
+  for (const [slug, maxEnlargementRatio] of Object.entries(expectedLimits)) {
     expect(getProductCutoutPolicy(slug)).toEqual({
       canvas: 1600,
       occupancy: 0.84,
       allowEnlargement: true,
+      maxEnlargementRatio,
     })
   }
 
-  expect(getProductCutoutPolicy('ryzen-7-7800x3d')).toEqual({
-    canvas: 1600,
-    occupancy: 0.84,
-  })
+  for (const slug of ['ryzen-7-7800x3d', 'ryzen-5-9600x']) {
+    expect(getProductCutoutPolicy(slug)).toEqual({
+      canvas: 1600,
+      occupancy: 0.84,
+    })
+  }
 })

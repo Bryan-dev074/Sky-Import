@@ -13,7 +13,7 @@ export function renderProductCredits(manifest) {
     '',
     ...manifest.map(
       (entry) =>
-        `- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage}) — [archivo original](${entry.imageUrl})`,
+        `- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage}) — [archivo original](${entry.imageUrl})${entry.sourceSha256 ? ` — SHA-256: \`${entry.sourceSha256}\`` : ''}`,
     ),
     '',
   ].join('\n')

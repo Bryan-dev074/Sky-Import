@@ -45,31 +45,32 @@
     "slug": "ryzen-7-9800x3d",
     "imageUrl": "https://production-rdj-web-asset.s3.ap-east-1.amazonaws.com/products/cpu/ecomm/4894/images/amd-ryzen-7-9800x3d-am5-without-cooler-tray-type-1771834093699C0AED0EFCD.png",
     "sourcePage": "https://www.pcworth.com/product/ad36d3fe9a9b?slug=amd-ryzen-7-9800x3d-am5-without-cooler-tray-type",
-    "credit": "AMD product image via PC Worth"
+    "credit": "PC Worth product photography"
   },
   {
     "slug": "ryzen-7-7800x3d",
-    "imageUrl": "https://shop.kz/upload/iblock/507/xg2utmaavddkm4gzcb7zu6yxxl3pn6de/175290x2.webp",
-    "sourcePage": "https://shop.kz/offer/protsessor-amd-ryzen-7-7800x3d-am5-oem/",
-    "credit": "AMD product image via Shop.kz"
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/AMD%405nmCCD%286nmIOD%29%40Zen4%40Raphael%40Ryzen_7_7800X3D%40100-000000910_BS_2312PGY_9LW3390030138_DSCx01.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:AMD%405nmCCD%286nmIOD%29%40Zen4%40Raphael%40Ryzen_7_7800X3D%40100-000000910_BS_2312PGY_9LW3390030138_DSCx01.jpg",
+    "credit": "FritzchensFritz photograph via Wikimedia Commons (CC0)"
   },
   {
     "slug": "ryzen-5-9600x",
-    "imageUrl": "https://cdn11.bigcommerce.com/s-ms4wz8cgi2/images/stencil/original/products/116076/29317/9600X__42565.1724658852.jpg?c=1",
-    "sourcePage": "https://extremepc.co.nz/amd-ryzen-5-9600x-cpu-6-core-12-thread-am5-socket-oem-without-cooler/",
-    "credit": "AMD product image via ExtremePC"
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ac/AMD%404nmCCD%286nmIOD%29%40Zen5%40Granite_Ridge%40Ryzen_5_9600X%40100-000001405_BY_2429SUY_9AEQ579S40073_DSCx01.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:AMD%404nmCCD%286nmIOD%29%40Zen5%40Granite_Ridge%40Ryzen_5_9600X%40100-000001405_BY_2429SUY_9AEQ579S40073_DSCx01.jpg",
+    "credit": "FritzchensFritz photograph via Wikimedia Commons (CC0)"
   },
   {
     "slug": "core-ultra-7-265k",
     "imageUrl": "https://tm-prd-cdn.themarket.co.nz/resizer/view?b=productimages&h=1080&key=a93a369a16414563279a01df0898b139&w=1080",
+    "sourceSha256": "4569BAA98C6C50D8C2FAF66933143C85307B4C3ACC71FFBF31501DB051C6CD3B",
     "sourcePage": "https://www.thewarehouse.co.nz/p/intel-core-ultra-7-265k-lga-1851-unlocked-cpu-processor-oem-package-without-cooler/M36750185.html",
-    "credit": "Intel product image via The Warehouse"
+    "credit": "The Warehouse marketplace product photography"
   },
   {
     "slug": "core-i5-14600k",
     "imageUrl": "https://xstore.md/images/product/2025/05/procesor-intel-core-i5-14600k-tray-xstore-md-41.webp",
     "sourcePage": "https://xstore.md/ru/komplektuyushhie-pk/processory/intel-core-i5-14600k",
-    "credit": "Intel product image via Xstore"
+    "credit": "Xstore product photography"
   },
   {
     "slug": "msi-mag-b850-tomahawk-wifi",

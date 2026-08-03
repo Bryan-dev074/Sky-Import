@@ -5,6 +5,8 @@ const DEFAULT_ALPHA_THRESHOLD = 8
 function validateCanvasOptions(options) {
   const canvas = options.canvas ?? 1600
   const occupancy = options.occupancy ?? 0.86
+  const allowEnlargement = options.allowEnlargement === true
+  const maxEnlargementRatio = options.maxEnlargementRatio
 
   if (!Number.isInteger(canvas) || canvas <= 0) {
     throw new Error(`El lienzo debe ser un entero positivo; se recibió ${canvas}.`)
@@ -12,8 +14,18 @@ function validateCanvasOptions(options) {
   if (typeof occupancy !== 'number' || occupancy <= 0 || occupancy > 1) {
     throw new Error(`La ocupación debe estar entre 0 y 1; se recibió ${occupancy}.`)
   }
+  if (
+    allowEnlargement &&
+    (typeof maxEnlargementRatio !== 'number' ||
+      !Number.isFinite(maxEnlargementRatio) ||
+      maxEnlargementRatio < 1)
+  ) {
+    throw new Error(
+      'allowEnlargement requiere un maxEnlargementRatio finito mayor o igual a 1.',
+    )
+  }
 
-  return { canvas, occupancy }
+  return { canvas, occupancy, allowEnlargement, maxEnlargementRatio }
 }
 
 function findOpaqueBounds(data, info, threshold) {
@@ -100,9 +112,9 @@ export async function inspectProductCutout(input, options = {}) {
 }
 
 export async function normalizeProductCutout(input, options = {}) {
-  const { canvas, occupancy } = validateCanvasOptions(options)
+  const { canvas, occupancy, allowEnlargement, maxEnlargementRatio } =
+    validateCanvasOptions(options)
   const alphaThreshold = options.alphaThreshold ?? DEFAULT_ALPHA_THRESHOLD
-  const allowEnlargement = options.allowEnlargement === true
   const rotated = await sharp(input).rotate().ensureAlpha().png().toBuffer()
   const sourceBounds = await measureOpaqueBounds(rotated, { alphaThreshold })
 
@@ -118,6 +130,18 @@ export async function normalizeProductCutout(input, options = {}) {
   }
 
   const occupancyBox = Math.round(canvas * occupancy)
+  const sourceLongestAxis = Math.max(
+    trimmedBounds.opaqueWidth,
+    trimmedBounds.opaqueHeight,
+  )
+  const enlargementRatio = occupancyBox / sourceLongestAxis
+
+  if (allowEnlargement && enlargementRatio > maxEnlargementRatio) {
+    throw new Error(
+      `La ampliación solicitada (${enlargementRatio.toFixed(3)}×) supera el máximo permitido (${maxEnlargementRatio.toFixed(3)}×); fuente opaca ${trimmedBounds.opaqueWidth}×${trimmedBounds.opaqueHeight} px, objetivo ${occupancyBox} px.`,
+    )
+  }
+
   const extracted = await sharp(trimmed)
     .extract({
       left: trimmedBounds.left,
