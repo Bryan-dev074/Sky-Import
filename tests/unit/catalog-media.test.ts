@@ -46,6 +46,12 @@ describe('catálogo premium', () => {
     }
   })
 
+  test('atribuye la fotografía de Crucial al listing exacto de Newegg', () => {
+    expect(PRODUCTS.find((product) => product.slug === 'crucial-p3-plus-1tb')?.media.credit).toBe(
+      'Crucial product image via Newegg',
+    )
+  })
+
   test('incluye una imagen local WebP con alfa y esquinas transparentes para cada producto', async () => {
     for (const product of PRODUCTS) {
       const imagePath = join(

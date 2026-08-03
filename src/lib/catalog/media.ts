@@ -114,7 +114,7 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
   },
   'crucial-p3-plus-1tb': {
     sourcePage: 'https://www.crucial.com/ssd/p3-plus/ct1000p3pssd8',
-    credit: 'Crucial',
+    credit: 'Crucial product image via Newegg',
   },
   'samsung-870-evo-1tb': {
     sourcePage: 'https://semiconductor.samsung.com/consumer-storage/internal-ssd/870evo/',
@@ -126,8 +126,9 @@ const OFFICIAL_SOURCE_BY_SLUG: Readonly<Record<string, OfficialSource>> = {
     credit: 'Corsair',
   },
   'seasonic-focus-gx-850': {
-    sourcePage: 'https://seasonic.com/focus-gx/',
-    credit: 'Seasonic',
+    sourcePage:
+      'https://www.newegg.com/seasonic-usa-atx12v-eps12v-850-w-80-plus-gold-certified-power-supply-focus-gx-850/p/N82E16817151188',
+    credit: 'Seasonic FOCUS GX-850 product image via Newegg',
   },
   'corsair-rm1000x': {
     sourcePage:

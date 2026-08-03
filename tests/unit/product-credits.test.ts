@@ -26,6 +26,25 @@ test('incluye el SHA-256 de una fuente dinámica cuando el manifiesto lo declara
   }
 })
 
+test('incluye evidencia visual de identidad cuando el activo principal no muestra la variante', async () => {
+  const rendered = await import('../../scripts/lib/product-credits.mjs').then(({ renderProductCredits }) =>
+    renderProductCredits([
+      {
+        slug: 'fuente-850',
+        credit: 'Fotografía de review',
+        sourcePage: 'https://example.com/review',
+        imageUrl: 'https://example.com/psu.jpg',
+        sourceSha256: 'A'.repeat(64),
+        identityEvidenceUrl: 'https://example.com/label.jpg',
+        identityEvidenceSha256: 'B'.repeat(64),
+      },
+    ]),
+  )
+
+  expect(rendered).toContain('[evidencia de identidad](https://example.com/label.jpg)')
+  expect(rendered).toContain(`SHA-256 evidencia: \`${'B'.repeat(64)}\``)
+})
+
 test('la regeneración de créditos conserva el flujo y todas las entradas del manifiesto', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'sky-import-credits-'))
   const output = join(directory, 'SOURCES.md')
@@ -39,7 +58,7 @@ test('la regeneración de créditos conserva el flujo y todas las entradas del m
 
     expect(generated).toContain(PRODUCT_MEDIA_WORKFLOW)
     expect(generated).toContain('artifacts/product-sources/<slug>/source.<ext>')
-    expect(generated).toContain('artifacts/product-cutouts/<slug>.png')
+    expect(generated).toContain('scripts/lib/product-cutout-recipes.mjs')
     expect(generated.match(/^- `[^`]+` — /gm)).toHaveLength(manifest.length)
     for (const entry of manifest) {
       expect(generated).toContain(`- \`${entry.slug}\` — [${entry.credit}](${entry.sourcePage})`)

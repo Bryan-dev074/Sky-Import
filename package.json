@@ -20,6 +20,7 @@
     "assets": "node scripts/build-assets.mjs",
     "media:sync": "node scripts/sync-product-images.mjs",
     "media:normalize": "node scripts/normalize-product-cutout.mjs",
+    "media:rebuild": "node scripts/rebuild-product-cutouts.mjs",
     "media:validate": "node scripts/validate-product-media.mjs",
     "media:sheet": "node scripts/build-product-contact-sheet.mjs",
     "verify": "npm run media:validate && npm run lint && npm run typecheck && npm run test && npm run build"

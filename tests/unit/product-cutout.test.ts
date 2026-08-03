@@ -273,7 +273,7 @@ test('cada fuente de plataforma ampliada tiene un límite por slug medido y tole
 test('cada componente ampliado tiene un límite mínimo por slug y Kingston conserva el valor predeterminado', () => {
   const expectedLimits = {
     'samsung-990-pro-2tb': 1.45,
-    'crucial-p3-plus-1tb': 2.29,
+    'crucial-p3-plus-1tb': 1.15,
     'samsung-870-evo-1tb': 1.33,
     'seasonic-focus-gx-850': 1.37,
   }

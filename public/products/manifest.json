@@ -119,7 +119,8 @@
     "imageUrl": "https://media.kingston.com/kingston/product/FURY_Beast_Black_EXPO_DDR5_2-zm-lg.jpg",
     "sourcePage": "https://www.kingston.com/en/memory/search?partid=KF556C36BBEK2-16",
     "credit": "Kingston",
-    "sourceSha256": "3B798651BD116C65591BB60DBB7D78F592CA7C00FDEABF94BC23BA8C5401B774"
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "9E80FD2E86807ED125FEA34842DEDD2A43555F44CB41F5EC1D579BBE70BD238A"
   },
   {
     "slug": "corsair-vengeance-lpx-ddr4-16gb-3200",
@@ -132,6 +133,7 @@
     "imageUrl": "https://images.samsung.com/is/image/samsung/p6pim/es/mz-v9p2t0bw/gallery/es-990pro-nvme-m2-ssd-mz-v9p2t0bw-534283429?$1164_776_PNG$",
     "sourcePage": "https://www.samsung.com/es/memory-storage/nvme-ssd/990-pro-2tb-nvme-pcie-gen-4-mz-v9p2t0bw/",
     "credit": "Samsung",
+    "sourceMediaType": "image/png",
     "sourceSha256": "264B4CBAF015AB7F6F7881E48EA35888050C34CC070DE23A70BFD5896685497F"
   },
   {
@@ -142,16 +144,18 @@
   },
   {
     "slug": "crucial-p3-plus-1tb",
-    "imageUrl": "https://c1.neweggimages.com/productimage/1280x1280/20-156-299-01.jpg",
+    "imageUrl": "https://c1.neweggimages.com/ProductImageCompressAll1280/20-156-299-01.jpg",
     "sourcePage": "https://www.crucial.com/ssd/p3-plus/ct1000p3pssd8",
     "credit": "Crucial product image via Newegg",
-    "sourceSha256": "2D55B51447879B6E9691DFAF3106047B73589FB43EB18F4505ECB5B741F711FD"
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "336EA4453CB15BAFF2C3D31CB338A1503EFCC3FB58E3F2931E8D00DE3817ECA0"
   },
   {
     "slug": "samsung-870-evo-1tb",
     "imageUrl": "https://images.samsung.com/is/image/samsung/p6pim/es/mz-77e1t0b-eu/gallery/es-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-372776334?$1164_776_PNG$",
     "sourcePage": "https://www.samsung.com/es/memory-storage/sata-ssd/870-evo-1tb-sata-3-2-5-ssd-mz-77e1t0b-eu/",
     "credit": "Samsung",
+    "sourceMediaType": "image/png",
     "sourceSha256": "A04175482969BC50E034048912433245A44FD6656E6889D88E9F61C1F349486C"
   },
   {
@@ -162,10 +166,13 @@
   },
   {
     "slug": "seasonic-focus-gx-850",
-    "imageUrl": "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-fan-grill-1462x1080.webp",
-    "sourcePage": "https://seasonic.com/focus-gx/",
-    "credit": "Seasonic",
-    "sourceSha256": "EA434ED1451289CEBF5DF8FD4D9645EF21464DF3237A997F6CFFF6D14301E325"
+    "imageUrl": "https://c1.neweggimages.com/ProductImageCompressAll1280/17-151-188-V09.jpg",
+    "sourcePage": "https://www.newegg.com/seasonic-usa-atx12v-eps12v-850-w-80-plus-gold-certified-power-supply-focus-gx-850/p/N82E16817151188",
+    "credit": "Seasonic FOCUS GX-850 product image via Newegg",
+    "sourceMediaType": "image/jpeg",
+    "sourceSha256": "CE5FFC9D0E7BC86E3E40168D7DBDD91FA2502B1973BB607D5E6E95316D8A11C9",
+    "identityEvidenceUrl": "https://c1.neweggimages.com/ProductImageCompressAll1280/17-151-188-V10.jpg",
+    "identityEvidenceSha256": "F6B5D5F19E871D8646E252E4B39C3D2CBE8C497ACD81A862B144FE49FDA3275A"
   },
   {
     "slug": "corsair-rm1000x",

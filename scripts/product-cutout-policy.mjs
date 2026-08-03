@@ -40,7 +40,7 @@ export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'corsair-vengeance-lpx-ddr4-16gb-3200': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'samsung-990-pro-2tb': reviewedEnlargementPolicy(1.45),
   'wd-black-sn850x-1tb': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'crucial-p3-plus-1tb': reviewedEnlargementPolicy(2.29),
+  'crucial-p3-plus-1tb': reviewedEnlargementPolicy(1.15),
   'samsung-870-evo-1tb': reviewedEnlargementPolicy(1.33),
   'corsair-rm750e': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'seasonic-focus-gx-850': reviewedEnlargementPolicy(1.37),
