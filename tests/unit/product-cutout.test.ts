@@ -44,6 +44,8 @@ test('normaliza un recorte sin perder alfa ni margen seguro', async () => {
     safeMarginRatio: expect.any(Number),
   })
   const bounds = await measureOpaqueBounds(output)
+  expect(bounds).not.toBeNull()
+  if (!bounds) throw new Error('El recorte normalizado debe contener píxeles opacos.')
   expect(bounds.safeMarginRatio).toBeGreaterThanOrEqual(0.06)
 })
 
