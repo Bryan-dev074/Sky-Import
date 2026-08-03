@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { INTRO_TIMING } from '../../src/lib/introTiming'
 
 type BuildSlot = 'cpu' | 'motherboard' | 'ram' | 'gpu' | 'storage' | 'psu' | 'cooling' | 'case'
 
@@ -30,12 +31,16 @@ test.describe('intro de marca', () => {
     // Lo que de verdad importa no es cuándo desaparece el nodo, sino desde
     // cuándo la tienda es usable. En el instante en que la primera lama se
     // mueve, el panel suelta el puntero aunque siga desmontándose.
-    await page.waitForTimeout(2500)
-    const libre = await page.evaluate(() => {
-      const nodo = document.querySelector('.intro')
-      return !nodo || getComputedStyle(nodo).pointerEvents === 'none'
-    })
-    expect(libre).toBe(true)
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const nodo = document.querySelector('.intro')
+            return !nodo || getComputedStyle(nodo).pointerEvents === 'none'
+          }),
+        { intervals: [50], timeout: INTRO_TIMING.curtainMs + 500 },
+      )
+      .toBe(true)
   })
 
   test('no vuelve a aparecer al navegar entre páginas', async ({ page, isMobile }) => {
