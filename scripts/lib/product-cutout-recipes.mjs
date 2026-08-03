@@ -83,22 +83,24 @@ export const PRODUCT_CUTOUT_RECIPES = Object.freeze({
     operation: 'white-flood-matte',
     sourceExtension: 'jpg',
     sourceSha256: 'B1084B27D34F736D8CB4443E77852355D8D58C43AA46F7F161FFA2B6DB53B411',
-    expectedOutputSha256: '43970608E9AB7B1B17CAA87C1AADECA236493D29B4245046D42C9087225DAA2F',
+    expectedOutputSha256: '5D3D11C89BCAEED40283F47458005B7DC768DEA3FF04AF709F9744E1EC02EE89',
     matte: enclosedWhiteMatte([
       { centerX: 400, centerY: 590, radius: 70 },
     ]),
+    edgeColorPropagation: Object.freeze({ luma: 180, chroma: 24, maxDistance: 8 }),
     webpExactTransparentRgb: true,
   }),
   'arctic-liquid-freezer-iii-360': Object.freeze({
     operation: 'white-flood-matte',
     sourceExtension: 'jpg',
     sourceSha256: 'BD98DF5C938824AD3492C168C30C8417ACD7EF32B65A9D04D1B19D382DF70ACE',
-    expectedOutputSha256: '57309FDA23EA3DC30AD6ADC979F82A673514CE7374FDB08EAAACF1D5F4B5DA09',
+    expectedOutputSha256: 'D4E5F6F04C7E71AA80CA84E2BEAE5BABB2531A42EF3F22D59FE96365ACA1D9C5',
     matte: enclosedWhiteMatte([
       { centerX: 800, centerY: 440, radius: 120 },
       { centerX: 800, centerY: 890, radius: 120 },
       { centerX: 800, centerY: 1340, radius: 120 },
     ]),
+    edgeColorPropagation: Object.freeze({ luma: 180, chroma: 24, maxDistance: 8 }),
     webpExactTransparentRgb: true,
   }),
   'lian-li-lancool-216': Object.freeze({
@@ -129,7 +131,7 @@ export const PRODUCT_CUTOUT_RECIPES = Object.freeze({
     operation: 'white-flood-five-copy-grid',
     sourceExtension: 'jpg',
     sourceSha256: '4349D68E69267CA9E446D826E8923BE8B7AE5EA42E493A7D77AFA4C6E5D08EE8',
-    expectedOutputSha256: '625F7A6FC1C06E7ED32D4DDBEF8C08EC141BD681DA8DC2E96DE49053B2BBDCAC',
+    expectedOutputSha256: '926E5C2872E7A2EBA3175FE745E3F35EDD08D1A33003479851C35E6B156AD0C1',
     matte: enclosedWhiteMatte([
       { centerX: 600, centerY: 600, radius: 125 },
     ]),
@@ -145,6 +147,7 @@ export const PRODUCT_CUTOUT_RECIPES = Object.freeze({
         Object.freeze({ left: 740, top: 500 }),
       ]),
     }),
+    edgeColorPropagation: Object.freeze({ luma: 180, chroma: 24, maxDistance: 8 }),
     webpExactTransparentRgb: true,
   }),
 })
@@ -614,6 +617,191 @@ export async function arrangeFiveIdenticalCopies(input, layoutOptions) {
     .toBuffer()
 }
 
+function validateEdgeColorPropagationOptions(options) {
+  const luma = options?.luma
+  const chroma = options?.chroma
+  const maxDistance = options?.maxDistance
+  if (!Number.isFinite(luma) || luma < 0 || luma > 255) {
+    throw new Error(`edge luma debe estar entre 0 y 255; se recibió ${luma}.`)
+  }
+  if (!Number.isFinite(chroma) || chroma < 0 || chroma > 255) {
+    throw new Error(`edge chroma debe estar entre 0 y 255; se recibió ${chroma}.`)
+  }
+  if (!Number.isInteger(maxDistance) || maxDistance < 1 || maxDistance > 32) {
+    throw new Error(
+      `edge maxDistance debe ser un entero entre 1 y 32; se recibió ${maxDistance}.`,
+    )
+  }
+  return { luma, chroma, maxDistance }
+}
+
+function isBrightNeutral(data, offset, options) {
+  const red = data[offset]
+  const green = data[offset + 1]
+  const blue = data[offset + 2]
+  const channelChroma = Math.max(red, green, blue) - Math.min(red, green, blue)
+  const channelLuma = red * 0.2126 + green * 0.7152 + blue * 0.0722
+  return channelLuma >= options.luma && channelChroma <= options.chroma
+}
+
+function isDarkNeutralPropagationSource(data, offset, options) {
+  const red = data[offset]
+  const green = data[offset + 1]
+  const blue = data[offset + 2]
+  const channelChroma = Math.max(red, green, blue) - Math.min(red, green, blue)
+  const channelLuma = red * 0.2126 + green * 0.7152 + blue * 0.0722
+  return channelLuma < options.luma && channelChroma <= options.chroma
+}
+
+function orthogonalNeighbors(index, width, height) {
+  const x = index % width
+  const y = Math.floor(index / width)
+  return [
+    x > 0 ? index - 1 : -1,
+    x + 1 < width ? index + 1 : -1,
+    y > 0 ? index - width : -1,
+    y + 1 < height ? index + width : -1,
+  ]
+}
+
+export async function decontaminateNeutralBoundaryRgb(input, propagationOptions) {
+  const options = validateEdgeColorPropagationOptions(propagationOptions)
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const pixelCount = info.width * info.height
+  const edgeDistance = new Uint8Array(pixelCount)
+  edgeDistance.fill(255)
+  const queue = new Int32Array(pixelCount)
+  let head = 0
+  let tail = 0
+
+  for (let index = 0; index < pixelCount; index += 1) {
+    if (data[index * info.channels + 3] === 0) continue
+    const touchesTransparency = orthogonalNeighbors(index, info.width, info.height).some(
+      (neighbor) => neighbor >= 0 && data[neighbor * info.channels + 3] === 0,
+    )
+    if (!touchesTransparency) continue
+    edgeDistance[index] = 1
+    queue[tail] = index
+    tail += 1
+  }
+
+  while (head < tail) {
+    const index = queue[head]
+    head += 1
+    const distance = edgeDistance[index]
+    if (distance >= options.maxDistance) continue
+    for (const neighbor of orthogonalNeighbors(index, info.width, info.height)) {
+      if (
+        neighbor < 0 ||
+        edgeDistance[neighbor] !== 255 ||
+        data[neighbor * info.channels + 3] === 0
+      ) {
+        continue
+      }
+      edgeDistance[neighbor] = distance + 1
+      queue[tail] = neighbor
+      tail += 1
+    }
+  }
+
+  const contaminated = new Uint8Array(pixelCount)
+  for (let index = 0; index < pixelCount; index += 1) {
+    if (
+      edgeDistance[index] <= options.maxDistance &&
+      isBrightNeutral(data, index * info.channels, options)
+    ) {
+      contaminated[index] = 1
+    }
+  }
+
+  const output = Buffer.from(data)
+  const resolved = new Uint8Array(pixelCount)
+  head = 0
+  tail = 0
+  for (let index = 0; index < pixelCount; index += 1) {
+    const offset = index * info.channels
+    if (
+      contaminated[index] ||
+      data[offset + 3] === 0 ||
+      !isDarkNeutralPropagationSource(data, offset, options)
+    ) {
+      continue
+    }
+    const bordersContamination = orthogonalNeighbors(index, info.width, info.height).some(
+      (neighbor) => neighbor >= 0 && contaminated[neighbor] === 1,
+    )
+    if (!bordersContamination) continue
+    resolved[index] = 1
+    queue[tail] = index
+    tail += 1
+  }
+
+  while (head < tail) {
+    const index = queue[head]
+    head += 1
+    const sourceOffset = index * info.channels
+    for (const neighbor of orthogonalNeighbors(index, info.width, info.height)) {
+      if (neighbor < 0 || !contaminated[neighbor] || resolved[neighbor]) continue
+      const targetOffset = neighbor * info.channels
+      output[targetOffset] = output[sourceOffset]
+      output[targetOffset + 1] = output[sourceOffset + 1]
+      output[targetOffset + 2] = output[sourceOffset + 2]
+      resolved[neighbor] = 1
+      queue[tail] = neighbor
+      tail += 1
+    }
+  }
+
+  // JPEG antialias can leave tiny alpha islands separated by transparent pixels.
+  // Sample their nearest dark-neutral subject color without reconnecting or removing the island.
+  const fallbackRadius = options.maxDistance * 16
+  for (let index = 0; index < pixelCount; index += 1) {
+    if (!contaminated[index] || resolved[index]) continue
+    const originX = index % info.width
+    const originY = Math.floor(index / info.width)
+    let sourceIndex = -1
+    for (let radius = 1; radius <= fallbackRadius && sourceIndex < 0; radius += 1) {
+      let strongestAlpha = -1
+      for (let vertical = -radius; vertical <= radius; vertical += 1) {
+        for (let horizontal = -radius; horizontal <= radius; horizontal += 1) {
+          if (Math.abs(horizontal) !== radius && Math.abs(vertical) !== radius) continue
+          const x = originX + horizontal
+          const y = originY + vertical
+          if (x < 0 || x >= info.width || y < 0 || y >= info.height) continue
+          const candidate = y * info.width + x
+          const candidateOffset = candidate * info.channels
+          const alpha = data[candidateOffset + 3]
+          if (
+            alpha === 0 ||
+            alpha <= strongestAlpha ||
+            !isDarkNeutralPropagationSource(data, candidateOffset, options)
+          ) {
+            continue
+          }
+          strongestAlpha = alpha
+          sourceIndex = candidate
+        }
+      }
+    }
+    if (sourceIndex < 0) continue
+    const sourceOffset = sourceIndex * info.channels
+    const targetOffset = index * info.channels
+    output[targetOffset] = output[sourceOffset]
+    output[targetOffset + 1] = output[sourceOffset + 1]
+    output[targetOffset + 2] = output[sourceOffset + 2]
+    resolved[index] = 1
+  }
+
+  return sharp(output, {
+    raw: { width: info.width, height: info.height, channels: info.channels },
+  })
+    .webp({ lossless: true, alphaQuality: 100, effort: 6, exact: true })
+    .toBuffer()
+}
+
 export async function rebuildProductCutout(source, recipe) {
   if (
     !recipe ||
@@ -643,10 +831,14 @@ export async function rebuildProductCutout(source, recipe) {
     const single = await removeWhiteBackground(source, recipe.matte)
     cutout = await arrangeFiveIdenticalCopies(single, recipe.layout)
   }
-  return normalizeProductCutout(cutout, {
+  const normalized = await normalizeProductCutout(cutout, {
     ...recipe.policy,
     webpExactTransparentRgb: recipe.webpExactTransparentRgb === true,
   })
+  if (recipe.edgeColorPropagation) {
+    return decontaminateNeutralBoundaryRgb(normalized, recipe.edgeColorPropagation)
+  }
+  return normalized
 }
 
 export function sha256(bytes) {

@@ -30,6 +30,7 @@ export interface ProductCutoutRecipe {
   matte?: WhiteFloodMatte
   alphaPrune?: { coreAlpha: number; retainDistance: number }
   tone?: { gamma: number }
+  edgeColorPropagation?: { luma: number; chroma: number; maxDistance: number }
   webpExactTransparentRgb?: boolean
   layout?: {
     width: number
@@ -49,6 +50,10 @@ export function pruneDiffuseNativeAlpha(
   options: { coreAlpha: number; retainDistance: number },
 ): Promise<Buffer>
 export function liftDarkProductRgb(input: Buffer, options: { gamma: number }): Promise<Buffer>
+export function decontaminateNeutralBoundaryRgb(
+  input: Buffer,
+  options: { luma: number; chroma: number; maxDistance: number },
+): Promise<Buffer>
 export function arrangeFiveIdenticalCopies(
   input: Buffer,
   layout: NonNullable<ProductCutoutRecipe['layout']>,

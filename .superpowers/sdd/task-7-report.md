@@ -2,7 +2,7 @@
 
 Fecha: 2026-08-03
 Branch: `codex/premium-store-3d`
-Base revisada: `66f9647`
+Base inicial revisada: `66f9647`; corrección de revisión sobre `94141d9`
 
 ## Resultado
 
@@ -29,6 +29,7 @@ No se usó ImageGen. Se prefirieron archivos directos de los fabricantes, inspec
 - Noctua, Thermalright, Liquid Freezer y P12 usan matte blanco por flood-fill, feather de 3 px y despill. La extensión de Task 7 elimina también componentes blancos encerrados de al menos 48 px, como los huecos entre aspas.
 - Regiones circulares versionadas protegen únicamente los hubs/logos blancos reales de Thermalright y ARCTIC. La prueba de regresión demuestra que un hueco blanco encerrado desaparece mientras una marca blanca protegida conserva RGB y alfa.
 - Los WebP de Task 7 usan `exact: true`; los siete decodifican con RGB `0/0/0` en todo píxel de alfa 0. Esto elimina los bloques de RGB oculto que algunos inspectores mostraban aun cuando su alfa ya era cero.
+- La revisión posterior detectó halo de matte blanco en tres productos negros: 4819 píxeles en Thermalright, 6373 en Liquid Freezer y 11335 en P12, medidos como borde adyacente a alfa 0 con luma `>= 180` y chroma `<= 24`. Una etapa post-normalización RGB-only propaga color desde vecinos interiores oscuros neutrales en una banda máxima de 8 px; la métrica final es `0 / 0 / 0`. No contrae, expande ni reestima alfa.
 - El LANCOOL conserva alfa nativo y elimina solo el halo/sombra difusa: núcleo `alpha >= 160` más 2 px adyacentes para antialias. El contenido opaco previo queda en 558 × 702 px.
 - H5 Flow y NR200P reciben una curva gamma RGB-only de 1.45 y 1.70. La prueba comprueba que alfa no cambia; no hay recorte geométrico, expansión, contenido nuevo ni alteración de puertos o mesh.
 - El P12 se extrae una vez y se compone cinco veces en una grilla 3 + 2 de 1440 × 960, con piezas de 440 px. Los huecos entre aspas son transparentes y el logo ARCTIC queda íntegro.
@@ -39,14 +40,16 @@ No se usó ImageGen. Se prefirieron archivos directos de los fabricantes, inspec
 | Producto | Contenido opaco | Márgenes L/R/T/B | Tamaño | SHA-256 final |
 |---|---:|---:|---:|---|
 | Noctua NH-D15 | 1344 × 1272 | 128 / 128 / 164 / 164 | 1289842 B | `697AB656BA897989A6421EB2F74AD2FAAA2E3CD6450CE9A0270A18E0692D8D12` |
-| Peerless Assassin 120 SE | 1068 × 1344 | 266 / 266 / 128 / 128 | 664358 B | `43970608E9AB7B1B17CAA87C1AADECA236493D29B4245046D42C9087225DAA2F` |
-| Liquid Freezer III 360 | 873 × 1344 | 363 / 364 / 128 / 128 | 342076 B | `57309FDA23EA3DC30AD6ADC979F82A673514CE7374FDB08EAAACF1D5F4B5DA09` |
+| Peerless Assassin 120 SE | 1068 × 1344 | 266 / 266 / 128 / 128 | 660830 B | `5D3D11C89BCAEED40283F47458005B7DC768DEA3FF04AF709F9744E1EC02EE89` |
+| Liquid Freezer III 360 | 873 × 1344 | 363 / 364 / 128 / 128 | 341154 B | `D4E5F6F04C7E71AA80CA84E2BEAE5BABB2531A42EF3F22D59FE96365ACA1D9C5` |
 | LANCOOL 216 | 1068 × 1344 | 266 / 266 / 128 / 128 | 1150448 B | `9982250E12462F7E1CC73D78FC36E696822BEECF73BB75385A2E0812A8148B79` |
 | NZXT H5 Flow 2022 | 1297 × 1344 | 151 / 152 / 128 / 128 | 1053736 B | `611DB7F2A63DA2DE4A38D69195898B2AFAC6B2B720E4901BE19D1D8D4F47FC78` |
 | Cooler Master NR200P | 687 × 1344 | 456 / 457 / 128 / 128 | 1096088 B | `6F2A28A818C0E3C53DB96DF9F3504976AA7563822FF553E130A1CE29DD9CA85C` |
-| ARCTIC P12 PWM PST 5-pack | 1344 × 883 | 128 / 128 / 358 / 359 | 542836 B | `625F7A6FC1C06E7ED32D4DDBEF8C08EC141BD681DA8DC2E96DE49053B2BBDCAC` |
+| ARCTIC P12 PWM PST 5-pack | 1344 × 883 | 128 / 128 / 358 / 359 | 542530 B | `926E5C2872E7A2EBA3175FE745E3F35EDD08D1A33003479851C35E6B156AD0C1` |
 
-Las cuatro esquinas tienen alfa 0 y no existe RGB oculto bajo alfa 0 en ninguno. Frente a `66f9647`, cambiaron exactamente estos siete primarios; los otros 31 medios aprobados permanecen byte-identical.
+Las cuatro esquinas tienen alfa 0 y no existe RGB oculto bajo alfa 0 en ninguno. Frente a `66f9647`, cambiaron exactamente estos siete primarios; los otros 31 medios aprobados permanecen byte-identical. Frente al commit revisado `94141d9`, la corrección cambia únicamente Thermalright, Liquid Freezer y P12; los otros 35 primarios permanecen byte-identical.
+
+Las máscaras alfa antes/después de la corrección son byte-identical en los 2560000 píxeles de cada canvas. Sus SHA-256 son `F094D0ADDD2B4C8EC1AE207CE9C32B70E04E9C751A707032674DE7EE69054A62`, `50F9FDC08043970629CC3C4E3FAC5279ACA83911981FE242A1DF9853459465DD` y `202154BA300830C016CC6C3C3C027ADF86CF92666A1FC4CAA1D06C22B97F1F92`. También permanecen idénticos los bounds, los conteos de píxeles con alfa y los conteos de alfa parcial.
 
 ## Verificación visual
 
@@ -57,16 +60,18 @@ Las cuatro esquinas tienen alfa 0 y no existe RGB oculto bajo alfa 0 en ninguno.
 - H5 es la vista oficial negra exacta que prueba interior vacío. Se rechazó el hero 3/4 porque contiene GPU, AIO, motherboard y cableado.
 - NR200P usa la vista oficial cerrada 3/4; se rechazó la vista lateral plana y las vistas abiertas sin panel.
 - P12 muestra exactamente cinco ventiladores idénticos, con aperturas transparentes y logo real preservado; sin packaging, badge ni iluminación inventada.
+- Para la corrección se volvieron a inspeccionar los tres originales a detalle original, los tres outputs directos y comparaciones before/after en matte negro y claro. Se descartó un prototipo que propagaba tintes de compresión; la receta final usa exclusivamente semillas oscuras neutrales. No se observan halos blancos, tintes nuevos ni pérdida de blades, frames, aletas, tubos, cables, logos o aperturas.
 
-Lámina final: `artifacts/product-cutouts-cooling.webp`, 1600 × 2480, 282712 B, SHA-256 `FF845C4CF3EC8DA93F311BE06F3A74AF424906B4CC480F25832442E4D27C9203`. Mattes de auditoría: `artifacts/task7-source-audit-20260803/task7-final-light-matte.png` y `task7-final-dark-matte.png`.
+Lámina final: `artifacts/product-cutouts-cooling.webp`, 1600 × 2480, 282558 B, SHA-256 `B8C16F26D8EDB9B7CF242F7CA1F21C938A4429A2ED40B1032643ED5616269F0E`. Comparaciones de auditoría de la corrección: `artifacts/task7-halo-fix-trial/comparison-dark.png` y `comparison-light.png`.
 
 ## Pruebas y límites
 
 - TDD inicial RED: faltaban lista/recetas Task 7, poda de sombra, composición 5-up y límites de ampliación; 4 fallos esperados. GREEN: 18/18.
 - TDD de procedencia RED: manifest sin pins y H5 apuntando a la generación actual; corregido.
 - Regresión visual RED: hueco blanco encerrado quedó con alfa 255; RGB oculto detectó 327659 píxeles en Noctua. GREEN: huecos transparentes, logo protegido y `hiddenRGB=0` en los siete.
-- Suite enfocada de fuente, receta, recorte, crédito, catálogo y validación: **38/38**.
-- Suite global: **99/99**.
+- Revisión de halo RED sobre assets reales: **4819 / 6373 / 11335** píxeles neutrales brillantes. GREEN: **0 / 0 / 0**. La regresión adicional fija las tres máscaras alfa históricas y demuestra que la propagación sintética modifica RGB sin cambiar un solo valor alfa.
+- Suite enfocada de fuente, receta, recorte, crédito, catálogo y validación: **40/40**.
+- Suite global: **101/101**.
 - `npm run media:validate`: **OK, 38/38 productos**.
 - `npm run lint`: **OK**.
 - `npm run build`: **OK**, 100 páginas estáticas generadas.

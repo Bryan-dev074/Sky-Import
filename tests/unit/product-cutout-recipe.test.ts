@@ -5,6 +5,7 @@ import sharp from 'sharp'
 import { expect, test } from 'vitest'
 import {
   arrangeFiveIdenticalCopies,
+  decontaminateNeutralBoundaryRgb,
   liftDarkProductRgb,
   PRODUCT_CUTOUT_RECIPES,
   TASK_6_PRODUCT_SLUGS,
@@ -16,6 +17,34 @@ import {
 
 function sha256(bytes: Buffer) {
   return createHash('sha256').update(bytes).digest('hex').toUpperCase()
+}
+
+async function countBrightNeutralBoundaryPixels(input: Buffer) {
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  let count = 0
+  for (let index = 0; index < info.width * info.height; index += 1) {
+    const offset = index * info.channels
+    if (data[offset + 3] === 0) continue
+    const x = index % info.width
+    const y = Math.floor(index / info.width)
+    const touchesTransparency = [
+      x > 0 ? index - 1 : -1,
+      x + 1 < info.width ? index + 1 : -1,
+      y > 0 ? index - info.width : -1,
+      y + 1 < info.height ? index + info.width : -1,
+    ].some((neighbor) => neighbor >= 0 && data[neighbor * info.channels + 3] === 0)
+    if (!touchesTransparency) continue
+    const red = data[offset]!
+    const green = data[offset + 1]!
+    const blue = data[offset + 2]!
+    const chroma = Math.max(red, green, blue) - Math.min(red, green, blue)
+    const luma = red * 0.2126 + green * 0.7152 + blue * 0.0722
+    if (luma >= 180 && chroma <= 24) count += 1
+  }
+  return count
 }
 
 test('versiona una receta completa para cada activo de Task 6', () => {
@@ -209,6 +238,69 @@ test('el matte blanco atenúa y descontamina el borde sin dañar el sujeto', asy
   expect(pixel(12, 12)).toEqual([22, 22, 22, 255])
 })
 
+test('propaga color interior en el halo neutral sin cambiar un solo valor alfa', async () => {
+  const input = await sharp({
+    create: { width: 18, height: 18, channels: 4, background: '#00000000' },
+  })
+    .composite([
+      {
+        input: await sharp({
+          create: {
+            width: 14,
+            height: 14,
+            channels: 4,
+            background: { r: 230, g: 230, b: 230, alpha: 0.35 },
+          },
+        })
+          .composite([
+            {
+              input: await sharp({
+                create: { width: 10, height: 10, channels: 4, background: '#202830ff' },
+              })
+                .png()
+                .toBuffer(),
+              left: 2,
+              top: 2,
+            },
+            {
+              input: await sharp({
+                create: { width: 2, height: 2, channels: 4, background: '#ffffffff' },
+              })
+                .png()
+                .toBuffer(),
+              left: 6,
+              top: 6,
+            },
+          ])
+          .png()
+          .toBuffer(),
+        left: 2,
+        top: 2,
+      },
+    ])
+    .png()
+    .toBuffer()
+  const output = await decontaminateNeutralBoundaryRgb(input, {
+    luma: 180,
+    chroma: 24,
+    maxDistance: 3,
+  })
+  const before = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const after = await sharp(output).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+
+  expect(after.info).toMatchObject({ width: before.info.width, height: before.info.height })
+  for (let offset = 3; offset < before.data.length; offset += before.info.channels) {
+    expect(after.data[offset], `alfa en píxel ${Math.floor(offset / before.info.channels)}`).toBe(
+      before.data[offset],
+    )
+  }
+  const protectedMarkOffset = (8 * before.info.width + 8) * before.info.channels
+  expect(after.data.subarray(protectedMarkOffset, protectedMarkOffset + 4)).toEqual(
+    before.data.subarray(protectedMarkOffset, protectedMarkOffset + 4),
+  )
+  expect(await countBrightNeutralBoundaryPixels(output)).toBe(0)
+})
+
 test('vacía huecos blancos encerrados y preserva una marca blanca protegida', async () => {
   const fixture = await sharp({
     create: { width: 40, height: 24, channels: 3, background: '#ffffff' },
@@ -354,6 +446,32 @@ test('los primarios Task 7 no conservan RGB oculto bajo alfa cero', async () => 
   }
 })
 
+test('los recortes negros extraídos de matte blanco no conservan contornos neutrales brillantes', async () => {
+  const expectedAlphaHashes = {
+    'thermalright-peerless-assassin-120-se':
+      'F094D0ADDD2B4C8EC1AE207CE9C32B70E04E9C751A707032674DE7EE69054A62',
+    'arctic-liquid-freezer-iii-360':
+      '50F9FDC08043970629CC3C4E3FAC5279ACA83911981FE242A1DF9853459465DD',
+    'arctic-p12-pwm-pst-5-pack':
+      '202154BA300830C016CC6C3C3C027ADF86CF92666A1FC4CAA1D06C22B97F1F92',
+  }
+  for (const [slug, expectedAlphaHash] of Object.entries(expectedAlphaHashes)) {
+    const primary = await readFile(join(process.cwd(), 'public', 'products', slug, 'primary.webp'))
+    expect(await countBrightNeutralBoundaryPixels(primary), slug).toBe(0)
+    const { data, info } = await sharp(primary)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+    const alpha = Buffer.alloc(info.width * info.height)
+    for (let index = 0; index < alpha.length; index += 1) {
+      alpha[index] = data[index * info.channels + 3]!
+    }
+    expect(sha256(alpha), `${slug} conserva exactamente su máscara alfa aprobada`).toBe(
+      expectedAlphaHash,
+    )
+  }
+})
+
 test('la receta es determinista y sus primarios aprobados coinciden con el hash versionado', async () => {
   const fixture = await sharp({
     create: { width: 80, height: 60, channels: 3, background: '#ffffff' },
@@ -381,7 +499,7 @@ test('la receta es determinista y sus primarios aprobados coinciden con el hash 
   const second = await rebuildProductCutout(fixture, recipe)
   expect(second).toEqual(first)
 
-  for (const slug of TASK_6_PRODUCT_SLUGS) {
+  for (const slug of [...TASK_6_PRODUCT_SLUGS, ...TASK_7_PRODUCT_SLUGS]) {
     const primary = await readFile(join(process.cwd(), 'public', 'products', slug, 'primary.webp'))
     const recipe = PRODUCT_CUTOUT_RECIPES[slug]
     expect(recipe, slug).toBeDefined()
