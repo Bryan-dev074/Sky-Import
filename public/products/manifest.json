@@ -43,38 +43,38 @@
   },
   {
     "slug": "ryzen-7-9800x3d",
-    "imageUrl": "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2900400-ryzen-7-9800x3d.jpg",
-    "sourcePage": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-7-9800x3d.html",
-    "credit": "AMD"
+    "imageUrl": "https://production-rdj-web-asset.s3.ap-east-1.amazonaws.com/products/cpu/ecomm/4894/images/amd-ryzen-7-9800x3d-am5-without-cooler-tray-type-1771834093699C0AED0EFCD.png",
+    "sourcePage": "https://www.pcworth.com/product/ad36d3fe9a9b?slug=amd-ryzen-7-9800x3d-am5-without-cooler-tray-type",
+    "credit": "AMD product image via PC Worth"
   },
   {
     "slug": "ryzen-7-7800x3d",
-    "imageUrl": "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d-og.jpg",
-    "sourcePage": "https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7800x3d.html",
-    "credit": "AMD"
+    "imageUrl": "https://shop.kz/upload/iblock/507/xg2utmaavddkm4gzcb7zu6yxxl3pn6de/175290x2.webp",
+    "sourcePage": "https://shop.kz/offer/protsessor-amd-ryzen-7-7800x3d-am5-oem/",
+    "credit": "AMD product image via Shop.kz"
   },
   {
     "slug": "ryzen-5-9600x",
-    "imageUrl": "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2613900-ryzen-5-9600x-og.jpg",
-    "sourcePage": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-5-9600x.html",
-    "credit": "AMD"
+    "imageUrl": "https://cdn11.bigcommerce.com/s-ms4wz8cgi2/images/stencil/original/products/116076/29317/9600X__42565.1724658852.jpg?c=1",
+    "sourcePage": "https://extremepc.co.nz/amd-ryzen-5-9600x-cpu-6-core-12-thread-am5-socket-oem-without-cooler/",
+    "credit": "AMD product image via ExtremePC"
   },
   {
     "slug": "core-ultra-7-265k",
-    "imageUrl": "https://newsroom.intel.com/wp-content/uploads/2024/11/newsroom-Intel-ARL-Chip-2.jpg",
-    "sourcePage": "https://newsroom.intel.com/artificial-intelligence/core-ultra-200s-series-desktop",
-    "credit": "Intel"
+    "imageUrl": "https://tm-prd-cdn.themarket.co.nz/resizer/view?b=productimages&h=1080&key=a93a369a16414563279a01df0898b139&w=1080",
+    "sourcePage": "https://www.thewarehouse.co.nz/p/intel-core-ultra-7-265k-lga-1851-unlocked-cpu-processor-oem-package-without-cooler/M36750185.html",
+    "credit": "Intel product image via The Warehouse"
   },
   {
     "slug": "core-i5-14600k",
-    "imageUrl": "https://download.intel.com/newsroom/2023/client-computing/Intel-Core-14th-Gen-Desktop-Lineup.jpg",
-    "sourcePage": "https://newsroom.intel.com/client-computing/intel-core-14th-gen-desktop-processors",
-    "credit": "Intel"
+    "imageUrl": "https://xstore.md/images/product/2025/05/procesor-intel-core-i5-14600k-tray-xstore-md-41.webp",
+    "sourcePage": "https://xstore.md/ru/komplektuyushhie-pk/processory/intel-core-i5-14600k",
+    "credit": "Intel product image via Xstore"
   },
   {
     "slug": "msi-mag-b850-tomahawk-wifi",
-    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_1736159754f30751ff77a834ba28009a222071b3d3.webp",
-    "sourcePage": "https://www.msi.com/Motherboard/MAG-B850-TOMAHAWK-MAX-WIFI",
+    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_1736159752859b0d59d04f539fee0f53b5742d9275.webp",
+    "sourcePage": "https://www.msi.com/Motherboard/MAG-B850-TOMAHAWK-MAX-WIFI/Gallery",
     "credit": "MSI"
   },
   {
@@ -85,8 +85,8 @@
   },
   {
     "slug": "msi-pro-b650m-a-wifi",
-    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_1664782100d10ef26fe3fc5c4c436cc139db200c1c.webp",
-    "sourcePage": "https://www.msi.com/Motherboard/PRO-B650M-A-WIFI",
+    "imageUrl": "https://storage-asset.msi.com/global/picture/product/product_1664782103bd0750526bf08cc98f5d01ef1436f9fa.webp",
+    "sourcePage": "https://www.msi.com/Motherboard/PRO-B650M-A-WIFI/Gallery",
     "credit": "MSI"
   },
   {
@@ -97,8 +97,8 @@
   },
   {
     "slug": "gigabyte-b760m-ds3h",
-    "imageUrl": "https://static.gigabyte.com/StaticFile/Image/Global/74a19f09cebd58831e913703ba3e065c/ProductRemoveBg/33481",
-    "sourcePage": "https://www.gigabyte.com/Motherboard/B760M-DS3H-rev-10",
+    "imageUrl": "https://static.gigabyte.com/StaticFile/Image/Global/546e241a08dd427a14a81db8355181e9/Product/33482/png/1000",
+    "sourcePage": "https://www.gigabyte.com/Motherboard/B760M-DS3H-rev-10/gallery",
     "credit": "Gigabyte"
   },
   {

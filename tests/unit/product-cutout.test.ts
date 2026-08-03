@@ -183,3 +183,26 @@ test('los recortes GPU revisados permiten una ampliación mínima y localizada',
     occupancy: 0.84,
   })
 })
+
+test('solo las fuentes de plataforma revisadas que lo requieren permiten ampliación', () => {
+  for (const slug of [
+    'ryzen-7-9800x3d',
+    'ryzen-5-9600x',
+    'core-ultra-7-265k',
+    'core-i5-14600k',
+    'msi-mag-b850-tomahawk-wifi',
+    'msi-pro-b650m-a-wifi',
+    'gigabyte-b760m-ds3h',
+  ]) {
+    expect(getProductCutoutPolicy(slug)).toEqual({
+      canvas: 1600,
+      occupancy: 0.84,
+      allowEnlargement: true,
+    })
+  }
+
+  expect(getProductCutoutPolicy('ryzen-7-7800x3d')).toEqual({
+    canvas: 1600,
+    occupancy: 0.84,
+  })
+})

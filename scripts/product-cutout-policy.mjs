@@ -10,6 +10,11 @@ export const GPU_REVIEWED_ENLARGEMENT_POLICY = Object.freeze({
   occupancy: 0.84,
   allowEnlargement: true,
 })
+export const PLATFORM_REVIEWED_ENLARGEMENT_POLICY = Object.freeze({
+  canvas: 1600,
+  occupancy: 0.84,
+  allowEnlargement: true,
+})
 
 export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'geforce-rtx-5090-founders-edition-32gb': RTX_5090_PRODUCT_CUTOUT_POLICY,
@@ -19,16 +24,16 @@ export const PRODUCT_CUTOUT_POLICY = Object.freeze({
   'radeon-rx-9070-xt-16gb': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'geforce-rtx-4060-8gb': GPU_REVIEWED_ENLARGEMENT_POLICY,
   'arc-b580-12gb': GPU_REVIEWED_ENLARGEMENT_POLICY,
-  'ryzen-7-9800x3d': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'ryzen-7-9800x3d': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
   'ryzen-7-7800x3d': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'ryzen-5-9600x': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'core-ultra-7-265k': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'core-i5-14600k': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'msi-mag-b850-tomahawk-wifi': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'ryzen-5-9600x': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
+  'core-ultra-7-265k': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
+  'core-i5-14600k': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
+  'msi-mag-b850-tomahawk-wifi': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
   'asus-tuf-gaming-b650-plus-wifi': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'msi-pro-b650m-a-wifi': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'msi-pro-b650m-a-wifi': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
   'asrock-z890-pro-rs': DEFAULT_PRODUCT_CUTOUT_POLICY,
-  'gigabyte-b760m-ds3h': DEFAULT_PRODUCT_CUTOUT_POLICY,
+  'gigabyte-b760m-ds3h': PLATFORM_REVIEWED_ENLARGEMENT_POLICY,
   'corsair-vengeance-ddr5-32gb-6000': DEFAULT_PRODUCT_CUTOUT_POLICY,
   'gskill-trident-z5-neo-32gb-6000': GSKILL_TRIDENT_Z5_NEO_PRODUCT_CUTOUT_POLICY,
   'kingston-fury-beast-ddr5-16gb-5600': DEFAULT_PRODUCT_CUTOUT_POLICY,
