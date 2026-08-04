@@ -1,6 +1,6 @@
 # Diseño: imágenes de producto transparentes
 
-**Fecha:** 2026-08-03  
+**Fecha:** 2026-08-03
 **Estado:** aprobado para planificación
 
 ## Objetivo

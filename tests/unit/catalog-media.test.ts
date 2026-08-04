@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import sharp from 'sharp'
 import { describe, expect, test } from 'vitest'
@@ -45,6 +46,67 @@ describe('catálogo premium', () => {
       expect(media?.alt.es).toContain(product.model)
       expect(media?.alt.pt).toContain(product.model)
     }
+  })
+
+  test('identifica la RTX 5080 como Founders Edition con las dimensiones oficiales', () => {
+    const product = PRODUCTS.find((candidate) => candidate.slug === 'geforce-rtx-5080-16gb')
+
+    expect(product).toMatchObject({
+      name: 'GeForce RTX 5080 Founders Edition 16 GB',
+      brand: 'NVIDIA',
+      model: 'RTX 5080 Founders Edition',
+      compat: {
+        kind: 'gpu',
+        lengthMm: 304,
+        slots: 2,
+      },
+    })
+    expect(product?.blurb.es).toContain('Founders Edition')
+    expect(product?.blurb.es).toContain('304 mm')
+    expect(product?.blurb.pt).toContain('Founders Edition')
+    expect(product?.blurb.pt).toContain('304 mm')
+    expect(product?.specs.map((spec) => spec.value)).toEqual(
+      expect.arrayContaining(['304 mm', '2']),
+    )
+  })
+
+  test('mantiene la identidad CL36 del SKU Corsair CMK32GX5M2B6000C36', () => {
+    const product = PRODUCTS.find(
+      (candidate) => candidate.slug === 'corsair-vengeance-ddr5-32gb-6000',
+    )
+    const serialized = JSON.stringify(product)
+
+    expect(product).toMatchObject({
+      name: 'Vengeance DDR5 32 GB (2×16) 6000 CL36',
+      brand: 'Corsair',
+      model: 'Vengeance DDR5 6000 CL36',
+      compat: {
+        kind: 'ram',
+        latency: 'CL36',
+      },
+    })
+    expect(product?.blurb.es).toContain('CL36')
+    expect(product?.blurb.pt).toContain('CL36')
+    expect(product?.specs.map((spec) => spec.value)).toEqual(
+      expect.arrayContaining(['CL36', 'CMK32GX5M2B6000C36', '36-38-38-76']),
+    )
+    expect(serialized).not.toContain('CL30')
+  })
+
+  test('sincroniza exactamente fuente y crédito del runtime con el manifiesto', async () => {
+    const manifest = JSON.parse(
+      await readFile(join(process.cwd(), 'public', 'products', 'manifest.json'), 'utf8'),
+    ) as { slug: string; sourcePage: string; credit: string }[]
+    const expected = manifest
+      .map(({ slug, sourcePage, credit }) => ({ slug, sourcePage, credit }))
+      .sort((left, right) => left.slug.localeCompare(right.slug))
+    const actual = PRODUCTS.map(({ slug, media: { sourcePage, credit } }) => ({
+      slug,
+      sourcePage,
+      credit,
+    })).sort((left, right) => left.slug.localeCompare(right.slug))
+
+    expect(actual).toEqual(expected)
   })
 
   test('atribuye la fotografía de Crucial al listing exacto de Newegg', () => {

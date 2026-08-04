@@ -23,7 +23,7 @@ const boardAm5Atx = get('msi-mag-b850-tomahawk-wifi')
 const boardLga1700Matx = get('gigabyte-b760m-ds3h')
 const ramDdr5 = get('corsair-vengeance-ddr5-32gb-6000')
 const ramDdr4 = get('corsair-vengeance-lpx-ddr4-16gb-3200')
-const gpuBig = get('geforce-rtx-5080-16gb') // 336 mm · 360 W · pide 850 W
+const gpuBig = get('geforce-rtx-5080-16gb') // 304 mm · 360 W · pide 850 W
 const gpuSmall = get('geforce-rtx-4060-8gb') // 200 mm · 115 W · pide 550 W
 const psu650 = get('msi-mag-a650bn')
 const psu1000 = get('corsair-rm1000x')
@@ -34,6 +34,11 @@ const coolerTall = get('noctua-nh-d15') // 165 mm · sin LGA1851
 const aio360 = get('arctic-liquid-freezer-iii-360')
 
 const ids = (build: Build) => checkBuild(build).map((issue) => issue.id)
+
+const caseWithGpuClearance = (maxGpuMm: number) => {
+  if (caseItx.compat.kind !== 'case') throw new Error('el producto de prueba debe ser un gabinete')
+  return { ...caseItx, compat: { ...caseItx.compat, maxGpuMm } }
+}
 
 describe('compatibilidad — zócalo', () => {
   it('detecta procesador y placa de zócalos distintos', () => {
@@ -76,23 +81,32 @@ describe('compatibilidad — física', () => {
     expect(ids({ motherboard: boardAm5Atx, case: caseSmall })).toContain('form-factor')
   })
 
-  it('bloquea una placa de video más larga que el gabinete', () => {
-    // 336 mm de tarjeta en un gabinete Mini-ITX que admite 330 mm.
-    const issue = checkBuild({ gpu: gpuBig, case: caseItx }).find((i) => i.id === 'gpu-length')
+  it('bloquea una placa de video solo cuando supera el espacio real del gabinete', () => {
+    // 304 mm de tarjeta en un gabinete que admite 303 mm.
+    const issue = checkBuild({ gpu: gpuBig, case: caseWithGpuClearance(303) }).find(
+      (candidate) => candidate.id === 'gpu-length',
+    )
     expect(issue).toBeDefined()
     expect(issue?.level).toBe('bloqueo')
-    expect(issue?.detail.es).toContain('336')
-    expect(issue?.detail.es).toContain('330')
+    expect(issue?.detail.es).toContain('304')
+    expect(issue?.detail.es).toContain('303')
     // Y nombra exactamente cuántos milímetros faltan.
-    expect(issue?.detail.es).toContain('6 mm')
+    expect(issue?.detail.es).toContain('1 mm')
   })
+
+  it.each([304, 330, 335])(
+    'no rechaza la RTX 5080 FE en un gabinete con %i mm disponibles',
+    (maxGpuMm) => {
+      expect(ids({ gpu: gpuBig, case: caseWithGpuClearance(maxGpuMm) })).not.toContain('gpu-length')
+    },
+  )
 
   it('avisa (sin bloquear) cuando la placa de video entra con menos de 15 mm de margen', () => {
     // 320 mm en un gabinete de 330 mm: entra con 10 mm, avisa pero no bloquea.
     const tight = checkBuild({ gpu: get('radeon-rx-9070-xt-16gb'), case: caseItx })
     const issue = tight.find((i) => i.id === 'gpu-length-tight')
     expect(issue?.level).toBe('aviso')
-    // 336 mm en un gabinete de 392 mm: sobra margen, ni bloqueo ni aviso.
+    // 304 mm en un gabinete de 392 mm: sobra margen, ni bloqueo ni aviso.
     expect(ids({ gpu: gpuBig, case: caseBig })).not.toContain('gpu-length-tight')
     expect(ids({ gpu: gpuBig, case: caseBig })).not.toContain('gpu-length')
   })

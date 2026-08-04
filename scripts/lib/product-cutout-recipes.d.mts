@@ -21,33 +21,80 @@ export interface WhiteFloodMatte {
   )[]
 }
 
-export interface ProductCutoutRecipe {
-  operation:
-    | 'native-alpha'
-    | 'white-flood-matte'
-    | 'native-alpha-prune-diffuse'
-    | 'native-alpha-tone-lift'
-    | 'white-flood-five-copy-grid'
+export interface FiveCopyLayout {
+  width: number
+  height: number
+  itemSize: number
+  positions: readonly { left: number; top: number }[]
+}
+
+export interface EdgeColorPropagation {
+  luma: number
+  chroma: number
+  maxDistance: number
+}
+
+interface RecipeOptions {
+  edgeColorPropagation?: EdgeColorPropagation
+  webpExactTransparentRgb?: boolean
+}
+
+export type ProductCutoutRecipe =
+  | (RecipeOptions & {
+      operation: 'native-alpha'
+      matte?: never
+      alphaPrune?: never
+      tone?: never
+      layout?: never
+    })
+  | (RecipeOptions & {
+      operation: 'white-flood-matte'
+      matte: WhiteFloodMatte
+      alphaPrune?: never
+      tone?: never
+      layout?: never
+    })
+  | (RecipeOptions & {
+      operation: 'native-alpha-prune-diffuse'
+      matte?: never
+      alphaPrune: { coreAlpha: number; retainDistance: number }
+      tone?: never
+      layout?: never
+    })
+  | (RecipeOptions & {
+      operation: 'native-alpha-tone-lift'
+      matte?: never
+      alphaPrune?: never
+      tone: { gamma: number }
+      layout?: never
+    })
+  | (RecipeOptions & {
+      operation: 'white-flood-five-copy-grid'
+      matte: WhiteFloodMatte
+      alphaPrune?: never
+      tone?: never
+      layout: FiveCopyLayout
+    })
+
+export type StoredProductCutoutRecipe = ProductCutoutRecipe & {
+  sourceExtension: string
+  sourceSha256: string
+  expectedOutputSha256: string
+  policy?: never
+}
+
+export type ExecutableProductCutoutRecipe = ProductCutoutRecipe & {
+  policy: CutoutPolicy
   sourceExtension?: string
   sourceSha256?: string
   expectedOutputSha256?: string
-  matte?: WhiteFloodMatte
-  alphaPrune?: { coreAlpha: number; retainDistance: number }
-  tone?: { gamma: number }
-  edgeColorPropagation?: { luma: number; chroma: number; maxDistance: number }
-  webpExactTransparentRgb?: boolean
-  layout?: {
-    width: number
-    height: number
-    itemSize: number
-    positions: readonly { left: number; top: number }[]
-  }
-  policy?: CutoutPolicy
 }
 
 export const TASK_6_PRODUCT_SLUGS: readonly string[]
 export const TASK_7_PRODUCT_SLUGS: readonly string[]
-export const PRODUCT_CUTOUT_RECIPES: Readonly<Record<string, Required<Pick<ProductCutoutRecipe, 'operation' | 'sourceExtension' | 'sourceSha256' | 'expectedOutputSha256'>> & ProductCutoutRecipe>>
+export const PRODUCT_CUTOUT_RECIPES: Readonly<
+  Record<string, StoredProductCutoutRecipe | undefined>
+>
 export function removeWhiteBackground(input: Buffer, matte: WhiteFloodMatte): Promise<Buffer>
 export function pruneDiffuseNativeAlpha(
   input: Buffer,
@@ -56,11 +103,11 @@ export function pruneDiffuseNativeAlpha(
 export function liftDarkProductRgb(input: Buffer, options: { gamma: number }): Promise<Buffer>
 export function decontaminateNeutralBoundaryRgb(
   input: Buffer,
-  options: { luma: number; chroma: number; maxDistance: number },
+  options: EdgeColorPropagation,
 ): Promise<Buffer>
-export function arrangeFiveIdenticalCopies(
+export function arrangeFiveIdenticalCopies(input: Buffer, layout: FiveCopyLayout): Promise<Buffer>
+export function rebuildProductCutout(
   input: Buffer,
-  layout: NonNullable<ProductCutoutRecipe['layout']>,
+  recipe: ExecutableProductCutoutRecipe,
 ): Promise<Buffer>
-export function rebuildProductCutout(input: Buffer, recipe: ProductCutoutRecipe): Promise<Buffer>
 export function sha256(bytes: Buffer): string
