@@ -9,6 +9,7 @@ import { ComponentDims } from '@/components/render/ComponentRender'
 import { ProductImage } from '@/components/product/ProductImage'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { AssemblySection } from '@/components/home/AssemblySection'
+import { BuildInviteCta } from '@/components/home/BuildInviteCta'
 import { Trace } from '@/components/motif/Trace'
 import { Counter, Magnetic, Parallax, Reveal, SplitWords, Tilt } from '@/components/motion/Motion'
 import { EdgeGlow } from '@/components/motion/EdgeGlow'
@@ -126,9 +127,12 @@ export function HomeView() {
                 </Magnetic>
 
                 <Magnetic strength={0.22}>
-                  <Link href={path('/armar')} className="u-btn u-btn-line">
-                    {t('cta.build')}
-                  </Link>
+                  <BuildInviteCta
+                    href={path('/armar')}
+                    label={t('cta.build')}
+                    locale={locale}
+                    ambient
+                  />
                 </Magnetic>
               </div>
             </Reveal>
@@ -139,7 +143,7 @@ export function HomeView() {
             <div ref={heroArt} className="relative rounded-part">
               <Tilt max={5} scale={1.012}>
                 <div className="u-product-interactive u-hero-product u-plate relative aspect-[16/11] overflow-hidden rounded-part border border-rule bg-surface-sunk">
-                  <div className="absolute inset-[7%]">
+                  <div className="u-hero-product__art absolute">
                     <ProductImage
                       product={HERO_GPU}
                       locale={locale}
@@ -347,12 +351,12 @@ export function HomeView() {
                     {t('home.builder.lede')}
                   </p>
                   <Magnetic strength={0.24}>
-                    <Link href={path('/armar')} className="u-btn u-btn-solid mt-9">
-                      {t('home.builder.cta')}
-                      <span className="u-nudge" aria-hidden="true">
-                        →
-                      </span>
-                    </Link>
+                    <BuildInviteCta
+                      href={path('/armar')}
+                      label={t('home.builder.cta')}
+                      locale={locale}
+                      className="mt-9"
+                    />
                   </Magnetic>
                 </Reveal>
               </div>

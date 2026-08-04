@@ -41,15 +41,15 @@ export interface PcAssemblyPlan {
   totalSlots: number
   progress: number
   complete: boolean
-  powered: boolean
   nextSlot: BuildSlot | null
   visibleParts: PcScenePartId[]
 }
 
-export function getPcAssemblyPlan(
-  picks: Partial<Record<BuildSlot, unknown>>,
-  blockingIssues: number,
-): PcAssemblyPlan {
+export function scenePartsForSlots(slots: readonly BuildSlot[]): PcScenePartId[] {
+  return slots.flatMap((slot) => PARTS_BY_SLOT[slot])
+}
+
+export function getPcAssemblyPlan(picks: Partial<Record<BuildSlot, unknown>>): PcAssemblyPlan {
   const selectedSlots = BUILD_SLOTS.filter((slot) => Boolean(picks[slot]))
   const visibleParts = SCENE_SLOT_ORDER.filter((slot) => Boolean(picks[slot])).flatMap(
     (slot) => PARTS_BY_SLOT[slot],
@@ -66,7 +66,6 @@ export function getPcAssemblyPlan(
     totalSlots: BUILD_SLOTS.length,
     progress: selectedCount / BUILD_SLOTS.length,
     complete,
-    powered: complete && blockingIssues === 0,
     nextSlot: BUILD_SLOTS.find((slot) => !picks[slot]) ?? null,
     visibleParts,
   }

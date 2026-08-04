@@ -171,6 +171,21 @@ test('el producto de portada es transparente y conserva movimiento fino', async 
     .toBeGreaterThan(2)
 })
 
+test('la portada acerca la 5090 e invita a ensamblar con piezas reales', async ({ page }) => {
+  await page.goto('/es')
+
+  const heroArt = page.locator('.u-hero-product__art')
+  await expect(heroArt).toBeVisible()
+  await expect(page.locator('[data-build-invite="ambient"] img')).toHaveCount(3)
+
+  const ratio = await heroArt.evaluate(
+    (node) =>
+      node.getBoundingClientRect().width /
+      (node.parentElement?.getBoundingClientRect().width ?? Number.POSITIVE_INFINITY),
+  )
+  expect(ratio).toBeGreaterThan(1)
+})
+
 test.describe('cursor propio', () => {
   test('se dibuja con puntero fino y no existe en táctil', async ({ page, isMobile }) => {
     await page.goto('/es')
@@ -306,6 +321,26 @@ test.describe('moneda e idioma', () => {
 })
 
 test.describe('configurador', () => {
+  const validBuild: Record<BuildSlot, string> = {
+    cpu: 'ryzen-7-9800x3d',
+    motherboard: 'msi-mag-b850-tomahawk-wifi',
+    ram: 'corsair-vengeance-ddr5-32gb-6000',
+    gpu: 'geforce-rtx-5080-16gb',
+    storage: 'samsung-990-pro-2tb',
+    psu: 'corsair-rm1000x',
+    cooling: 'arctic-liquid-freezer-iii-360',
+    case: 'lian-li-lancool-216',
+  }
+
+  const seedBuild = async (page: Page, picks: Record<BuildSlot, string>) => {
+    await page.addInitScript((seededPicks) => {
+      localStorage.setItem(
+        'sky-import:build:v1',
+        JSON.stringify({ state: { picks: seededPicks }, version: 0 }),
+      )
+    }, picks)
+  }
+
   const elegir = async (page: Page, ranura: BuildSlot, pieza: RegExp) => {
     await page
       .locator(`li[data-slot="${ranura}"]`)
@@ -347,6 +382,93 @@ test.describe('configurador', () => {
 
     await page.getByRole('button', { name: 'Agregar el armado al carrito' }).click()
     await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('06')
+  })
+
+  test('espera el botón, prueba el equipo y recién entonces lo enciende', async ({ page }) => {
+    await seedBuild(page, validBuild)
+    await page.goto('/es/armar')
+
+    await expect(page.getByRole('button', { name: 'Encender PC' })).toBeVisible()
+    await expect(page.getByText('Sistema encendido')).toHaveCount(0)
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __pcBuilderState?: { powered?: boolean } }).__pcBuilderState
+              ?.powered ?? false,
+        ),
+      )
+      .toBe(false)
+
+    await page.getByRole('button', { name: 'Encender PC' }).click()
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Comprobando energía y compatibilidad' }),
+    ).toBeVisible()
+    await expect(page.getByRole('status').filter({ hasText: 'Sistema encendido' })).toBeVisible({
+      timeout: 4000,
+    })
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __pcBuilderState?: { powered?: boolean } }).__pcBuilderState
+              ?.powered ?? false,
+        ),
+      )
+      .toBe(true)
+
+    const purchase = page.getByRole('button', { name: 'Comprar armado' })
+    await expect(purchase).toBeVisible()
+    await purchase.click()
+    await expect(page.getByRole('dialog', { name: 'Carrito' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('08')
+  })
+
+  test('una fuente insuficiente bloquea el arranque y marca sus piezas', async ({ page }) => {
+    await seedBuild(page, { ...validBuild, psu: 'msi-mag-a650bn' })
+    await page.goto('/es/armar')
+
+    await page.getByRole('button', { name: 'Encender PC' }).click()
+    await expect(page.getByText('La fuente está por debajo de lo recomendado').last()).toBeVisible({
+      timeout: 4000,
+    })
+    await expect(page.locator('[data-diagnostic="error"]')).toHaveCount(2)
+    await expect(page.getByRole('button', { name: 'Comprar armado' })).toHaveCount(0)
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __pcBuilderState?: { powered?: boolean } }).__pcBuilderState
+              ?.powered ?? false,
+        ),
+      )
+      .toBe(false)
+  })
+
+  test('el laboratorio móvil muestra las ocho piezas en una cuadrícula 4 por 2', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'esta geometría pertenece al armador táctil')
+    await page.goto('/es/armar')
+
+    const cells = page.locator('[data-pc-dock] [data-pc-slot]')
+    await expect(cells).toHaveCount(8)
+    const boxes = await cells.evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const box = node.getBoundingClientRect()
+        return { top: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) }
+      }),
+    )
+
+    expect(new Set(boxes.slice(0, 4).map((box) => box.top)).size).toBe(1)
+    expect(new Set(boxes.slice(4).map((box) => box.top)).size).toBe(1)
+    expect(boxes[4]!.top).toBeGreaterThan(boxes[0]!.top)
+    expect(Math.min(...boxes.map((box) => box.width))).toBeGreaterThanOrEqual(44)
+    expect(Math.min(...boxes.map((box) => box.height))).toBeGreaterThanOrEqual(44)
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))
+      .toBe(true)
   })
 })
 

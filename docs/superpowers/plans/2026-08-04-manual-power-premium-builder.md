@@ -118,7 +118,7 @@ test('la portada acerca la 5090 e invita a ensamblar con piezas reales', async (
 
 - [ ] **Step 2: Ejecutar el caso y verificar que falla por selectores ausentes**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "acerca la 5090" --project=chromium`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "acerca la 5090" --project=escritorio`
 
 Expected: FAIL porque `.u-hero-product__art` y `data-build-invite` aún no existen.
 
@@ -143,7 +143,7 @@ export function BuildInviteCta({ href, label, locale, ambient = false }: Props) 
 
 - [ ] **Step 4: Ejecutar el caso E2E y confirmar verde**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "acerca la 5090" --project=chromium`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "acerca la 5090" --project=escritorio`
 
 Expected: PASS en escritorio; el enlace conserva nombre accesible y tres imágenes.
 
@@ -205,7 +205,7 @@ test('una fuente insuficiente bloquea el arranque y marca sus piezas', async ({ 
 
 - [ ] **Step 2: Ejecutar ambos recorridos y observar el fallo por ausencia del control**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=chromium`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=escritorio`
 
 Expected: FAIL al buscar «Encender PC».
 
@@ -234,7 +234,7 @@ const powerOn = useCallback(() => {
     setDiagnosticIssueId(result.issue?.id ?? null)
     setPowerPhase(result.status === 'passed' ? 'powered' : 'failed')
     powerTimerRef.current = null
-  }, 1100)
+  }, 2000)
 }, [issues, powerPhase, scenePlan.complete])
 ```
 
@@ -250,7 +250,7 @@ const addWholeBuild = useCallback(() => {
 
 - [ ] **Step 5: Ejecutar los recorridos y confirmar estados correctos**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=chromium`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=escritorio`
 
 Expected: PASS; compra solo tras `powered`, error visible y dos ranuras marcadas.
 
@@ -276,7 +276,7 @@ await expect.poll(() => page.evaluate(() => window.__pcBuilderState?.powered)).t
 
 - [ ] **Step 2: Ejecutarlo y confirmar que falla porque la escena aún se autoalimenta**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces" --project=chromium`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces" --project=escritorio`
 
 Expected: FAIL: antes del clic el estado actual ya aparece encendido.
 
@@ -297,7 +297,7 @@ actualizan y muestran solo cuando su `PcScenePartId` pertenece a las ranuras dia
 
 - [ ] **Step 4: Ejecutar el E2E y la suite unitaria focalizada**
 
-Run: `npm test -- tests/unit/pc-assembly-plan.test.ts tests/unit/pc-boot-sequence.test.ts && npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=chromium`
+Run: `npm test -- tests/unit/pc-assembly-plan.test.ts tests/unit/pc-boot-sequence.test.ts && npx playwright test tests/e2e/experiencia.spec.ts --grep "recién entonces|bloquea el arranque" --project=escritorio`
 
 Expected: PASS en unit y E2E.
 
@@ -329,7 +329,7 @@ test('el laboratorio móvil muestra las ocho piezas en una cuadrícula 4 por 2',
 
 - [ ] **Step 2: Ejecutar el caso móvil y confirmar el fallo de estructura actual**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "cuadrícula 4 por 2" --project="Mobile Chrome"`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "cuadrícula 4 por 2" --project=movil`
 
 Expected: FAIL porque el dock actual es horizontal y no tiene selectores semánticos.
 
@@ -345,7 +345,7 @@ Expected: FAIL porque el dock actual es horizontal y no tiene selectores semánt
 
 - [ ] **Step 4: Ejecutar el caso móvil, inspección mecánica y revisión de movimiento**
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "cuadrícula 4 por 2" --project="Mobile Chrome"`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --grep "cuadrícula 4 por 2" --project=movil`
 
 Run: `node C:\Users\Bryan\.agents\skills\impeccable\scripts/detect.mjs --json src/components/views/HomeView.tsx src/components/home/BuildInviteCta.tsx src/components/builder/Configurator.tsx src/components/builder/PcBuildScene.tsx src/app/globals.css`
 
@@ -355,7 +355,7 @@ Expected: E2E PASS y detector sin hallazgos bloqueantes.
 
 Run: `npm run verify`
 
-Run: `npx playwright test tests/e2e/experiencia.spec.ts --project=chromium --project="Mobile Chrome"`
+Run: `npx playwright test tests/e2e/experiencia.spec.ts --project=escritorio --project=movil`
 
 Expected: validación de imágenes, lint, tipos, unit tests, build y recorridos relevantes en verde.
 

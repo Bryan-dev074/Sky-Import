@@ -5,11 +5,21 @@ import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import type { BuildSlot } from '@/lib/compat'
-import { getPcAssemblyPlan, type PcAssemblyPlan, type PcScenePartId } from '@/lib/pcAssemblyPlan'
+import {
+  getPcAssemblyPlan,
+  scenePartsForSlots,
+  type PcAssemblyPlan,
+  type PcScenePartId,
+} from '@/lib/pcAssemblyPlan'
+
+type DiagnosticTone = 'error' | 'warning' | null
 
 interface Props {
   picks: Partial<Record<BuildSlot, string>>
-  blockingIssues: number
+  powered: boolean
+  checking: boolean
+  diagnosticSlots: readonly BuildSlot[]
+  diagnosticTone: DiagnosticTone
   coolingType?: 'aire' | 'liquida'
   onReady?: () => void
   onLost?: () => void
@@ -18,7 +28,11 @@ interface Props {
 
 type SceneWindow = Window & {
   __pcBuilderReady?: boolean
-  __pcBuilderState?: PcAssemblyPlan
+  __pcBuilderState?: PcAssemblyPlan & {
+    powered: boolean
+    checking: boolean
+    diagnosticSlots: readonly BuildSlot[]
+  }
 }
 
 interface AnimatedPart {
@@ -74,7 +88,10 @@ function makeFan(
 
 export default function PcBuildScene({
   picks,
-  blockingIssues,
+  powered,
+  checking,
+  diagnosticSlots,
+  diagnosticTone,
   coolingType,
   onReady,
   onLost,
@@ -82,12 +99,26 @@ export default function PcBuildScene({
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
-  const plan = useMemo(() => getPcAssemblyPlan(picks, blockingIssues), [blockingIssues, picks])
-  const snapshotRef = useRef({ plan, coolingType })
+  const plan = useMemo(() => getPcAssemblyPlan(picks), [picks])
+  const snapshotRef = useRef({
+    plan,
+    coolingType,
+    powered,
+    checking,
+    diagnosticSlots,
+    diagnosticTone,
+  })
 
   useEffect(() => {
-    snapshotRef.current = { plan, coolingType }
-  }, [coolingType, plan])
+    snapshotRef.current = {
+      plan,
+      coolingType,
+      powered,
+      checking,
+      diagnosticSlots,
+      diagnosticTone,
+    }
+  }, [checking, coolingType, diagnosticSlots, diagnosticTone, plan, powered])
 
   useEffect(() => {
     const host = hostRef.current
@@ -441,6 +472,21 @@ export default function PcBuildScene({
         0.42,
       )
 
+      const diagnosticHelpers = new Map<PcScenePartId, THREE.BoxHelper>()
+      for (const part of animatedParts) {
+        const helper = new THREE.BoxHelper(part.group, 0xc4553d)
+        helper.name = `pc-diagnostic-${part.id}`
+        helper.visible = false
+        helper.renderOrder = 20
+        helper.material.transparent = true
+        helper.material.opacity = 0.92
+        helper.material.depthTest = false
+        geometries.push(helper.geometry)
+        materials.push(helper.material)
+        scene.add(helper)
+        diagnosticHelpers.set(part.id, helper)
+      }
+
       const groundMaterial = keepMaterial(new THREE.ShadowMaterial({ color: 0x020608, opacity: 0.28 }))
       const groundGeometry = keepGeometry(new THREE.PlaneGeometry(16, 12))
       const ground = new THREE.Mesh(groundGeometry, groundMaterial)
@@ -454,6 +500,12 @@ export default function PcBuildScene({
         const width = Math.max(1, Math.round(rect.width))
         const height = Math.max(1, Math.round(rect.height))
         renderer.setSize(width, height, false)
+        if (width >= 640) {
+          camera.position.set(7.65, 4.25, 11.75)
+        } else {
+          camera.position.set(8.7, 4.8, 13.4)
+        }
+        camera.lookAt(0, -0.05, -0.2)
         camera.aspect = width / height
         camera.updateProjectionMatrix()
       }
@@ -502,6 +554,8 @@ export default function PcBuildScene({
       const rgbBaseEmissive = new THREE.Color(0x041014)
       let visiblePartsSnapshot: PcScenePartId[] | undefined
       let visibleSet = new Set<PcScenePartId>()
+      let diagnosticSlotsSnapshot: readonly BuildSlot[] | undefined
+      let diagnosticSet = new Set<PcScenePartId>()
 
       const frame = (time: number) => {
         raf = requestAnimationFrame(frame)
@@ -514,7 +568,16 @@ export default function PcBuildScene({
           visiblePartsSnapshot = snapshot.plan.visibleParts
           visibleSet = new Set(visiblePartsSnapshot)
         }
-        sceneWindow.__pcBuilderState = snapshot.plan
+        if (snapshot.diagnosticSlots !== diagnosticSlotsSnapshot) {
+          diagnosticSlotsSnapshot = snapshot.diagnosticSlots
+          diagnosticSet = new Set(scenePartsForSlots(diagnosticSlotsSnapshot))
+        }
+        sceneWindow.__pcBuilderState = {
+          ...snapshot.plan,
+          powered: snapshot.powered,
+          checking: snapshot.checking,
+          diagnosticSlots: snapshot.diagnosticSlots,
+        }
         const reduced = reducedQuery.matches
 
         for (const part of animatedParts) {
@@ -531,6 +594,15 @@ export default function PcBuildScene({
           part.group.visible = part.current > 0.008
         }
 
+        const diagnosticColor = snapshot.diagnosticTone === 'warning' ? 0xe8b23a : 0xc4553d
+        for (const [id, helper] of diagnosticHelpers) {
+          helper.visible = snapshot.diagnosticTone !== null && diagnosticSet.has(id) && visibleSet.has(id)
+          if (helper.visible) {
+            helper.material.color.setHex(diagnosticColor)
+            helper.update()
+          }
+        }
+
         const isAir = snapshot.coolingType === 'aire'
         airTower.visible = isAir
         radiator.visible = !isAir
@@ -539,9 +611,9 @@ export default function PcBuildScene({
           tube.visible = !isAir
         }
 
-        const powerTarget = snapshot.plan.powered ? 1 : 0
+        const powerTarget = snapshot.powered ? 1 : 0
         powerMix = THREE.MathUtils.lerp(powerMix, powerTarget, reduced ? 1 : 1 - Math.exp(-delta * 2.7))
-        const hue = (time * 0.000075) % 1
+        const hue = reduced ? 0.53 : 0.57 + Math.sin(time * 0.00042) * 0.055
         rgbColor.setHSL(hue, 0.92, 0.46)
         rgbMaterial.color.copy(rgbBaseColor).lerp(rgbColor, powerMix * 0.82)
         rgbMaterial.emissive.copy(rgbBaseEmissive).lerp(rgbColor, powerMix)
@@ -554,12 +626,12 @@ export default function PcBuildScene({
         traceMaterial.opacity = 0.28 + powerMix * 0.55
 
         if (!reduced) {
-          const speed = delta * THREE.MathUtils.lerp(0.12, 10.5, powerMix)
+          const speed = delta * 10.5 * powerMix
           for (const rotor of rotors) rotor.rotation.z -= speed
         }
 
         for (const path of pulsePaths) {
-          const cableVisible = path.group.visible && powerMix > 0.04
+          const cableVisible = !reduced && path.group.visible && powerMix > 0.04
           path.pulse.visible = cableVisible
           if (cableVisible) {
             const travel = (time * 0.00042 + path.offset) % 1

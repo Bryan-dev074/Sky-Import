@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ProductImage } from '@/components/product/ProductImage'
 import { Price } from '@/components/ui/Price'
@@ -23,8 +23,19 @@ import {
 } from '@/lib/compat'
 import type { CompatKind, Product } from '@/lib/catalog/types'
 import { getPcAssemblyPlan } from '@/lib/pcAssemblyPlan'
+import { diagnosePcBoot } from '@/lib/pcBootSequence'
 
 const PcBuildScene = dynamic(() => import('@/components/builder/PcBuildScene'), { ssr: false })
+
+const POWER_CHECK_MS = 2000
+
+type PcPowerPhase = 'off' | 'checking' | 'failed' | 'powered'
+
+interface PowerAttempt {
+  signature: string
+  phase: PcPowerPhase
+  diagnosticIssueId: string | null
+}
 
 /**
  * TABLERO DE COMPATIBILIDAD
@@ -61,9 +72,16 @@ export function Configurator() {
   const resetBuild = useBuild((s) => s.reset)
   const addToCart = useCart((s) => s.add)
   const toast = useUi((s) => s.toast)
+  const openCart = useUi((s) => s.openCart)
 
   const [openSlot, setOpenSlot] = useState<BuildSlot | null>(null)
   const [sceneReady, setSceneReady] = useState(false)
+  const [powerAttempt, setPowerAttempt] = useState<PowerAttempt>({
+    signature: '',
+    phase: 'off',
+    diagnosticIssueId: null,
+  })
+  const powerTimerRef = useRef<number | null>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeDialog = useCallback(() => setOpenSlot(null), [])
   useFocusTrap(dialogRef, openSlot !== null, closeDialog)
@@ -71,12 +89,60 @@ export function Configurator() {
   const build = useMemo(() => resolveBuild(picks), [picks])
   const issues = useMemo(() => checkBuild(build), [build])
   const status = summarize(issues)
-  const scenePlan = useMemo(() => getPcAssemblyPlan(picks, status.blocking), [picks, status.blocking])
+  const scenePlan = useMemo(() => getPcAssemblyPlan(picks), [picks])
   const draw = estimatedDrawW(build)
   const psu = suggestedPsuW(build)
 
-  const chosen = BUILD_SLOTS.map((slot) => build[slot]).filter(Boolean) as Product[]
+  const chosen = useMemo(
+    () => BUILD_SLOTS.map((slot) => build[slot]).filter(Boolean) as Product[],
+    [build],
+  )
   const totalUsd = chosen.reduce((sum, product) => sum + product.priceUsd, 0)
+  const buildSignature = BUILD_SLOTS.map((slot) => picks[slot] ?? '').join('|')
+  const currentAttempt = powerAttempt.signature === buildSignature
+  const powerPhase: PcPowerPhase = currentAttempt ? powerAttempt.phase : 'off'
+  const diagnosticIssue = currentAttempt
+    ? issues.find((issue) => issue.id === powerAttempt.diagnosticIssueId) ?? null
+    : null
+  const diagnosticSlots = diagnosticIssue?.slots ?? []
+  const scenePhase = !scenePlan.complete
+    ? 'assembling'
+    : powerPhase === 'off'
+      ? 'ready'
+      : powerPhase
+
+  useEffect(
+    () => () => {
+      if (powerTimerRef.current !== null) {
+        window.clearTimeout(powerTimerRef.current)
+        powerTimerRef.current = null
+      }
+    },
+    [buildSignature],
+  )
+
+  const powerOn = useCallback(() => {
+    if (!scenePlan.complete || powerPhase === 'checking') return
+    if (powerTimerRef.current !== null) window.clearTimeout(powerTimerRef.current)
+
+    const signature = buildSignature
+    setPowerAttempt({ signature, phase: 'checking', diagnosticIssueId: null })
+    powerTimerRef.current = window.setTimeout(() => {
+      const result = diagnosePcBoot(true, issues)
+      setPowerAttempt({
+        signature,
+        phase: result.status === 'passed' ? 'powered' : 'failed',
+        diagnosticIssueId: result.issue?.id ?? null,
+      })
+      powerTimerRef.current = null
+    }, POWER_CHECK_MS)
+  }, [buildSignature, issues, powerPhase, scenePlan.complete])
+
+  const addWholeBuild = useCallback(() => {
+    for (const product of chosen) addToCart(product.slug, 1)
+    toast(t('build.addedAll'))
+    openCart()
+  }, [addToCart, chosen, openCart, t, toast])
 
   /** Ranuras señaladas por alguna advertencia, con su nivel. */
   const flagged = useMemo(() => {
@@ -93,91 +159,158 @@ export function Configurator() {
   const overall = chosen.length === 0 ? 'vacio' : status.status
   const coolingType =
     build.cooling?.compat.kind === 'cooling' ? build.cooling.compat.type : undefined
-  const sceneStatusKey = scenePlan.powered
-    ? 'build.scene.powered'
-    : scenePlan.complete && status.blocking > 0
-      ? 'build.scene.blocked'
-      : scenePlan.selectedCount > 0
-        ? 'build.scene.assembling'
-        : 'build.scene.idle'
+  const sceneStatusKey =
+    scenePhase === 'powered'
+      ? 'build.scene.powered'
+      : scenePhase === 'checking'
+        ? 'build.scene.checking'
+        : scenePhase === 'failed'
+          ? 'build.scene.failed'
+          : scenePhase === 'ready'
+            ? 'build.scene.ready'
+            : scenePlan.selectedCount > 0
+              ? 'build.scene.assembling'
+              : 'build.scene.idle'
+  const sceneHintKey =
+    scenePhase === 'powered'
+      ? 'build.scene.readyHint'
+      : scenePhase === 'checking'
+        ? 'build.scene.checkingHint'
+        : scenePhase === 'failed'
+          ? 'build.scene.failedHint'
+          : scenePhase === 'ready'
+            ? 'build.scene.powerHint'
+            : 'build.scene.hint'
   const onSceneReady = useCallback(() => setSceneReady(true), [])
   const onSceneLost = useCallback(() => setSceneReady(false), [])
 
   return (
     <div className="u-page pb-24">
       <section
-        className="u-pc-lab relative mb-12 min-h-[660px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#05090c] shadow-[0_38px_120px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.06)] sm:min-h-[680px]"
+        className="u-pc-lab relative mb-12 overflow-hidden"
         aria-labelledby="pc-live-title"
+        data-boot-phase={scenePhase}
       >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_66%_45%,rgba(43,196,237,0.13),transparent_38%),radial-gradient(circle_at_12%_88%,rgba(23,96,124,0.13),transparent_34%)]" />
-          <div className="u-pc-lab-grid absolute -inset-[30%] opacity-30 [background-image:linear-gradient(rgba(67,184,220,0.13)_1px,transparent_1px),linear-gradient(90deg,rgba(67,184,220,0.13)_1px,transparent_1px)] [background-size:46px_46px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-          <div className="u-pc-lab-scan absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
+        <div className="u-pc-lab__field pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="u-pc-lab-grid absolute -inset-[30%]" />
+          <div className="u-pc-lab-scan absolute inset-x-0 top-0 h-px" />
         </div>
 
-        <div className="pointer-events-none absolute inset-x-5 top-5 z-20 flex flex-col items-start gap-3 sm:inset-x-7 sm:top-7 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div className="w-full sm:w-auto">
+        <div className="u-pc-lab__header pointer-events-none absolute z-20">
+          <div className="u-pc-lab__heading">
             <p className="u-eyebrow">{t('build.scene.eyebrow')}</p>
-            <h2 id="pc-live-title" className="mt-3 max-w-md text-[clamp(1.35rem,3.2vw,2.45rem)] font-semibold leading-tight tracking-[-0.04em] text-fg">
+            <h2 id="pc-live-title" className="u-pc-lab__title">
               {t('build.scene.title')}
             </h2>
           </div>
-          <div className="shrink-0 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-left backdrop-blur-sm sm:text-right">
-            <p className="font-mono text-[0.6rem] tracking-[0.15em] text-fg-low uppercase">
-              {scenePlan.selectedCount}/{scenePlan.totalSlots}
-            </p>
-            <p
-              className={`mt-1 font-mono text-[0.62rem] tracking-[0.12em] uppercase ${
-                scenePlan.powered
-                  ? 'text-accent drop-shadow-[0_0_10px_rgba(66,205,255,0.95)]'
-                  : scenePlan.complete && status.blocking > 0
-                    ? 'text-rust'
-                    : 'text-fg-mid'
-              }`}
-            >
-              {t(sceneStatusKey)}
-            </p>
+          <div className="u-pc-lab__status-stack pointer-events-auto">
+            {scenePhase === 'powered' ? (
+              <button
+                type="button"
+                className="u-pc-purchase"
+                aria-label={t('build.scene.purchase')}
+                onClick={addWholeBuild}
+              >
+                <span>{t('build.scene.purchase')}</span>
+                <small>{t('build.scene.purchaseHint')}</small>
+              </button>
+            ) : null}
+            <div className="u-pc-status" data-state={scenePhase} role="status" aria-live="polite">
+              <p>{scenePlan.selectedCount}/{scenePlan.totalSlots}</p>
+              <span>{t(sceneStatusKey)}</span>
+            </div>
           </div>
         </div>
 
-        <div className="absolute inset-0 z-10 pt-40 sm:pt-20">
+        <div className="u-pc-lab__scene absolute inset-0 z-10">
           <PcBuildScene
             picks={picks}
-            blockingIssues={status.blocking}
+            powered={scenePhase === 'powered'}
+            checking={scenePhase === 'checking'}
+            diagnosticSlots={diagnosticSlots}
+            diagnosticTone={diagnosticIssue ? 'error' : null}
             {...(coolingType ? { coolingType } : {})}
             onReady={onSceneReady}
             onLost={onSceneLost}
-            className="h-full w-full transition-opacity duration-700"
+            className="h-full w-full"
           />
         </div>
 
         <div
-          className={`pointer-events-none absolute inset-0 z-[5] grid place-items-center transition-opacity duration-700 ${sceneReady ? 'opacity-0' : 'opacity-100'}`}
+          className={`u-pc-lab__loading pointer-events-none absolute inset-0 z-[5] grid place-items-center ${sceneReady ? 'opacity-0' : 'opacity-100'}`}
           aria-hidden="true"
         >
-          <div className="h-40 w-40 animate-pulse rounded-full border border-accent/20 bg-accent/5 shadow-[0_0_80px_rgba(66,205,255,0.12)]" />
+          <div />
         </div>
 
-        <div className="absolute inset-x-5 bottom-5 z-20 sm:inset-x-7 sm:bottom-7">
-          <div className="mb-4 flex min-h-12 items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+        {scenePhase === 'failed' && diagnosticIssue ? (
+          <div className="u-pc-diagnostic" role="alert">
+            <p>{t('build.scene.diagnostic')}</p>
+            <h3>{diagnosticIssue.title[locale]}</h3>
+            <span>{diagnosticIssue.detail[locale]}</span>
+          </div>
+        ) : null}
+
+        {scenePlan.complete && scenePhase !== 'powered' ? (
+          <div className="u-pc-power-tray">
+            <button
+              type="button"
+              className="u-pc-power"
+              data-state={scenePhase}
+              disabled={scenePhase === 'checking'}
+              onClick={powerOn}
+              aria-label={
+                scenePhase === 'checking'
+                  ? t('build.scene.checking')
+                  : scenePhase === 'failed'
+                    ? t('build.scene.retry')
+                    : t('build.scene.power')
+              }
+            >
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M24 5v18" />
+                <path d="M14.3 11.6a16 16 0 1 0 19.4 0" />
+              </svg>
+              <span>
+                {scenePhase === 'checking'
+                  ? t('build.scene.checkingShort')
+                  : scenePhase === 'failed'
+                    ? t('build.scene.retry')
+                    : t('build.scene.power')}
+              </span>
+            </button>
+          </div>
+        ) : null}
+
+        <div className="u-pc-lab__footer absolute z-20">
+          <div className="u-pc-dock" data-pc-dock>
             {BUILD_SLOTS.map((slot) => {
               const product = build[slot]
+              const hasDiagnostic = diagnosticSlots.includes(slot)
               return product ? (
-                <div
+                <button
                   key={slot}
-                  className="group/thumb pointer-events-auto relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-white/12 bg-black/35 p-1.5 backdrop-blur-sm"
+                  type="button"
+                  onClick={() => setOpenSlot(slot)}
+                  className="u-pc-dock__cell"
+                  data-pc-slot={slot}
+                  data-diagnostic={hasDiagnostic ? 'error' : undefined}
                   title={`${t(`build.slot.${slot}`)}: ${product.name}`}
+                  aria-label={`${t('build.change')} ${t(`build.slot.${slot}`)}: ${product.name}`}
+                  aria-haspopup="dialog"
                 >
                   <ProductImage product={product} locale={locale} sizes="48px" className="h-full w-full" />
-                  <span className="absolute inset-x-0 bottom-0 h-px bg-accent shadow-[0_0_8px_rgba(66,205,255,0.8)]" />
-                </div>
+                  <span className="u-pc-dock__rail" aria-hidden="true" />
+                </button>
               ) : (
                 <button
                   key={slot}
                   type="button"
                   onClick={() => setOpenSlot(slot)}
-                  className="pointer-events-auto grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-dashed border-white/10 bg-black/20 font-mono text-[0.58rem] text-fg-low transition-colors hover:border-accent/50 hover:text-accent"
+                  className="u-pc-dock__cell u-pc-dock__cell--empty"
+                  data-pc-slot={slot}
                   aria-label={`${t('build.choose')} ${t(`build.slot.${slot}`)}`}
+                  aria-haspopup="dialog"
                 >
                   {String(BUILD_SLOTS.indexOf(slot) + 1).padStart(2, '0')}
                 </button>
@@ -185,23 +318,20 @@ export function Configurator() {
             })}
           </div>
 
-          <div className="flex items-end justify-between gap-5 border-t border-white/10 pt-4">
+          <div className="u-pc-lab__meta">
             <div>
-              <p className="font-mono text-[0.64rem] tracking-[0.13em] text-accent uppercase">
+              <p>
                 {scenePlan.nextSlot ? t(`build.slot.${scenePlan.nextSlot}`) : t(sceneStatusKey)}
               </p>
-              <p className="mt-1 max-w-xl text-[0.75rem] leading-relaxed text-fg-low">
-                {scenePlan.powered ? t('build.scene.readyHint') : t('build.scene.hint')}
-              </p>
+              <span>{t(sceneHintKey)}</span>
             </div>
-            <p className="hidden max-w-xs text-right font-mono text-[0.58rem] leading-relaxed tracking-[0.05em] text-fg-low md:block">
+            <small>
               {t('build.scene.approx')}
-            </p>
+            </small>
           </div>
-          <div className="mt-3 h-px overflow-hidden bg-white/8" aria-hidden="true">
+          <div className="u-pc-lab__progress" aria-hidden="true">
             <span
-              className="block h-full bg-accent shadow-[0_0_12px_rgba(66,205,255,0.9)] transition-[width] duration-700 ease-rail"
-              style={{ width: `${scenePlan.progress * 100}%` }}
+              style={{ transform: `scaleX(${scenePlan.progress})` }}
             />
           </div>
         </div>
@@ -214,8 +344,9 @@ export function Configurator() {
           {BUILD_SLOTS.map((slot, i) => {
             const product = build[slot]
             const flag = flagged.get(slot)
+            const hasBootDiagnostic = diagnosticSlots.includes(slot)
             const railColor =
-              flag === 'bloqueo'
+              hasBootDiagnostic || flag === 'bloqueo'
                 ? 'bg-rust'
                 : flag === 'aviso'
                   ? 'bg-amber'
@@ -224,7 +355,12 @@ export function Configurator() {
                     : 'bg-rule'
 
             return (
-              <li key={slot} data-slot={slot} className="relative border-b border-rule first:border-t">
+              <li
+                key={slot}
+                data-slot={slot}
+                data-issue-state={hasBootDiagnostic ? 'error' : undefined}
+                className="relative border-b border-rule first:border-t"
+              >
                 <div className="flex items-stretch gap-4 py-5 sm:gap-6">
                   {/* el rail: el trazado convertido en estado */}
                   <div className="relative flex w-4 shrink-0 justify-center" aria-hidden="true">
@@ -337,10 +473,7 @@ export function Configurator() {
               <button
                 type="button"
                 disabled={chosen.length === 0}
-                onClick={() => {
-                  for (const product of chosen) addToCart(product.slug, 1)
-                  toast(t('build.addedAll'))
-                }}
+                onClick={addWholeBuild}
                 data-lead
                 className="u-cta u-cta--block u-cta--sm"
               >

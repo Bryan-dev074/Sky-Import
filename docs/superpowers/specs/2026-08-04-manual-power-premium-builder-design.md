@@ -58,7 +58,7 @@ Reglas:
 - Completar 8/8 nunca enciende automáticamente.
 - Cualquier cambio, eliminación o reinicio de una pieza apaga el sistema y devuelve el
   estado a `assembling` o `ready` según corresponda.
-- La comprobación dura lo suficiente para entenderse, aproximadamente 1,1 segundos, y
+- La comprobación dura lo suficiente para entenderse, aproximadamente 2 segundos, y
   puede cancelarse de forma segura si cambia el armado o se desmonta el componente.
 - Los bloqueos existentes impiden arrancar. La advertencia `psu-under` también impide el
   arranque porque una fuente insuficiente puede apagar el equipo en picos de carga.
@@ -117,7 +117,7 @@ Reglas:
 ## 7. Movimiento, rendimiento y accesibilidad
 
 - Las transiciones de controles duran menos de 300 ms y usan `--ease-rail`; la prueba de
-  1,1 segundos es una secuencia de estado, no una transición que bloquee respuesta.
+  2 segundos es una secuencia de estado, no una transición que bloquee respuesta.
 - Por cuadro se animan `transform` y `opacity`; el barrido puede usar una máscara estable.
 - El fondo de la sección «Arma tu PC» incrementa claramente su velocidad sin superar el
   presupuesto de nodos ni distraer de la selección.
