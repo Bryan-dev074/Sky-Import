@@ -138,6 +138,14 @@ export function Configurator() {
     }, POWER_CHECK_MS)
   }, [buildSignature, issues, powerPhase, scenePlan.complete])
 
+  const powerOff = useCallback(() => {
+    if (powerTimerRef.current !== null) {
+      window.clearTimeout(powerTimerRef.current)
+      powerTimerRef.current = null
+    }
+    setPowerAttempt({ signature: buildSignature, phase: 'off', diagnosticIssueId: null })
+  }, [buildSignature])
+
   const addWholeBuild = useCallback(() => {
     for (const product of chosen) addToCart(product.slug, 1)
     toast(t('build.addedAll'))
@@ -251,16 +259,18 @@ export function Configurator() {
           </div>
         ) : null}
 
-        {scenePlan.complete && scenePhase !== 'powered' ? (
+        {scenePlan.complete ? (
           <div className="u-pc-power-tray">
             <button
               type="button"
               className="u-pc-power"
               data-state={scenePhase}
               disabled={scenePhase === 'checking'}
-              onClick={powerOn}
+              onClick={scenePhase === 'powered' ? powerOff : powerOn}
               aria-label={
-                scenePhase === 'checking'
+                scenePhase === 'powered'
+                  ? t('build.scene.powerOff')
+                  : scenePhase === 'checking'
                   ? t('build.scene.checking')
                   : scenePhase === 'failed'
                     ? t('build.scene.retry')
@@ -272,7 +282,9 @@ export function Configurator() {
                 <path d="M14.3 11.6a16 16 0 1 0 19.4 0" />
               </svg>
               <span>
-                {scenePhase === 'checking'
+                {scenePhase === 'powered'
+                  ? t('build.scene.powerOff')
+                  : scenePhase === 'checking'
                   ? t('build.scene.checkingShort')
                   : scenePhase === 'failed'
                     ? t('build.scene.retry')

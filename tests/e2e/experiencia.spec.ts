@@ -384,7 +384,7 @@ test.describe('configurador', () => {
     await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('06')
   })
 
-  test('espera el botón, prueba el equipo y recién entonces lo enciende', async ({ page }) => {
+  test('espera el botón, prueba el equipo y permite apagarlo de nuevo', async ({ page }) => {
     await seedBuild(page, validBuild)
     await page.goto('/es/armar')
 
@@ -418,6 +418,25 @@ test.describe('configurador', () => {
       .toBe(true)
 
     const purchase = page.getByRole('button', { name: 'Comprar armado' })
+    await expect(purchase).toBeVisible()
+
+    await page.getByRole('button', { name: 'Apagar PC' }).click()
+    await expect(page.getByRole('status').filter({ hasText: 'Listo para probar' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Comprar armado' })).toHaveCount(0)
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __pcBuilderState?: { powered?: boolean } }).__pcBuilderState
+              ?.powered ?? false,
+        ),
+      )
+      .toBe(false)
+
+    await page.getByRole('button', { name: 'Encender PC' }).click()
+    await expect(page.getByRole('status').filter({ hasText: 'Sistema encendido' })).toBeVisible({
+      timeout: 4000,
+    })
     await expect(purchase).toBeVisible()
     await purchase.click()
     await expect(page.getByRole('dialog', { name: 'Carrito' })).toBeVisible()
