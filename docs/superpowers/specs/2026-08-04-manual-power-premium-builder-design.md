@@ -1,6 +1,6 @@
 # SkyImport: portada cercana y armador con encendido manual
 
-**Fecha:** 2026-08-04  
+**Fecha:** 2026-08-04
 **Estado:** dirección aprobada por el titular para ejecución directa
 
 ## Objetivo
