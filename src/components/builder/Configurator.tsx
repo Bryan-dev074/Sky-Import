@@ -144,7 +144,7 @@ export function Configurator() {
           <PcBuildScene
             picks={picks}
             blockingIssues={status.blocking}
-            coolingType={coolingType}
+            {...(coolingType ? { coolingType } : {})}
             onReady={onSceneReady}
             onLost={onSceneLost}
             className="h-full w-full transition-opacity duration-700"

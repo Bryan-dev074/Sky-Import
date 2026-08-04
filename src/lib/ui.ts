@@ -34,7 +34,8 @@ export const useUi = create<UiState>()((set, get) => ({
   toast: (text, action) => {
     seq += 1
     const id = seq
-    set({ toasts: [...get().toasts, { id, text, action }].slice(-3) })
+    const nextToast: Toast = action ? { id, text, action } : { id, text }
+    set({ toasts: [...get().toasts, nextToast].slice(-3) })
     window.setTimeout(() => get().dismiss(id), action ? 6000 : 3600)
   },
 

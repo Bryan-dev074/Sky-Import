@@ -48,3 +48,33 @@ Durante las pruebas aparecen avisos preexistentes/no bloqueantes: Vite avisa sob
 - No se cambiaron imágenes de producto ni se borraron TEMP.
 - `git diff --check` del worktree queda limpio antes del commit; tras el commit se verificó `git diff --check 1bce77b..HEAD` limpio.
 - No se hizo push ni deploy.
+
+## Addendum de revisión — 2026-08-04
+
+Se atendieron los dos hallazgos Important posteriores a `3f8f832`.
+
+### Copy Corsair: RED → GREEN
+
+1. Se amplió `tests/unit/catalog-media.test.ts` para exigir `Intel XMP 3.0` en ES/PT y rechazar cualquier `EXPO` serializado.
+2. RED: `npm test -- tests/unit/catalog-media.test.ts` falló 1/9 porque el copy decía `Perfil EXPO/XMP`.
+3. GREEN: se cambió únicamente el copy ES/PT del SKU `CMK32GX5M2B6000C36` a `Perfil Intel XMP 3.0`; la prueba focal pasó 9/9.
+
+### Optional exacto de recetas: RED → GREEN
+
+1. Se añadieron contratos que rechazan `policy: undefined` en una receta almacenada, `matte: undefined` en `native-alpha` y `tone: undefined` en `white-flood-matte`.
+2. RED: sin optional exacto, `npm run typecheck` emitió 3 errores de `Expect<false>` porque los opcionales con `never` aún aceptaban `undefined`.
+3. Impacto investigado primero con `npx tsc --noEmit --exactOptionalPropertyTypes`: 11 errores, limitados a seis call sites de UI que pasaban props opcionales como `undefined`; no afectó recetas, rutas, datos ni APIs públicas.
+4. GREEN: se activó `exactOptionalPropertyTypes: true` y los call sites omiten las props inexistentes; los toasts construyen la propiedad `action` sólo cuando existe. `npm run typecheck` pasó sin casts, `any` ni ignores.
+
+### Verificación del addendum
+
+| Comando | Resultado |
+| --- | --- |
+| `npm test -- tests/unit/catalog-media.test.ts` | 9/9 OK |
+| `npm run media:validate` | 38 productos OK |
+| `npm run lint` | exit 0 |
+| `npm run typecheck` | exit 0 |
+| `npm test` | 14 archivos, 113/113 pruebas OK |
+| `npm run build` | exit 0 |
+
+No se repitió E2E por este addendum: los cambios son copy/contrato TypeScript y no existe una prueba E2E focal de la ficha Corsair; la suite existente cubre la selección Vengeance en el armador. No hubo push ni deploy.

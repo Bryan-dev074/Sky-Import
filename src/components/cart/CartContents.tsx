@@ -74,6 +74,7 @@ export function CartContents({
 
   const resolved = resolveLines(lines)
   const totals = totalsOf(resolved)
+  const navigationProps = onNavigate ? { onClick: onNavigate } : {}
 
   // Compuerta de hidratación: primero un marcador neutro, nunca un «flash de vacío».
   if (!hydrated) {
@@ -90,10 +91,10 @@ export function CartContents({
         <p className="u-display-sm text-2xl">{t('cart.empty.title')}</p>
         <p className="u-measure text-[0.9375rem] text-fg-mid">{t('cart.empty.body')}</p>
         <div className="flex flex-wrap justify-center gap-3">
-          <Link href={path('/catalogo')} onClick={onNavigate} className="u-btn u-btn-solid">
+          <Link href={path('/catalogo')} {...navigationProps} className="u-btn u-btn-solid">
             {t('cta.catalog')}
           </Link>
-          <Link href={path('/armar')} onClick={onNavigate} className="u-btn u-btn-line">
+          <Link href={path('/armar')} {...navigationProps} className="u-btn u-btn-line">
             {t('cta.build')}
           </Link>
         </div>
@@ -109,7 +110,7 @@ export function CartContents({
             <div className="flex gap-4 px-5 py-5">
               <Link
                 href={path(`/producto/${line.slug}`)}
-                onClick={onNavigate}
+                {...navigationProps}
                 data-cursor="product"
                 data-cursor-label={t('cta.view')}
                 className="u-product-interactive relative block h-20 w-20 shrink-0 self-start overflow-hidden bg-surface-sunk rounded-part"
@@ -126,7 +127,7 @@ export function CartContents({
                 <p className="u-label mb-1">{line.product.brand}</p>
                 <Link
                   href={path(`/producto/${line.slug}`)}
-                  onClick={onNavigate}
+                  {...navigationProps}
                   data-cursor="link"
                   className="u-link block text-[0.9375rem] font-medium leading-snug"
                 >
@@ -211,7 +212,7 @@ export function CartContents({
         <div className={`mt-5 grid gap-2 ${compact ? '' : 'sm:grid-cols-2'}`}>
           <Link
             href={path('/checkout')}
-            onClick={onNavigate}
+            {...navigationProps}
             className="u-btn u-btn-solid w-full"
           >
             {t('cart.checkout')}
@@ -231,7 +232,7 @@ export function CartContents({
         <p className="mt-3 text-center">
           <Link
             href={path('/catalogo')}
-            onClick={onNavigate}
+            {...navigationProps}
             data-cursor="link"
             className="u-link u-tap font-mono text-[0.625rem] tracking-[0.14em] uppercase text-fg-low"
           >

@@ -22,6 +22,7 @@ const NAV = [
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { t, path } = useI18n()
   const pathname = usePathname()
+  const navigationProps = onNavigate ? { onClick: onNavigate } : {}
   return (
     <>
       {NAV.map((item, i) => {
@@ -31,7 +32,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             key={item.href}
             href={href}
-            onClick={onNavigate}
+            {...navigationProps}
             aria-current={active ? 'page' : undefined}
             className="u-link relative font-mono text-[0.6875rem] font-medium tracking-[0.16em] uppercase text-fg-mid transition-colors hover:text-fg"
           >

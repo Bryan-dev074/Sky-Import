@@ -52,6 +52,17 @@ export type RejectsPolicyInStoredRecipe = Expect<
     false
   >
 >
+export type RejectsUndefinedPolicyInStoredRecipe = Expect<
+  Equal<
+    (Provenance & {
+      operation: 'native-alpha'
+      policy: undefined
+    }) extends StoredProductCutoutRecipe
+      ? true
+      : false,
+    false
+  >
+>
 export type AcceptsExecutablePruneRecipe = Expect<
   Equal<
     {
@@ -80,6 +91,29 @@ export type RejectsMatteOnNativeAlpha = Expect<
     {
       operation: 'native-alpha'
       matte: { luma: 245; chroma: 10; featherPixels: 1; despill: true }
+    } extends ProductCutoutRecipe
+      ? true
+      : false,
+    false
+  >
+>
+export type RejectsUndefinedMatteOnNativeAlpha = Expect<
+  Equal<
+    {
+      operation: 'native-alpha'
+      matte: undefined
+    } extends ProductCutoutRecipe
+      ? true
+      : false,
+    false
+  >
+>
+export type RejectsUndefinedToneOnWhiteFlood = Expect<
+  Equal<
+    {
+      operation: 'white-flood-matte'
+      matte: { luma: 245; chroma: 10; featherPixels: 1; despill: true }
+      tone: undefined
     } extends ProductCutoutRecipe
       ? true
       : false,

@@ -868,7 +868,12 @@ export function ComponentRender({
       aria-hidden={title ? undefined : true}
       focusable="false"
     >
-      <Shape accent={accent} seed={seed} fans={fans} variant={variant} />
+      <Shape
+        accent={accent}
+        seed={seed}
+        {...(fans === undefined ? {} : { fans })}
+        {...(variant === undefined ? {} : { variant })}
+      />
       {view === 'annotated' && dims && dims.length > 0 ? <Dimensions dims={dims} /> : null}
     </svg>
   )

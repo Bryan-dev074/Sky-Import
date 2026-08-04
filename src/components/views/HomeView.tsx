@@ -215,7 +215,7 @@ export function HomeView() {
                 key={slug}
                 delayIndex={i}
                 from="scale"
-                className={wide ? 'sm:col-span-2' : undefined}
+                {...(wide ? { className: 'sm:col-span-2' } : {})}
               >
                 <Cell
                   as="a"

@@ -625,8 +625,8 @@ const CATALOG_PRODUCTS: CatalogProduct[] = [
     units: 12,
     featured: true,
     blurb: L(
-      'El kit Corsair CMK32GX5M2B6000C36: 32 GB en dos módulos, 6000 MT/s, latencia CL36 y timings 36-38-38-76. Perfil EXPO/XMP de un clic en la BIOS.',
-      'O kit Corsair CMK32GX5M2B6000C36: 32 GB em dois módulos, 6000 MT/s, latência CL36 e timings 36-38-38-76. Perfil EXPO/XMP de um clique na BIOS.',
+      'El kit Corsair CMK32GX5M2B6000C36: 32 GB en dos módulos, 6000 MT/s, latencia CL36 y timings 36-38-38-76. Perfil Intel XMP 3.0 de un clic en la BIOS.',
+      'O kit Corsair CMK32GX5M2B6000C36: 32 GB em dois módulos, 6000 MT/s, latência CL36 e timings 36-38-38-76. Perfil Intel XMP 3.0 de um clique na BIOS.',
     ),
     specs: [
       { label: S.ramGen, value: 'DDR5' },

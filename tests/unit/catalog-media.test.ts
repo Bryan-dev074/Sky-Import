@@ -87,10 +87,13 @@ describe('catálogo premium', () => {
     })
     expect(product?.blurb.es).toContain('CL36')
     expect(product?.blurb.pt).toContain('CL36')
+    expect(product?.blurb.es).toContain('Intel XMP 3.0')
+    expect(product?.blurb.pt).toContain('Intel XMP 3.0')
     expect(product?.specs.map((spec) => spec.value)).toEqual(
       expect.arrayContaining(['CL36', 'CMK32GX5M2B6000C36', '36-38-38-76']),
     )
     expect(serialized).not.toContain('CL30')
+    expect(serialized).not.toContain('EXPO')
   })
 
   test('sincroniza exactamente fuente y crédito del runtime con el manifiesto', async () => {
