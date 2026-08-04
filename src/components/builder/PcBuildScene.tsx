@@ -52,6 +52,42 @@ interface PulsePath {
   offset: number
 }
 
+interface DiagnosticMarker {
+  group: THREE.Group
+  ring: THREE.Mesh
+  light: THREE.PointLight
+}
+
+const DIAGNOSTIC_MARKER_OFFSETS: Record<PcScenePartId, [number, number, number]> = {
+  case: [2.3, 2.2, 2.3],
+  motherboard: [-2.1, 1.75, 2.2],
+  cpu: [-1.4, 1.65, 2.1],
+  'ram-left': [1.2, 1.7, 2.1],
+  'ram-right': [1.65, 1.55, 2.1],
+  gpu: [2.35, 1.35, 2.25],
+  storage: [-1.9, 1.15, 2.1],
+  psu: [-1.9, 1.45, 2.1],
+  cooling: [-2.15, 2.15, 2.2],
+  'cooling-fans': [2.1, 2.15, 2.15],
+  'motherboard-power': [-1.8, 1.55, 2.1],
+  'gpu-power': [1.9, 1.35, 2.1],
+}
+
+const DIAGNOSTIC_TARGET_Z: Record<PcScenePartId, number> = {
+  case: 2.02,
+  motherboard: 0.24,
+  cpu: 0.22,
+  'ram-left': 0.28,
+  'ram-right': 0.28,
+  gpu: 0.58,
+  storage: 0.24,
+  psu: 1.28,
+  cooling: 0.72,
+  'cooling-fans': 0.8,
+  'motherboard-power': 0.2,
+  'gpu-power': 0.25,
+}
+
 function makeFan(
   radius: number,
   ringMaterial: THREE.MeshStandardMaterial,
@@ -472,19 +508,63 @@ export default function PcBuildScene({
         0.42,
       )
 
-      const diagnosticHelpers = new Map<PcScenePartId, THREE.BoxHelper>()
+      const diagnosticLineMaterial = keepMaterial(
+        new THREE.LineBasicMaterial({
+          color: 0xe8b23a,
+          transparent: true,
+          opacity: 0.94,
+          depthTest: false,
+          depthWrite: false,
+        }),
+      )
+      const diagnosticSolidMaterial = keepMaterial(
+        new THREE.MeshBasicMaterial({
+          color: 0xe8b23a,
+          transparent: true,
+          opacity: 0.96,
+          depthTest: false,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        }),
+      )
+      const diagnosticConeGeometry = keepGeometry(new THREE.ConeGeometry(0.085, 0.24, 12))
+      const diagnosticRingGeometry = keepGeometry(new THREE.RingGeometry(0.22, 0.31, 32))
+      const diagnosticMarkers = new Map<PcScenePartId, DiagnosticMarker>()
+      const coneUp = new THREE.Vector3(0, 1, 0)
+
       for (const part of animatedParts) {
-        const helper = new THREE.BoxHelper(part.group, 0xc4553d)
-        helper.name = `pc-diagnostic-${part.id}`
-        helper.visible = false
-        helper.renderOrder = 20
-        helper.material.transparent = true
-        helper.material.opacity = 0.92
-        helper.material.depthTest = false
-        geometries.push(helper.geometry)
-        materials.push(helper.material)
-        scene.add(helper)
-        diagnosticHelpers.set(part.id, helper)
+        const target = part.home.clone()
+        target.z += DIAGNOSTIC_TARGET_Z[part.id]
+        const origin = target.clone().add(new THREE.Vector3(...DIAGNOSTIC_MARKER_OFFSETS[part.id]))
+        const marker = new THREE.Group()
+        marker.name = `pc-diagnostic-${part.id}`
+        marker.visible = false
+        marker.renderOrder = 30
+
+        const lineGeometry = keepGeometry(
+          new THREE.BufferGeometry().setFromPoints([origin, target]),
+        )
+        const line = new THREE.Line(lineGeometry, diagnosticLineMaterial)
+        line.renderOrder = 30
+        marker.add(line)
+
+        const arrow = new THREE.Mesh(diagnosticConeGeometry, diagnosticSolidMaterial)
+        arrow.position.copy(target)
+        arrow.quaternion.setFromUnitVectors(coneUp, target.clone().sub(origin).normalize())
+        arrow.renderOrder = 31
+        marker.add(arrow)
+
+        const ring = new THREE.Mesh(diagnosticRingGeometry, diagnosticSolidMaterial)
+        ring.position.copy(target)
+        ring.renderOrder = 31
+        marker.add(ring)
+
+        const light = new THREE.PointLight(0xe8b23a, 0, 2.15, 2)
+        light.position.copy(target)
+        marker.add(light)
+
+        root.add(marker)
+        diagnosticMarkers.set(part.id, { group: marker, ring, light })
       }
 
       const groundMaterial = keepMaterial(new THREE.ShadowMaterial({ color: 0x020608, opacity: 0.28 }))
@@ -594,12 +674,16 @@ export default function PcBuildScene({
           part.group.visible = part.current > 0.008
         }
 
-        const diagnosticColor = snapshot.diagnosticTone === 'warning' ? 0xe8b23a : 0xc4553d
-        for (const [id, helper] of diagnosticHelpers) {
-          helper.visible = snapshot.diagnosticTone !== null && diagnosticSet.has(id) && visibleSet.has(id)
-          if (helper.visible) {
-            helper.material.color.setHex(diagnosticColor)
-            helper.update()
+        for (const [id, marker] of diagnosticMarkers) {
+          const active =
+            snapshot.diagnosticTone !== null && diagnosticSet.has(id) && visibleSet.has(id)
+          marker.group.visible = active
+          if (active) {
+            const pulse = reduced ? 1 : 1 + Math.sin(time * 0.0065 + id.length) * 0.1
+            marker.ring.scale.setScalar(pulse)
+            marker.light.intensity = reduced ? 2.1 : 1.85 + pulse * 0.45
+          } else {
+            marker.light.intensity = 0
           }
         }
 

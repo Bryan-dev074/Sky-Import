@@ -384,7 +384,7 @@ test.describe('configurador', () => {
     await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('06')
   })
 
-  test('espera el botón, prueba el equipo y permite apagarlo de nuevo', async ({ page }) => {
+  test('espera el botón, prueba el equipo y recién entonces lo enciende', async ({ page }) => {
     await seedBuild(page, validBuild)
     await page.goto('/es/armar')
 
@@ -419,9 +419,26 @@ test.describe('configurador', () => {
 
     const purchase = page.getByRole('button', { name: 'Comprar armado' })
     await expect(purchase).toBeVisible()
+    await purchase.click()
+    await expect(page.getByRole('dialog', { name: 'Carrito' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('08')
+  })
+
+  test('permite apagarlo manualmente después de un arranque correcto', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await seedBuild(page, validBuild)
+    await page.goto('/es/armar')
+
+    await page.getByRole('button', { name: 'Encender PC' }).click()
+    await expect(page.getByRole('status').filter({ hasText: 'Sistema encendido' })).toBeVisible({
+      timeout: 10_000,
+    })
+    await expect(page.getByRole('button', { name: 'Comprar armado' })).toBeVisible()
 
     await page.getByRole('button', { name: 'Apagar PC' }).click()
+
     await expect(page.getByRole('status').filter({ hasText: 'Listo para probar' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Encender PC' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Comprar armado' })).toHaveCount(0)
     await expect
       .poll(() =>
@@ -432,18 +449,9 @@ test.describe('configurador', () => {
         ),
       )
       .toBe(false)
-
-    await page.getByRole('button', { name: 'Encender PC' }).click()
-    await expect(page.getByRole('status').filter({ hasText: 'Sistema encendido' })).toBeVisible({
-      timeout: 4000,
-    })
-    await expect(purchase).toBeVisible()
-    await purchase.click()
-    await expect(page.getByRole('dialog', { name: 'Carrito' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Abrir carrito' })).toContainText('08')
   })
 
-  test('una fuente insuficiente bloquea el arranque y marca sus piezas', async ({ page }) => {
+  test('una fuente insuficiente guía hacia opciones compatibles', async ({ page }) => {
     await seedBuild(page, { ...validBuild, psu: 'msi-mag-a650bn' })
     await page.goto('/es/armar')
 
@@ -451,7 +459,8 @@ test.describe('configurador', () => {
     await expect(page.getByText('La fuente está por debajo de lo recomendado').last()).toBeVisible({
       timeout: 4000,
     })
-    await expect(page.locator('[data-diagnostic="error"]')).toHaveCount(2)
+    await expect(page.locator('[data-diagnostic="warning"]')).toHaveCount(2)
+    await expect(page.locator('[data-pc-guide][data-target-slot="psu"]')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Comprar armado' })).toHaveCount(0)
     await expect
       .poll(() =>
@@ -462,6 +471,19 @@ test.describe('configurador', () => {
         ),
       )
       .toBe(false)
+
+    await page.getByRole('button', { name: 'Ver opciones compatibles' }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByRole('button', { name: /RM1000x/ })).toHaveAttribute(
+      'data-fit',
+      'compatible',
+    )
+    await expect(dialog.getByRole('button', { name: /MAG A650BN/ })).toHaveAttribute(
+      'data-fit',
+      'conflict',
+    )
+    await expect(page.getByText('Compatible con tu armado').first()).toBeVisible()
   })
 
   test('el laboratorio móvil muestra las ocho piezas en una cuadrícula 4 por 2', async ({

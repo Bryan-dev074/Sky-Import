@@ -22,6 +22,7 @@ import {
   type BuildSlot,
 } from '@/lib/compat'
 import type { CompatKind, Product } from '@/lib/catalog/types'
+import { assessBuildCandidate } from '@/lib/buildCandidateFit'
 import { getPcAssemblyPlan } from '@/lib/pcAssemblyPlan'
 import { diagnosePcBoot } from '@/lib/pcBootSequence'
 
@@ -105,6 +106,23 @@ export function Configurator() {
     ? issues.find((issue) => issue.id === powerAttempt.diagnosticIssueId) ?? null
     : null
   const diagnosticSlots = diagnosticIssue?.slots ?? []
+  const guidedSlot = diagnosticSlots[0] ?? null
+  const candidateOptions = useMemo(() => {
+    if (!openSlot) return []
+
+    return optionsFor(openSlot)
+      .map((product, index) => ({
+        product,
+        index,
+        assessment: assessBuildCandidate(build, openSlot, product),
+      }))
+      .sort((left, right) => {
+        const fitOrder =
+          Number(right.assessment.fit === 'compatible') -
+          Number(left.assessment.fit === 'compatible')
+        return fitOrder || left.index - right.index
+      })
+  }, [build, openSlot])
   const scenePhase = !scenePlan.complete
     ? 'assembling'
     : powerPhase === 'off'
@@ -236,7 +254,7 @@ export function Configurator() {
             powered={scenePhase === 'powered'}
             checking={scenePhase === 'checking'}
             diagnosticSlots={diagnosticSlots}
-            diagnosticTone={diagnosticIssue ? 'error' : null}
+            diagnosticTone={diagnosticIssue ? 'warning' : null}
             {...(coolingType ? { coolingType } : {})}
             onReady={onSceneReady}
             onLost={onSceneLost}
@@ -256,6 +274,16 @@ export function Configurator() {
             <p>{t('build.scene.diagnostic')}</p>
             <h3>{diagnosticIssue.title[locale]}</h3>
             <span>{diagnosticIssue.detail[locale]}</span>
+            {guidedSlot ? (
+              <button
+                type="button"
+                className="u-pc-diagnostic__action"
+                onClick={() => setOpenSlot(guidedSlot)}
+              >
+                <span>{t('build.scene.compatibleOptions')}</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -299,6 +327,7 @@ export function Configurator() {
             {BUILD_SLOTS.map((slot) => {
               const product = build[slot]
               const hasDiagnostic = diagnosticSlots.includes(slot)
+              const isGuided = guidedSlot === slot
               return product ? (
                 <button
                   key={slot}
@@ -306,13 +335,30 @@ export function Configurator() {
                   onClick={() => setOpenSlot(slot)}
                   className="u-pc-dock__cell"
                   data-pc-slot={slot}
-                  data-diagnostic={hasDiagnostic ? 'error' : undefined}
+                  data-diagnostic={hasDiagnostic ? 'warning' : undefined}
+                  data-guided={isGuided ? 'true' : undefined}
                   title={`${t(`build.slot.${slot}`)}: ${product.name}`}
                   aria-label={`${t('build.change')} ${t(`build.slot.${slot}`)}: ${product.name}`}
                   aria-haspopup="dialog"
                 >
                   <ProductImage product={product} locale={locale} sizes="48px" className="h-full w-full" />
                   <span className="u-pc-dock__rail" aria-hidden="true" />
+                  {isGuided ? (
+                    <span
+                      className="u-pc-dock__guide"
+                      data-pc-guide
+                      data-target-slot={slot}
+                      aria-hidden="true"
+                    >
+                      <span>
+                        {t('build.change')} {t(`build.slot.${slot}`)}
+                      </span>
+                      <svg viewBox="0 0 18 22">
+                        <path d="M9 1v16" />
+                        <path d="m3 12 6 6 6-6" />
+                      </svg>
+                    </span>
+                  ) : null}
                 </button>
               ) : (
                 <button
@@ -370,7 +416,7 @@ export function Configurator() {
               <li
                 key={slot}
                 data-slot={slot}
-                data-issue-state={hasBootDiagnostic ? 'error' : undefined}
+                data-issue-state={hasBootDiagnostic ? 'warning' : undefined}
                 className="relative border-b border-rule first:border-t"
               >
                 <div className="flex items-stretch gap-4 py-5 sm:gap-6">
@@ -567,7 +613,7 @@ export function Configurator() {
             </div>
 
             <ul className="flex-1 overflow-y-auto overscroll-contain">
-              {optionsFor(openSlot).map((product) => {
+              {candidateOptions.map(({ product, assessment }) => {
                 const selected = picks[openSlot] === product.slug
                 return (
                   <li key={product.slug}>
@@ -578,7 +624,8 @@ export function Configurator() {
                         closeDialog()
                       }}
                       aria-pressed={selected}
-                      className="flex w-full items-center gap-4 border-b border-rule px-5 py-4 text-left transition-colors hover:bg-surface-sunk aria-pressed:bg-surface-sunk"
+                      data-fit={assessment.fit}
+                      className="u-build-option flex w-full items-center gap-4 border-b border-rule px-5 py-4 text-left transition-colors hover:bg-surface-sunk aria-pressed:bg-surface-sunk"
                     >
                       <span className="u-product-interactive relative h-16 w-16 shrink-0">
                         <ProductImage product={product} locale={locale} sizes="64px" className="h-full w-full" />
@@ -592,12 +639,20 @@ export function Configurator() {
                           {headlineSpec(product, locale)}
                         </span>
                       </span>
-                      <Price usd={product.priceUsd} className="shrink-0 font-mono text-[0.875rem]" />
+                      <span className="u-build-option__meta shrink-0">
+                        <Price usd={product.priceUsd} className="font-mono text-[0.875rem]" />
+                        <span className="u-build-option__fit" data-fit={assessment.fit}>
+                          <span aria-hidden="true">{assessment.fit === 'compatible' ? '✓' : '!'}</span>
+                          {assessment.fit === 'compatible'
+                            ? t('build.option.compatible')
+                            : t('build.option.conflict')}
+                        </span>
+                      </span>
                     </button>
                   </li>
                 )
               })}
-              {optionsFor(openSlot).length === 0 ? (
+              {candidateOptions.length === 0 ? (
                 <li className="px-5 py-10 text-center text-[0.9375rem] text-fg-mid">
                   {t('build.pickEmpty')}
                 </li>

@@ -2491,7 +2491,7 @@ html[data-pointer='hidden'] [contenteditable='true'] {
 }
 
 .u-pc-status[data-state='failed'] span {
-  color: var(--rust);
+  color: var(--warn);
 }
 
 .u-pc-status[data-state='checking'] span {
@@ -2549,15 +2549,15 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   left: 24px;
   bottom: 158px;
   width: min(32rem, calc(100% - 190px));
-  border-top: 1px solid var(--rust);
-  border-bottom: 1px solid color-mix(in oklab, var(--rust) 58%, transparent);
+  border-top: 1px solid var(--warn);
+  border-bottom: 1px solid color-mix(in oklab, var(--warn) 52%, transparent);
   background: rgb(7 10 14 / 0.94);
   padding: 0.9rem 1rem;
   color: var(--fg-hi);
 }
 
 .u-pc-diagnostic p {
-  color: var(--rust);
+  color: var(--warn);
   font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 600;
@@ -2578,6 +2578,29 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   color: var(--fg-mid);
   font-size: 0.8rem;
   line-height: 1.45;
+}
+
+.u-pc-diagnostic__action {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.7rem;
+  border-bottom: 1px solid var(--warn);
+  color: var(--fg-hi);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    color 180ms var(--ease-rail),
+    transform 140ms var(--ease-rail);
+}
+
+.u-pc-diagnostic__action > span:last-child {
+  color: var(--warn);
+  font-size: 1rem;
 }
 
 .u-pc-power-tray {
@@ -2608,7 +2631,13 @@ html[data-pointer='hidden'] [contenteditable='true'] {
 }
 
 .u-pc-power[data-state='failed'] {
-  border-color: var(--rust);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.u-pc-power[data-state='powered'] {
+  border-color: color-mix(in oklab, var(--accent) 80%, white);
+  color: var(--accent);
 }
 
 .u-pc-power svg {
@@ -2669,24 +2698,61 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   background: var(--accent);
 }
 
-.u-pc-dock__cell[data-diagnostic='error'] {
-  border-color: var(--rust);
-  color: var(--rust);
+.u-pc-dock__cell[data-diagnostic='warning'] {
+  border-color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 8%, rgb(0 0 0 / 0.42));
+  color: var(--warn);
 }
 
-.u-pc-dock__cell[data-diagnostic='error'] .u-pc-dock__rail {
-  background: var(--rust);
+.u-pc-dock__cell[data-diagnostic='warning'] .u-pc-dock__rail {
+  height: 2px;
+  background: var(--warn);
 }
 
-.u-pc-dock__cell[data-diagnostic='error']::after {
+.u-pc-dock__cell[data-diagnostic='warning']::after {
   content: '!';
   position: absolute;
   top: 3px;
   right: 4px;
-  color: var(--rust);
+  color: var(--warn);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   font-weight: 700;
+}
+
+.u-pc-dock__cell[data-guided='true'] {
+  z-index: 8;
+  overflow: visible;
+}
+
+.u-pc-dock__guide {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  display: grid;
+  width: max-content;
+  justify-items: center;
+  color: var(--warn);
+  filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.8));
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.u-pc-dock__guide svg {
+  width: 18px;
+  height: 22px;
+  margin-top: 3px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-width: 1.5;
+  animation: pc-guide-nudge 1.35s var(--ease-clamp) infinite;
 }
 
 .u-pc-lab__meta {
@@ -2708,7 +2774,7 @@ html[data-pointer='hidden'] [contenteditable='true'] {
 }
 
 .u-pc-lab[data-boot-phase='failed'] .u-pc-lab__meta p {
-  color: var(--rust);
+  color: var(--warn);
 }
 
 .u-pc-lab__meta span {
@@ -2747,8 +2813,46 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   transition: transform 240ms var(--ease-rail);
 }
 
-[data-issue-state='error'] {
-  background: color-mix(in oklab, var(--rust) 5%, transparent);
+[data-issue-state='warning'] {
+  background: color-mix(in oklab, var(--warn) 5%, transparent);
+}
+
+.u-build-option__meta {
+  display: grid;
+  min-width: 10.5rem;
+  justify-items: end;
+  gap: 0.45rem;
+}
+
+.u-build-option__fit {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgb(255 255 255 / 0.11);
+  border-radius: 999px;
+  padding: 0.22rem 0.48rem;
+  color: var(--fg-low);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.u-build-option__fit[data-fit='compatible'] {
+  border-color: color-mix(in oklab, var(--accent) 66%, transparent);
+  background: color-mix(in oklab, var(--accent) 7%, transparent);
+  color: var(--accent);
+}
+
+.u-build-option[data-fit='compatible'] {
+  box-shadow: inset 2px 0 0 color-mix(in oklab, var(--accent) 74%, transparent);
+}
+
+.u-build-option[data-fit='conflict'][aria-pressed='true'] {
+  box-shadow: inset 2px 0 0 var(--warn);
 }
 
 @media (min-width: 640px) {
@@ -2781,8 +2885,13 @@ html[data-pointer='hidden'] [contenteditable='true'] {
     background: color-mix(in oklab, var(--fg-hi) 88%, var(--bg));
   }
 
+  .u-pc-diagnostic__action:hover {
+    color: var(--warn);
+  }
+
   .u-pc-power:active:not(:disabled),
   .u-pc-purchase:active,
+  .u-pc-diagnostic__action:active,
   .u-pc-dock__cell:active {
     transform: translateY(1px) scale(0.985);
   }
@@ -2870,6 +2979,25 @@ html[data-pointer='hidden'] [contenteditable='true'] {
     padding: 0.75rem 0.8rem;
   }
 
+  .u-pc-dock__guide {
+    font-size: 0.46rem;
+  }
+
+  .u-build-option {
+    align-items: flex-start;
+  }
+
+  .u-build-option__meta {
+    min-width: 6.9rem;
+    max-width: 7.5rem;
+  }
+
+  .u-build-option__fit {
+    justify-content: flex-end;
+    white-space: normal;
+    text-align: right;
+  }
+
   .u-pc-lab__meta {
     margin-top: 10px;
   }
@@ -2884,6 +3012,11 @@ html[data-pointer='hidden'] [contenteditable='true'] {
   14% { opacity: 0.72; }
   76% { opacity: 0.36; }
   100% { opacity: 0; transform: translateY(34rem) scaleX(0.82); }
+}
+
+@keyframes pc-guide-nudge {
+  0%, 100% { transform: translateY(0); opacity: 0.72; }
+  50% { transform: translateY(4px); opacity: 1; }
 }
 
 /* ──────────────────────────────────────────────── movimiento reducido
